@@ -36,9 +36,9 @@
 
 #include "cameranodeobject.h"
 
-#include <OgreRoot.h>
-#include <OgreSceneNode.h>
-#include <OgreCamera.h>
+#include <OGRE/OgreRoot.h>
+#include <OGRE/OgreSceneNode.h>
+#include <OGRE/OgreCamera.h>
 
 #include <QDebug>
 

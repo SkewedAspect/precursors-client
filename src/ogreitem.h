@@ -42,7 +42,7 @@
 #include <QtQuick/QSGTextureMaterial>
 #include <QtCore/QPropertyAnimation>
 
-#include <OgreTexture.h>
+#include <OGRE/OgreTexture.h>
 
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)

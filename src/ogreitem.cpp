@@ -34,14 +34,14 @@
 **
 **************************************************************************/
 
-#include <RenderSystems/GL/OgreGLTexture.h>
-#include <RenderSystems/GL/OgreGLFrameBufferObject.h>
-#include <RenderSystems/GL/OgreGLFBORenderTexture.h>
+#include <OGRE/RenderSystems/GL/OgreGLTexture.h>
+#include <OGRE/RenderSystems/GL/OgreGLFrameBufferObject.h>
+#include <OGRE/RenderSystems/GL/OgreGLFBORenderTexture.h>
 
 #include "ogreitem.h"
 #include "cameranodeobject.h"
 
-#include <Ogre.h>
+#include <OGRE/Ogre.h>
 
 #include <QtCore/QPropertyAnimation>
 #include <QtCore/QCoreApplication>
