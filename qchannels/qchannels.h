@@ -99,7 +99,7 @@ private slots:
     void tcpDataReady();
     void udpDataReady();
 
-    void handleIncommingMessage(QString data);
+    void handleIncommingMessage(QByteArray data);
 };
 
 #endif // QCHANNELS_H

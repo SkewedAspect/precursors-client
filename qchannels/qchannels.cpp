@@ -20,10 +20,10 @@ QChannels::QChannels(QObject *parent) :
 	aes128Dec(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Decode, key, iv)
 {
     sslNetstring = new QNetString();
-    connect(sslNetstring, SIGNAL(dataReady(QString)), this, SLOT(handleIncommingMessage(QString)));
+    connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
     tcpNetstring = new QNetString();
-    connect(tcpNetstring, SIGNAL(dataReady(QString)), this, SLOT(handleIncommingMessage(QString)));
+    connect(tcpNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
     // Create a new SSL socket, and conect it's signals.
     this->sslSocket = new QSslSocket(this);
@@ -99,21 +99,20 @@ void QChannels::disconnect()
  */
 void QChannels::send(QVariant envelope, ChannelMode mode)
 {
-    QString jsonData = QJsonDocument::fromVariant(envelope).toJson();
+    QByteArray jsonData = QJsonDocument::fromVariant(envelope).toJson();
 
     switch(mode)
     {
         case CM_SECURE:
         {
-			QByteArray data = QNetString::encode(jsonData).toUtf8();
+			QByteArray data = QNetString::encode(jsonData);
             sslSocket->write(data);
             break;
         } // end CM_SECURE
 
         case CM_UNRELABLE:
         {
-			QByteArray data = jsonData.toUtf8();
-			QCA::SecureArray cypherText = aes128Enc.update(data);
+			QCA::SecureArray cypherText = aes128Enc.update(jsonData);
             udpSocket->writeDatagram(cypherText.toByteArray(), this->serverAddress, this->udpPort);
             break;
         } // end CM_UNRELIABLE
@@ -121,7 +120,7 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
         case CM_RELIABLE:
         default:
         {
-			QByteArray data = QNetString::encode(jsonData).toUtf8();
+			QByteArray data = QNetString::encode(jsonData);
 			QCA::SecureArray cypherText = aes128Enc.update(data);
             tcpSocket->write(cypherText.toByteArray());
             break;
@@ -351,9 +350,9 @@ void QChannels::handleUDPResponse(bool confirmed)
     } // end if
 } // end handleUDPResponse
 
-void QChannels::handleIncommingMessage(QString data)
+void QChannels::handleIncommingMessage(QByteArray data)
 {
-	QByteArray plainText = aes128Dec.update(data.toUtf8()).toByteArray();
+	QByteArray plainText = aes128Dec.update(data).toByteArray();
     QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
 
     if(envelope["type"] == "reply")
