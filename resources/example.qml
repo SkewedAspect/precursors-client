@@ -50,7 +50,7 @@ ApplicationWindow {
 
 		OgreItem {
 			id: ogreitem
-
+        width: 600; height: 400
 			anchors.left: toolbar1.left
 			anchors.leftMargin: -5
 			anchors.top: toolbar1.bottom
