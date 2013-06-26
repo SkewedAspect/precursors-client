@@ -1,0 +1,14 @@
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+#ifdef DEBUG_PLUGIN
+#cmakedefine OGRE_RenderSystem_GL_LIBRARY "@OGRE_RenderSystem_GL_LIBRARY_DBG@"
+#else
+#cmakedefine OGRE_RenderSystem_GL_LIBRARY "@OGRE_RenderSystem_GL_LIBRARY_REL@"
+#endif
+
+#ifndef OGRE_RenderSystem_GL_LIBRARY
+#	define OGRE_RenderSystem_GL_LIBRARY "/usr/lib/OGRE"
+#endif
+
+#endif // __CONFIG_H__

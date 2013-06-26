@@ -38,6 +38,7 @@
 #include <OGRE/RenderSystems/GL/OgreGLFrameBufferObject.h>
 #include <OGRE/RenderSystems/GL/OgreGLFBORenderTexture.h>
 
+#include "config.h"
 #include "ogreitem.h"
 #include "cameranodeobject.h"
 
@@ -257,14 +258,7 @@ void OgreItem::init()
     m_samples = format.sampleBuffers() ? format.samples() : 0;
 
     m_root = new Ogre::Root;
-    QString glPlugin = QLatin1String(OGRE_PLUGIN_DIR);
-    glPlugin.remove("\"");
-#ifdef DEBUG_PLUGIN
-    glPlugin += QLatin1String("/RenderSystem_GL_d");
-#else
-    glPlugin += QLatin1String("/RenderSystem_GL");
-#endif
-    m_root->loadPlugin(glPlugin.toLatin1().constData());
+    m_root->loadPlugin(QLatin1String(OGRE_RenderSystem_GL_LIBRARY).latin1());
 
     Ogre::RenderSystem *renderSystem = m_root->getRenderSystemByName("OpenGL Rendering Subsystem");
     m_root->setRenderSystem(renderSystem);
@@ -281,7 +275,7 @@ void OgreItem::init()
     m_window->update(false);
 
     // Load resources
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(QString(appPath() + "/resources/data.zip").toLatin1().data(), "Zip");
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation((appPath() + "/../../resources/data.zip").toLatin1().data(), "Zip");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     // Setup scene

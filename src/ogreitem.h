@@ -44,19 +44,16 @@
 
 #include <OGRE/OgreTexture.h>
 
-#define STRINGIFY_(x) #x
-#define STRINGIFY(x) STRINGIFY_(x)
-#define OGRE_PLUGIN_DIR STRINGIFY(OGRE_PLUGIN_VAR)
 
 class QSGSimpleTextureNode;
 
 namespace Ogre {
-class Root;
-class Camera;
-class SceneManager;
-class RenderTexture;
-class Viewport;
-class RenderTarget;
+	class Root;
+	class Camera;
+	class SceneManager;
+	class RenderTexture;
+	class Viewport;
+	class RenderTarget;
 }
 
 class CameraNodeObject;

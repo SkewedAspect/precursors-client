@@ -129,10 +129,16 @@ file(MAKE_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}/dist/media
 	)
 
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in
+   	${CMAKE_CURRENT_BINARY_DIR}/src/config.h
+	)
+
 # List project files
 set(HEADERS
 	src/cameranodeobject.h
 	src/ogreitem.h
+   	${CMAKE_CURRENT_BINARY_DIR}/src/config.h
 	)
 set(SOURCES
 	src/main.cpp
@@ -157,6 +163,7 @@ target_link_libraries(PrecursorsClient
 	Qt5::OpenGL
 
 	${OGRE_LIBRARIES}
+	${OGRE_RenderSystem_GL_LIBRARIES}
 	${OIS_LIBRARIES}
 
 	${OPENGL_gl_LIBRARY}
