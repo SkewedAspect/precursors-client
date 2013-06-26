@@ -20,19 +20,14 @@ int main(int argc, char **argv)
 #else
     QGuiApplication app(argc, argv);
 #endif
+	// Register the networking code with QML
+	qmlRegisterType<QChannels>("precursors.networking", 1, 0, "QChannels");
 
+	// Register Ogre
     qmlRegisterType<OgreItem>("Ogre", 1, 0, "OgreItem");
 
+	//QQmlApplicationEngine engine("resources/qml/launcher.qml");
 	QQmlApplicationEngine engine("resources/main.qml");
-
-	/*
-    QQuickView view;
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setSource(QUrl::fromLocalFile("resources/example.qml"));
-    view.rootContext()->setContextProperty("Window", &view);
-    view.show();
-    view.raise();
-	*/
 
     return app.exec();
 } // end main

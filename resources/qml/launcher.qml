@@ -66,7 +66,27 @@ ApplicationWindow {
                 Button {
 					id: loginBtn
                     text: "Login"
-					enabled: false
+
+					onClicked: {
+						updateBar.visible = true;
+						updateTimer.running = true
+					}
+
+					Timer {
+						id: updateTimer
+						interval: 20
+						running: false
+						repeat: true
+						onTriggered: {
+							updateBar.value += 1;
+							if(updateBar.value >= 100)
+							{
+								updateTimer.running = false;
+								updateBar.visible = false;
+								updateBar.value = 0;
+							}
+						}
+					}
                 }
             }
         }
