@@ -9,6 +9,8 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
+#include <QtCrypto>
+
 #include "qchannels_global.h"
 
 class QChannelsRequest;
@@ -63,6 +65,11 @@ private:
     quint32 idCounter;
     QHash<quint32, QChannelsRequest*> requests;
 
+	QCA::SymmetricKey key;
+	QCA::InitializationVector iv;
+	QCA::Cipher aes128Enc;
+	QCA::Cipher aes128Dec;
+
     QSslSocket* sslSocket;
     QTcpSocket* tcpSocket;
     QUdpSocket* udpSocket;
@@ -92,7 +99,7 @@ private slots:
     void tcpDataReady();
     void udpDataReady();
 
-    void handleIncommingMessage(QString data);
+    void handleIncommingMessage(QByteArray data);
 };
 
 #endif // QCHANNELS_H

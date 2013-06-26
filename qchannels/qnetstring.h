@@ -10,13 +10,13 @@ class QNetString : public QObject
 public:
     explicit QNetString(QObject *parent = 0);
 
-    static QString encode(QString data);
+    static QByteArray encode(QByteArray data);
 
 private:
     QByteArray buffer;
 
 signals:
-    void dataReady(QString);
+    void dataReady(QByteArray);
     void tryParse();
 
 private slots:

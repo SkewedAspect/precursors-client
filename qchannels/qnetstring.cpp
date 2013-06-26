@@ -11,9 +11,9 @@ QNetString::QNetString(QObject *parent) :
     connect(this, SIGNAL(tryParse()), this, SLOT(onTryParse()));
 } // end QNetString
 
-QString QNetString::encode(QString data)
+QByteArray QNetString::encode(QByteArray data)
 {
-    return QString("%1:%2,").arg(data.length()).arg(data);
+    return QString("%1:%2,").arg(data.length()).arg(data.constData()).toUtf8();
 } // end encode
 
 /**********************************************************************************************************************/
@@ -69,6 +69,6 @@ void QNetString::onTryParse()
         //qDebug() << "Buffer: " << buffer;
 
         // Emit the data
-        emit dataReady(QString(data));
+        emit dataReady(data);
     } // end while
 } // end onTryParse

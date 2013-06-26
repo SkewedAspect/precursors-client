@@ -24,6 +24,7 @@ set_target_properties(QChannels PROPERTIES DEBUG_POSTFIX _d)
 target_link_libraries(QChannels
 	Qt5::Core
 	Qt5::Network
+	${QCA2_LIBRARIES}
 	)
 
 
