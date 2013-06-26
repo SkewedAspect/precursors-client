@@ -67,7 +67,8 @@ private:
 
 	QCA::SymmetricKey key;
 	QCA::InitializationVector iv;
-	QCA::Cipher aes128;
+	QCA::Cipher aes128Enc;
+	QCA::Cipher aes128Dec;
 
     QSslSocket* sslSocket;
     QTcpSocket* tcpSocket;
