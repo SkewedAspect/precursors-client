@@ -38,7 +38,7 @@
 #include <OGRE/RenderSystems/GL/OgreGLFrameBufferObject.h>
 #include <OGRE/RenderSystems/GL/OgreGLFBORenderTexture.h>
 
-#include "config.h"
+#include "../config.h"
 #include "ogreitem.h"
 #include "cameranodeobject.h"
 

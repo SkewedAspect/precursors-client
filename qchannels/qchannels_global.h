@@ -1,0 +1,12 @@
+#ifndef QCHANNELS_GLOBAL_H
+#define QCHANNELS_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(QCHANNELS_LIBRARY)
+#  define QCHANNELSSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define QCHANNELSSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // QCHANNELS_GLOBAL_H
