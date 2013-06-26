@@ -1,25 +1,15 @@
-#define USE_QAPPLICATION 1
-
-
-#include "ogreitem.h"
-
-#ifdef USE_QAPPLICATION
-#	include <QtWidgets/QApplication>
-#else
-#	include <QtGui/QGuiApplication>
-#endif
-
+#include <QtWidgets/QApplication>
 #include <QtQml/QQmlApplicationEngine>
 
 #include "qchannels/qchannels.h"
 
+#include "ogreitem.h"
+
+
 int main(int argc, char **argv)
 {
-#ifdef USE_QAPPLICATION
     QApplication app(argc, argv);
-#else
-    QGuiApplication app(argc, argv);
-#endif
+
 	// Register the networking code with QML
 	qmlRegisterType<QChannels>("precursors.networking", 1, 0, "QChannels");
 
