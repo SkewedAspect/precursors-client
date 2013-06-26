@@ -12,7 +12,11 @@
  * @brief The default constructor.
  * @param parent The parent QObject.
  */
-QChannels::QChannels(QObject *parent) : QObject(parent)
+QChannels::QChannels(QObject *parent) :
+	QObject(parent),
+	key(16),
+	iv(16),
+	aes128(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Encode, key, iv)
 {
     sslNetstring = new QNetString();
     connect(sslNetstring, SIGNAL(dataReady(QString)), this, SLOT(handleIncommingMessage(QString)));
