@@ -39,4 +39,19 @@ void QChannelsRequest::send()
     this->parent->sendRequest(this);
 } // end send
 
+void QChannelsRequest::fireReply()
+{
+    bool _confirmed = this->replyMessage["confirm"].toBool();
+    emit reply(_confirmed);
+
+    if(_confirmed)
+    {
+        emit confirmed();
+    }
+    else
+    {
+        emit denied();
+    } // end if
+} // end fireReply
+
 /*********************************************************************************************************************/

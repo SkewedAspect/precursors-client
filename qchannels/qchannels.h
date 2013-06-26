@@ -73,7 +73,7 @@ private:
 signals:
     void error(ErrorType errorType, QString errorMessage);
     void connected();
-    void disconnected();
+    void disconnected(QString);
     void incommingMessage(QVariantMap message);
 
 private slots:
@@ -87,7 +87,7 @@ private slots:
     void tcpDataReady();
     void udpDataReady();
 
-    void handleIncommingMessage(QVariantMap envelope);
+    void handleIncommingMessage(QString data);
 };
 
 #endif // QCHANNELS_H

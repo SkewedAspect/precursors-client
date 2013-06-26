@@ -14,11 +14,14 @@ public:
     bool isOutstanding();
     void send();
 
+    // Out of a cannon!
+    void fireReply();
+
     quint32 id;
     QString channel;
     QChannels::ChannelMode mode;
     QVariant requestMessage;
-    QVariant replyMessage;
+    QVariantMap replyMessage;
 
 signals:
     void confirmed();

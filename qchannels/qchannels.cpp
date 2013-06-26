@@ -15,22 +15,28 @@
 QChannels::QChannels(QObject *parent) : QObject(parent)
 {
     sslNetstring = new QNetString();
+    connect(sslNetstring, SIGNAL(dataReady(QString)), this, SLOT(handleIncommingMessage(QString)));
+
     tcpNetstring = new QNetString();
+    connect(tcpNetstring, SIGNAL(dataReady(QString)), this, SLOT(handleIncommingMessage(QString)));
 
     // Create a new SSL socket, and conect it's signals.
     this->sslSocket = new QSslSocket(this);
     connect(this->sslSocket, SIGNAL(encrypted()), this, SLOT(sslConnected()));
+    connect(this->sslSocket, SIGNAL(readyRead()), this, SLOT(sslDataReady()));
     //connect(this->sslSocket, SIGNAL(error()), this, SLOT(sslError()));
     //connect(this->sslSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
 
     // Create a new TCP socket, and conect it's signals.
     this->tcpSocket = new QTcpSocket(this);
     connect(this->tcpSocket, SIGNAL(connected()), this, SLOT(tcpConnected()));
+    connect(this->tcpSocket, SIGNAL(readyRead()), this, SLOT(tcpDataReady()));
     //connect(this->tcpSocket, SIGNAL(error()), this, SLOT(sslError()));
     //connect(this->tcpSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
 
     // Create a new UDP socket, and conect it's signals.
     this->udpSocket = new QUdpSocket(this);
+    connect(this->udpSocket, SIGNAL(readyRead()), this, SLOT(udpDataReady()));
     //connect(this->udpSocket, SIGNAL(encrypted()), this, SLOT(udpConnected()));
     //connect(this->udpSocket, SIGNAL(error()), this, SLOT(udpError()));
     //connect(this->udpSocket, SIGNAL(disconnected()), this, SLOT(udpDisconnected()));
@@ -149,8 +155,6 @@ QChannelsRequest* QChannels::buildRequest(QString channel, QVariant message, Cha
     request->id = getNextID();
     this->requests.insert(request->id, request);
 
-    //TODO: Reminder, this will need to be deleted with 'deleteLater' and removed from `results` when we get the response.
-
     return request;
 } // end buildRequest
 
@@ -175,13 +179,18 @@ quint32 QChannels::getNextID()
 // Handle an incoming reply.
 void QChannels::handleReply(QVariantMap envelope)
 {
+    QChannelsRequest* request = requests.take(envelope["id"].toUInt());
+    request->replyMessage = envelope["content"].toMap();
+    request->fireReply();
 
+    // Delete thi object after the handlers are done with it.
+    request->deleteLater();
 } // end handleReply
 
 // Handle an incomming event.
 void QChannels::handleEvent(QVariantMap envelope)
 {
-
+    emit incommingMessage(envelope["content"].toMap());
 } // end handleEvent
 
 // Connect the TCP and UDP transports to the server.
@@ -246,7 +255,21 @@ void QChannels::tcpConnected()
 
 void QChannels::handleLoginResponse(bool confirmed)
 {
+    //TODO: There might be reasons to avoid this... but it was easier, for now.
+    QChannelsRequest* loginReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    QVariantMap replyMessage = loginReq->replyMessage;
 
+    if(!confirmed)
+    {
+        qCritical() << "Server dened login: " << replyMessage["reason"].toString();
+        emit disconnected(replyMessage["reason"].toString());
+    }
+    else
+    {
+        this->tcpPort = replyMessage["tcpPort"].toUInt();
+        this->udpPort = replyMessage["udpPot"].toUInt();
+
+    } // end if
 } // end handleLoginResponse
 
 void QChannels::handleTCPResponse(bool confirmed)
@@ -259,9 +282,22 @@ void QChannels::handleUDPResponse(bool confirmed)
 
 } // end handleUDPResponse
 
-void QChannels::handleIncommingMessage(QVariantMap envelope)
+void QChannels::handleIncommingMessage(QString data)
 {
+    //TODO Decrypt from AES here
+    QVariantMap envelope = QJsonDocument::fromJson(data.toUtf8()).toVariant().toMap();
 
+    if(envelope["type"] == "reply")
+    {
+        handleReply(envelope);
+    } // end if
+
+    if(envelope["type"] == "event")
+    {
+        handleEvent(envelope);
+    } // end if
+
+    qCritical("Received incoming message withut type!!");
 } // end handleIncommingMessage
 
 void QChannels::sslDataReady()
