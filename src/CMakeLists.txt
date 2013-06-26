@@ -10,6 +10,8 @@ set(CLIENT_SOURCES
 	ogreitem.cpp
 	)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
+
 add_executable(PrecursorsClient WIN32
 	${CLIENT_HEADERS}
 	${CLIENT_SOURCES}
@@ -33,6 +35,8 @@ target_link_libraries(PrecursorsClient
 	${OPENGL_gl_LIBRARY}
 
 	python2.7
+
+	QChannels
 	)
 
 

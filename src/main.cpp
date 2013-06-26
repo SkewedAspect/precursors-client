@@ -11,6 +11,8 @@
 
 #include <QtQml/QQmlApplicationEngine>
 
+#include "qchannels/qchannels.h"
+
 int main(int argc, char **argv)
 {
 #ifdef USE_QAPPLICATION
