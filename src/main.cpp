@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 
     qmlRegisterType<OgreItem>("Ogre", 1, 0, "OgreItem");
 
-	QQmlApplicationEngine engine("resources/example.qml");
+	QQmlApplicationEngine engine("resources/main.qml");
 
 	/*
     QQuickView view;
