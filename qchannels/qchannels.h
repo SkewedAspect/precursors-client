@@ -58,7 +58,7 @@ private:
     void handleReply(QVariantMap envelope);
     void handleEvent(QVariantMap envelope);
     void connectTransports();
-    QVariantMap* wrapMessage(QString channel, QString type, QVariant message);
+    QVariantMap wrapMessage(QString channel, QString type, QVariant message);
 
     quint32 idCounter;
     QHash<quint32, QChannelsRequest*> requests;
@@ -69,6 +69,11 @@ private:
 
     QNetString* sslNetstring;
     QNetString* tcpNetstring;
+
+    bool _tcpConnected;
+    bool _udpConnected;
+
+    QString sessionCookie;
 
 signals:
     void error(ErrorType errorType, QString errorMessage);

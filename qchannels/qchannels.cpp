@@ -127,8 +127,8 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
  */
 void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode)
 {
-    QVariantMap* envelope = wrapMessage(channel, "event", message);
-    send(*envelope, mode);
+    QVariantMap envelope = wrapMessage(channel, "event", message);
+    send(envelope, mode);
 } // end sendEvent
 
 /**
@@ -137,8 +137,8 @@ void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode)
  */
 void QChannels::sendRequest(QChannelsRequest* request)
 {
-    QVariantMap* envelope = wrapMessage(request->channel, "request", request->requestMessage);
-    send(*envelope, request->mode);
+    QVariantMap envelope = wrapMessage(request->channel, "request", request->requestMessage);
+    send(envelope, request->mode);
 } // end sendRequest
 
 /**
@@ -196,16 +196,29 @@ void QChannels::handleEvent(QVariantMap envelope)
 // Connect the TCP and UDP transports to the server.
 void QChannels::connectTransports()
 {
+    tcpSocket->connectToHost(this->serverAddress, this->tcpPort);
+    udpSocket->bind(this->serverAddress, this->udpPort);
 
+    // Send the UDP login message
+    QVariantMap msg;
+    msg["type"] = "connect";
+    msg["cookie"] = this->sessionCookie;
+
+    // Setup a request
+    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELABLE);
+    connect(udpRequest, SIGNAL(reply(bool)), this, SLOT(handleUDPResponse(bool)));
+
+    // Send the udp request
+    udpRequest->send();
 } // end connectTransports
 
 // Wraps the mesage in an envelope for sending
-QVariantMap* QChannels::wrapMessage(QString channel, QString type, QVariant message)
+QVariantMap QChannels::wrapMessage(QString channel, QString type, QVariant message)
 {
-    QVariantMap* envelope = new QVariantMap();
-    envelope->insert("type", type);
-    envelope->insert("channel", channel);
-    envelope->insert("content", message);
+    QVariantMap envelope;
+    envelope["type"] = type;
+    envelope["channel"] = channel;
+    envelope["content"] = message;
 
     return envelope;
 } // end wrapMessage
@@ -220,28 +233,28 @@ void QChannels::sslConnected()
     this->serverAddress = this->sslSocket->peerAddress();
 
     // Buid our version list
-    QList<QVariant>* version = new QList<QVariant>();
-    version->append(0);						// Major
-    version->append(5);						// Minor
-    version->append(0);						// Micro
-    version->append("Client PreAlpha 1");	// Release name
+    QList<QVariant> version;
+    version.append(0);						// Major
+    version.append(5);						// Minor
+    version.append(0);						// Micro
+    version.append("Client PreAlpha 1");	// Release name
 
     // Build the login message
-    QVariantMap* msg = new QVariantMap();
-    msg->insert("type", "login");
-    msg->insert("user", this->username);
-    msg->insert("password", this->pwdHash);
+    QVariantMap msg;
+    msg["type"] = "login";
+    msg["user"] = this->username;
+    msg["password"] = this->pwdHash;
 
     //TODO: We should get this information somehow. Perhaps from a header?
-    msg->insert("version", *version);
-    msg->insert("clientName", "Official Precursors Client");
+    msg["version"] = version;
+    msg["clientName"] = "Official Precursors Client";
 
     //TODO: We need to generate actual keys and vectors
-    msg->insert("iv", "vector!!!#$%^");
-    msg->insert("key", "super-secure-key!111##&*");
+    msg["iv"] = "vector!!!#$%^";
+    msg["key"] = "super-secure-key!111##&*";
 
     // Setup a request
-    QChannelsRequest* loginRequest = buildRequest("control", *msg, CM_SECURE);
+    QChannelsRequest* loginRequest = buildRequest("control", msg, CM_SECURE);
     connect(loginRequest, SIGNAL(reply(bool)), this, SLOT(handleLoginResponse(bool)));
 
     // Send the login request
@@ -250,7 +263,17 @@ void QChannels::sslConnected()
 
 void QChannels::tcpConnected()
 {
+    // Send the TCP login message
+    QVariantMap msg;
+    msg["type"] = "connect";
+    msg["cookie"] = this->sessionCookie;
 
+    // Setup a request
+    QChannelsRequest* tcpRequest = buildRequest("control", msg, CM_UNRELABLE);
+    connect(tcpRequest, SIGNAL(reply(bool)), this, SLOT(handleTCPResponse(bool)));
+
+    // Send the tcp request
+    tcpRequest->send();
 } // end tcpConnected
 
 void QChannels::handleLoginResponse(bool confirmed)
@@ -261,7 +284,7 @@ void QChannels::handleLoginResponse(bool confirmed)
 
     if(!confirmed)
     {
-        qCritical() << "Server dened login: " << replyMessage["reason"].toString();
+        qCritical() << "Server denied login: " << replyMessage["reason"].toString();
         emit disconnected(replyMessage["reason"].toString());
     }
     else
@@ -269,17 +292,53 @@ void QChannels::handleLoginResponse(bool confirmed)
         this->tcpPort = replyMessage["tcpPort"].toUInt();
         this->udpPort = replyMessage["udpPot"].toUInt();
 
+        this->sessionCookie = replyMessage["cookie"].toString();
+
+        // Connect our TCP and UDP sockets.
+        connectTransports();
     } // end if
 } // end handleLoginResponse
 
 void QChannels::handleTCPResponse(bool confirmed)
 {
+    //TODO: There might be reasons to avoid this... but it was easier, for now.
+    QChannelsRequest* tcpReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    QVariantMap replyMessage = tcpReq->replyMessage;
 
+    if(!confirmed)
+    {
+        qCritical() << "Server denied tcp connection: " << replyMessage["reason"].toString();
+        emit disconnected(replyMessage["reason"].toString());
+    }
+    else
+    {
+        this->_tcpConnected = true;
+        if(this->_udpConnected)
+        {
+            emit connected();
+        } // end if
+    } // end if
 } // end handleTCPResponse
 
 void QChannels::handleUDPResponse(bool confirmed)
 {
+    //TODO: There might be reasons to avoid this... but it was easier, for now.
+    QChannelsRequest* udpReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    QVariantMap replyMessage = udpReq->replyMessage;
 
+    if(!confirmed)
+    {
+        qCritical() << "Server denied udp connection: " << replyMessage["reason"].toString();
+        emit disconnected(replyMessage["reason"].toString());
+    }
+    else
+    {
+        this->_udpConnected = true;
+        if(this->_tcpConnected)
+        {
+            emit connected();
+        } // end if
+    } // end if
 } // end handleUDPResponse
 
 void QChannels::handleIncommingMessage(QString data)
@@ -312,7 +371,19 @@ void QChannels::tcpDataReady()
 
 void QChannels::udpDataReady()
 {
+    //TODO: Decrypt AES here
+    while (udpSocket->hasPendingDatagrams())
+    {
+            QByteArray datagram;
+            datagram.resize(udpSocket->pendingDatagramSize());
+            QHostAddress sender;
+            quint16 senderPort;
 
+            udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+
+            // Now, parse as JSON, and emit.
+            emit incommingMessage(QJsonDocument::fromJson(datagram).toVariant().toMap());
+    } // end while
 } // end udpDataReady
 
 /**********************************************************************************************************************/
