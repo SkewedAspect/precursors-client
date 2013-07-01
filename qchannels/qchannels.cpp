@@ -13,12 +13,10 @@
  * @param parent The parent QObject.
  */
 QChannels::QChannels(QObject *parent) :
-	QObject(parent),
-	key(16),
-	iv(16),
-	aes128Enc(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Encode, key, iv),
-	aes128Dec(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Decode, key, iv)
+	QObject(parent)
 {
+	this->cipher = new AES();
+
     sslNetstring = new QNetString();
     connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
@@ -112,8 +110,8 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
 
         case CM_UNRELABLE:
         {
-			QCA::SecureArray cypherText = aes128Enc.update(jsonData);
-            udpSocket->writeDatagram(cypherText.toByteArray(), this->serverAddress, this->udpPort);
+			QByteArray cypherText = cipher->encrypt(jsonData);
+            udpSocket->writeDatagram(cypherText, this->serverAddress, this->udpPort);
             break;
         } // end CM_UNRELIABLE
 
@@ -121,8 +119,8 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
         default:
         {
 			QByteArray data = QNetString::encode(jsonData);
-			QCA::SecureArray cypherText = aes128Enc.update(data);
-            tcpSocket->write(cypherText.toByteArray());
+			QByteArray cypherText = cipher->encrypt(data);
+            tcpSocket->write(cypherText);
             break;
         } // end CM_RELIABLE
     }
@@ -259,8 +257,8 @@ void QChannels::sslConnected()
     msg["clientName"] = "Official Precursors Client";
 
     // Send our AES key/iv
-    msg["iv"] = iv.constData();
-    msg["key"] = key.constData();
+    msg["iv"] = cipher->iv;
+    msg["key"] = cipher->key;
 
     // Setup a request
     QChannelsRequest* loginRequest = buildRequest("control", msg, CM_SECURE);
@@ -352,7 +350,7 @@ void QChannels::handleUDPResponse(bool confirmed)
 
 void QChannels::handleIncommingMessage(QByteArray data)
 {
-	QByteArray plainText = aes128Dec.update(data).toByteArray();
+	QByteArray plainText = cipher->decrypt(data);
     QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
 
     if(envelope["type"] == "reply")
@@ -390,7 +388,7 @@ void QChannels::udpDataReady()
             udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
 			// Decrypt AES
-			QByteArray plainText = aes128Dec.update(datagram).toByteArray();
+			QByteArray plainText = cipher->decrypt(datagram);
 
             // Now, parse as JSON, and emit.
             emit incommingMessage(QJsonDocument::fromJson(plainText).toVariant().toMap());

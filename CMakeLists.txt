@@ -55,11 +55,11 @@ find_package(Qt5Quick REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 
 # Find QCA2
-find_package(QCA2 REQUIRED)
+#find_package(QCA2 REQUIRED)
 
-if(NOT QCA2_FOUND)
-	message(SEND_ERROR "Failed to find QCA2.")
-endif()
+#if(NOT QCA2_FOUND)
+#	message(SEND_ERROR "Failed to find QCA2.")
+#endif()
 
 # Find OGRE
 find_package(OGRE REQUIRED)
@@ -127,7 +127,7 @@ endif()
 include_directories(
 	${OIS_INCLUDE_DIRS}
 	${OGRE_INCLUDE_DIRS}
-	${QCA2_INCLUDE_DIR}
+	#${QCA2_INCLUDE_DIR}
 	)
 
 
