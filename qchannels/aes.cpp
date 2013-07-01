@@ -40,9 +40,6 @@ AES::AES(QByteArray salt) :
 	// Set key and iv
 	this->key = QByteArray((char*) _key, 16);
 	this->iv = QByteArray((char*) _iv, 16);
-
-	qDebug() << "Key: " << key.toHex();
-	qDebug() << "IV: " << iv.toHex();
 } // end AES
 
 QByteArray AES::encrypt(QByteArray plaintext)
