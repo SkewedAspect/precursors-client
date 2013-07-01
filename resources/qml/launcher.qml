@@ -2,6 +2,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
+import Precursors.Networking 1.0
+
 ApplicationWindow {
 	id: launcherWindow
 	title: "RFI: Precursors Launcher"
@@ -100,6 +102,10 @@ ApplicationWindow {
 			minimumValue: 0
 
 			Layout.fillWidth: true
+		}
+
+		QChannels {
+			id: networking
 		}
     }
 }
