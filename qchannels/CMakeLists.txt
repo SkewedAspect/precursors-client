@@ -32,7 +32,6 @@ include_directories(
 target_link_libraries(QChannels
 	Qt5::Core
 	Qt5::Network
-	#${QCA2_LIBRARIES}
 	${OPENSSL_LIBRARIES}
 	)
 
