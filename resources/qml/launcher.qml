@@ -2,6 +2,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
+import Precursors.Networking 1.0
+
 ApplicationWindow {
 	id: launcherWindow
 	title: "RFI: Precursors Launcher"
@@ -60,7 +62,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 TextField {
 					id: server
-					placeholderText: "localhost:6096"
+					placeholderText: "localhost:6006"
                     Layout.fillWidth: true
                 }
                 Button {
@@ -68,38 +70,14 @@ ApplicationWindow {
                     text: "Login"
 
 					onClicked: {
-						updateBar.visible = true;
-						updateTimer.running = true
-					}
-
-					Timer {
-						id: updateTimer
-						interval: 20
-						running: false
-						repeat: true
-						onTriggered: {
-							updateBar.value += 1;
-							if(updateBar.value >= 100)
-							{
-								updateTimer.running = false;
-								updateBar.visible = false;
-								updateBar.value = 0;
-							}
-						}
+						networking.connectToServer("localhost", 6006, "morgul", "pass")
 					}
                 }
             }
         }
 
-		ProgressBar {
-			id: updateBar
-			visible: false
-
-			value: 0
-			maximumValue: 100
-			minimumValue: 0
-
-			Layout.fillWidth: true
+		QChannels {
+			id: networking
 		}
     }
 }

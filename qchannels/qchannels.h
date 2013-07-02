@@ -9,9 +9,8 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
-#include <QtCrypto>
-
 #include "qchannels_global.h"
+#include "aes.h"
 
 class QChannelsRequest;
 class QNetString;
@@ -24,7 +23,7 @@ public:
     {
         CM_SECURE,
         CM_RELIABLE,
-        CM_UNRELABLE
+        CM_UNRELIABLE
     };
 
     enum ErrorType
@@ -37,12 +36,12 @@ public:
 
     explicit QChannels(QObject *parent = 0);
 
-    void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
+    Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
     void disconnect();
 
-    void send(QVariant envelope, ChannelMode mode);
-    void sendEvent(QString channel, QVariant message, ChannelMode mode);
-    void sendRequest(QChannelsRequest* request);
+    void send(QVariant envelope, ChannelMode mode, bool encrypted = true);
+    void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
+    void sendRequest(QChannelsRequest* request, bool encrypted = true);
 
     QChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode);
 
@@ -65,10 +64,7 @@ private:
     quint32 idCounter;
     QHash<quint32, QChannelsRequest*> requests;
 
-	QCA::SymmetricKey key;
-	QCA::InitializationVector iv;
-	QCA::Cipher aes128Enc;
-	QCA::Cipher aes128Dec;
+	AES* cipher;
 
     QSslSocket* sslSocket;
     QTcpSocket* tcpSocket;
@@ -98,6 +94,14 @@ private slots:
     void sslDataReady();
     void tcpDataReady();
     void udpDataReady();
+
+    void sslError(QAbstractSocket::SocketError error);
+    void tcpError(QAbstractSocket::SocketError error);
+    void udpError(QAbstractSocket::SocketError error);
+
+    void sslDisconnected();
+    void tcpDisconnected();
+    void udpDisconnected();
 
     void handleIncommingMessage(QByteArray data);
 };

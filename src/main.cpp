@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 
 	// Register the networking code with QML
-	qmlRegisterType<QChannels>("precursors.networking", 1, 0, "QChannels");
+	qmlRegisterType<QChannels>("Precursors.Networking", 1, 0, "QChannels");
 
 	// Register Horde3D
 	qmlRegisterType<Horde3DItem>("Horde3D", 1, 0, "Horde3DItem");
