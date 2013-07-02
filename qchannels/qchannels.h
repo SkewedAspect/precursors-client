@@ -36,12 +36,12 @@ public:
 
     explicit QChannels(QObject *parent = 0);
 
-    void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
+    Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
     void disconnect();
 
-    void send(QVariant envelope, ChannelMode mode);
-    void sendEvent(QString channel, QVariant message, ChannelMode mode);
-    void sendRequest(QChannelsRequest* request);
+    void send(QVariant envelope, ChannelMode mode, bool encrypted = true);
+    void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
+    void sendRequest(QChannelsRequest* request, bool encrypted = true);
 
     QChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode);
 
@@ -94,6 +94,14 @@ private slots:
     void sslDataReady();
     void tcpDataReady();
     void udpDataReady();
+
+    void sslError(QAbstractSocket::SocketError error);
+    void tcpError(QAbstractSocket::SocketError error);
+    void udpError(QAbstractSocket::SocketError error);
+
+    void sslDisconnected();
+    void tcpDisconnected();
+    void udpDisconnected();
 
     void handleIncommingMessage(QByteArray data);
 };

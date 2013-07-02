@@ -34,9 +34,9 @@ bool QChannelsRequest::isOutstanding()
 /**
  * @brief Sends this request to the server. (Note: this should be called *after* connecting to it's signals)
  */
-void QChannelsRequest::send()
+void QChannelsRequest::send(bool encrypted)
 {
-    this->parent->sendRequest(this);
+    this->parent->sendRequest(this, encrypted);
 } // end send
 
 void QChannelsRequest::fireReply()
