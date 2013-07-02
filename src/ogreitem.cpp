@@ -86,6 +86,8 @@ OgreItem::OgreItem(QQuickItem *parent)
 
 OgreItem::~OgreItem()
 {
+	rtt_texture.setNull();
+
     if (m_renderTexture) {
         m_renderTexture->removeAllViewports();
     }
