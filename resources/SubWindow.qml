@@ -65,9 +65,6 @@ Item {
 
         property int margin: styleLoader.item ? styleLoader.item.margin : 0
 
-        anchors.margins: margin
-        //anchors.fill: styleLoader.item ? styleLoader.item.panel.content : parent
-        //anchors.fill: loader
         anchors.topMargin: (loader.item && loader.item.titleBar ? loader.item.titleBar.height : 0) + margin
         anchors.leftMargin: margin
         anchors.rightMargin: margin
