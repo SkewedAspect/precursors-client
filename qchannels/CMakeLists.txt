@@ -1,15 +1,19 @@
+FIND_PACKAGE(OpenSSL)
+
 # List project files
 set(QCHANNELS_HEADERS
 	qchannels.h
 	qchannels_global.h
 	qchannelsrequest.h
 	qnetstring.h
+	aes.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
 set(QCHANNELS_SOURCES
 	qchannels.cpp
 	qchannelsrequest.cpp
 	qnetstring.cpp
+	aes.cpp
 	)
 
 add_library(QChannels SHARED
@@ -20,11 +24,15 @@ add_library(QChannels SHARED
 set_target_properties(QChannels PROPERTIES COMPILE_FLAGS -fPIC)
 set_target_properties(QChannels PROPERTIES DEBUG_POSTFIX _d)
 
+include_directories(
+	${OPENSSL_INCLUDE_DIR}
+)
+
 # Tell CMake what to link with
 target_link_libraries(QChannels
 	Qt5::Core
 	Qt5::Network
-	${QCA2_LIBRARIES}
+	${OPENSSL_LIBRARIES}
 	)
 
 
