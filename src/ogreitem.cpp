@@ -230,6 +230,7 @@ void OgreItem::updateFBO()
 
     m_material.setTexture(m_texture);
     m_materialO.setTexture(m_texture);
+	m_dirtyFBO = false;
 }
 
 void OgreItem::setSize(const QSize &size)
