@@ -17,7 +17,5 @@ int main(int argc, char **argv)
     qmlRegisterType<OgreItem>("Ogre", 1, 0, "OgreItem");
 
 	QQmlApplicationEngine engine("resources/qml/launcher.qml");
-	//QQmlApplicationEngine engine("resources/main.qml");
-
     return app.exec();
 } // end main

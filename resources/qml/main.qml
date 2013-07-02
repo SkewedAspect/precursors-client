@@ -8,9 +8,7 @@ import Ogre 1.0
 
 
 ApplicationWindow {
-	id: exampleWindow
-
-    Component.onCompleted: exampleWindow.show();
+	id: mainWindow
 
 	width: 1024; height: 768
 
@@ -101,7 +99,7 @@ ApplicationWindow {
 
 	property Component progressBarStyle: ProgressBarStyle {
 		background: BorderImage {
-			source: "./progress-background.png"
+			source: "../progress-background.png"
 			border.left: 2 ; border.right: 2 ; border.top: 2 ; border.bottom: 2
 		}
 
@@ -111,7 +109,7 @@ ApplicationWindow {
 			BorderImage {
 				anchors.fill: parent
 				anchors.rightMargin: (control.value < control.maximumValue) ? -4 : 0
-				source: "./progress-fill.png"
+				source: "../progress-fill.png"
 				border.left: 2 ; border.right: 2 ; border.top: 2 ; border.bottom: 2
 
 				Rectangle {
@@ -131,7 +129,7 @@ ApplicationWindow {
 			ImageParticle {
 				id: fireball
 				system: bubbles
-				source: "./bubble.png"
+				source: "../bubble.png"
 				opacity: 0.7
 			}
 			Emitter {

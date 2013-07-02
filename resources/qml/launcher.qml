@@ -8,6 +8,7 @@ ApplicationWindow {
 	id: launcherWindow
 	title: "RFI: Precursors Launcher"
 	property int margin: 11
+	property var mainWindow: mainWindowLoader.item;
 
 	width: (mainLayout.implicitWidth + 2 * margin) + 80
     height: mainLayout.implicitHeight + 2 * margin
@@ -20,6 +21,11 @@ ApplicationWindow {
 
 	// Make the window show itself.
     Component.onCompleted: launcherWindow.show();
+
+	Loader {
+		id: mainWindowLoader
+		source: "main.qml"
+	}
 
     ColumnLayout {
         id: mainLayout
@@ -70,7 +76,12 @@ ApplicationWindow {
                     text: "Login"
 
 					onClicked: {
-						networking.connectToServer("localhost", 6006, "morgul", "pass")
+						var parts = server.text.split(':');
+						var svrAddress = parts[0] || "localhost";
+						var svrPort = parseInt(parts[1]) || 6006;
+
+						// Connect to the server
+						networking.connectToServer(svrAddress, svrPort, username.text, password.text);
 					}
                 }
             }
@@ -78,6 +89,18 @@ ApplicationWindow {
 
 		QChannels {
 			id: networking
+
+			onConnected: {
+				mainWindow.show();
+				launcherWindow.hide();
+				console.log("IT CONNECTED!");
+			}
+
+			onDisconnected: {
+				mainWindow.hide();
+				launcherWindow.show();
+				console.log("Disconnected.");
+			}
 		}
     }
 }
