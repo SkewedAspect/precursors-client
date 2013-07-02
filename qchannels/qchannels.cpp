@@ -13,15 +13,16 @@
  * @param parent The parent QObject.
  */
 QChannels::QChannels(QObject *parent) :
-	QObject(parent),
-	key(16),
-	iv(16),
-	aes128Enc(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Encode, key, iv),
-	aes128Dec(QString("aes128"), QCA::Cipher::CBC, QCA::Cipher::DefaultPadding, QCA::Decode, key, iv)
+	QObject(parent)
 {
+	// Setup our AES class
+	this->cipher = new AES();
+
+	// Setup SSL Netstring handler
     sslNetstring = new QNetString();
     connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
+	// Setup TCP Netstring handler
     tcpNetstring = new QNetString();
     connect(tcpNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
@@ -29,22 +30,25 @@ QChannels::QChannels(QObject *parent) :
     this->sslSocket = new QSslSocket(this);
     connect(this->sslSocket, SIGNAL(encrypted()), this, SLOT(sslConnected()));
     connect(this->sslSocket, SIGNAL(readyRead()), this, SLOT(sslDataReady()));
-    //connect(this->sslSocket, SIGNAL(error()), this, SLOT(sslError()));
-    //connect(this->sslSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
+    connect(this->sslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(sslError(QAbstractSocket::SocketError)));
+    connect(this->sslSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
+
+	// Ignore expected SSL errors
+	//TODO: This should only be for debugging, not for release!
+    connect(this->sslSocket, SIGNAL(sslErrors(QList<QSslError>)), this->sslSocket, SLOT(ignoreSslErrors()));
 
     // Create a new TCP socket, and conect it's signals.
     this->tcpSocket = new QTcpSocket(this);
     connect(this->tcpSocket, SIGNAL(connected()), this, SLOT(tcpConnected()));
     connect(this->tcpSocket, SIGNAL(readyRead()), this, SLOT(tcpDataReady()));
-    //connect(this->tcpSocket, SIGNAL(error()), this, SLOT(sslError()));
-    //connect(this->tcpSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
+    connect(this->tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(tcpError(QAbstractSocket::SocketError)));
+    connect(this->tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
 
     // Create a new UDP socket, and conect it's signals.
     this->udpSocket = new QUdpSocket(this);
     connect(this->udpSocket, SIGNAL(readyRead()), this, SLOT(udpDataReady()));
-    //connect(this->udpSocket, SIGNAL(encrypted()), this, SLOT(udpConnected()));
-    //connect(this->udpSocket, SIGNAL(error()), this, SLOT(udpError()));
-    //connect(this->udpSocket, SIGNAL(disconnected()), this, SLOT(udpDisconnected()));
+    connect(this->udpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(udpError(QAbstractSocket::SocketError)));
+    connect(this->udpSocket, SIGNAL(disconnected()), this, SLOT(udpDisconnected()));
 } // end QChannels
 
 /**
@@ -97,9 +101,9 @@ void QChannels::disconnect()
  * @param envelope
  * @param mode
  */
-void QChannels::send(QVariant envelope, ChannelMode mode)
+void QChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 {
-    QByteArray jsonData = QJsonDocument::fromVariant(envelope).toJson();
+    QByteArray jsonData = QJsonDocument::fromVariant(envelope).toJson(QJsonDocument::Compact);
 
     switch(mode)
     {
@@ -110,21 +114,36 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
             break;
         } // end CM_SECURE
 
-        case CM_UNRELABLE:
+        case CM_UNRELIABLE:
         {
-			QCA::SecureArray cypherText = aes128Enc.update(jsonData);
-            udpSocket->writeDatagram(cypherText.toByteArray(), this->serverAddress, this->udpPort);
+			QByteArray ciphertext = jsonData;
+			if(encrypted)
+			{
+				ciphertext = cipher->encrypt(jsonData);
+			} // end if
+
+            udpSocket->writeDatagram(ciphertext, this->serverAddress, this->udpPort);
             break;
         } // end CM_UNRELIABLE
 
         case CM_RELIABLE:
-        default:
         {
-			QByteArray data = QNetString::encode(jsonData);
-			QCA::SecureArray cypherText = aes128Enc.update(data);
-            tcpSocket->write(cypherText.toByteArray());
+			QByteArray ciphertext = jsonData;
+			if(encrypted)
+			{
+				ciphertext = cipher->encrypt(jsonData);
+			} // end if
+
+			QByteArray data = QNetString::encode(ciphertext);
+
+            tcpSocket->write(data);
             break;
         } // end CM_RELIABLE
+
+        default:
+		{
+			qCritical() << "Send with unknown mode: " << envelope << ", " << mode << ", " << encrypted;
+		} // end default
     }
 } // end send
 
@@ -134,20 +153,21 @@ void QChannels::send(QVariant envelope, ChannelMode mode)
  * @param message
  * @param mode
  */
-void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode)
+void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(channel, "event", message);
-    send(envelope, mode);
+    send(envelope, mode, encrypted);
 } // end sendEvent
 
 /**
  * @brief QChannels::sendRequest
  * @param request
  */
-void QChannels::sendRequest(QChannelsRequest* request)
+void QChannels::sendRequest(QChannelsRequest* request, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(request->channel, "request", request->requestMessage);
-    send(envelope, request->mode);
+	envelope["id"] = request->id;
+    send(envelope, request->mode, encrypted);
 } // end sendRequest
 
 /**
@@ -189,7 +209,7 @@ quint32 QChannels::getNextID()
 void QChannels::handleReply(QVariantMap envelope)
 {
     QChannelsRequest* request = requests.take(envelope["id"].toUInt());
-    request->replyMessage = envelope["content"].toMap();
+    request->replyMessage = envelope["contents"].toMap();
     request->fireReply();
 
     // Delete thi object after the handlers are done with it.
@@ -214,7 +234,7 @@ void QChannels::connectTransports()
     msg["cookie"] = this->sessionCookie;
 
     // Setup a request
-    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELABLE);
+    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELIABLE);
     connect(udpRequest, SIGNAL(reply(bool)), this, SLOT(handleUDPResponse(bool)));
 
     // Send the udp request
@@ -227,7 +247,7 @@ QVariantMap QChannels::wrapMessage(QString channel, QString type, QVariant messa
     QVariantMap envelope;
     envelope["type"] = type;
     envelope["channel"] = channel;
-    envelope["content"] = message;
+    envelope["contents"] = message;
 
     return envelope;
 } // end wrapMessage
@@ -259,8 +279,8 @@ void QChannels::sslConnected()
     msg["clientName"] = "Official Precursors Client";
 
     // Send our AES key/iv
-    msg["iv"] = iv.constData();
-    msg["key"] = key.constData();
+    msg["vector"] = cipher->iv.toBase64();
+    msg["key"] = cipher->key.toBase64();
 
     // Setup a request
     QChannelsRequest* loginRequest = buildRequest("control", msg, CM_SECURE);
@@ -278,11 +298,11 @@ void QChannels::tcpConnected()
     msg["cookie"] = this->sessionCookie;
 
     // Setup a request
-    QChannelsRequest* tcpRequest = buildRequest("control", msg, CM_UNRELABLE);
+    QChannelsRequest* tcpRequest = buildRequest("control", msg, CM_RELIABLE);
     connect(tcpRequest, SIGNAL(reply(bool)), this, SLOT(handleTCPResponse(bool)));
 
     // Send the tcp request
-    tcpRequest->send();
+    tcpRequest->send(false);
 } // end tcpConnected
 
 void QChannels::handleLoginResponse(bool confirmed)
@@ -299,7 +319,7 @@ void QChannels::handleLoginResponse(bool confirmed)
     else
     {
         this->tcpPort = replyMessage["tcpPort"].toUInt();
-        this->udpPort = replyMessage["udpPot"].toUInt();
+        this->udpPort = replyMessage["udpPort"].toUInt();
 
         this->sessionCookie = replyMessage["cookie"].toString();
 
@@ -352,20 +372,28 @@ void QChannels::handleUDPResponse(bool confirmed)
 
 void QChannels::handleIncommingMessage(QByteArray data)
 {
-	QByteArray plainText = aes128Dec.update(data).toByteArray();
-    QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
+	QByteArray plainText = data;
 
-    if(envelope["type"] == "reply")
+	if(qobject_cast<QNetString*>(QObject::sender()) == this->tcpNetstring)
+	{
+		plainText = cipher->decrypt(data);
+	} // end if
+
+	QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
+
+    if(envelope["type"] == "response")
     {
         handleReply(envelope);
+		return;
     } // end if
 
     if(envelope["type"] == "event")
     {
         handleEvent(envelope);
+		return;
     } // end if
 
-    qCritical("Received incoming message withut type!!");
+    qCritical() << "Received incoming message with unknown type: " << envelope["type"];
 } // end handleIncommingMessage
 
 void QChannels::sslDataReady()
@@ -390,11 +418,41 @@ void QChannels::udpDataReady()
             udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
 			// Decrypt AES
-			QByteArray plainText = aes128Dec.update(datagram).toByteArray();
+			QByteArray plainText = cipher->decrypt(datagram);
 
             // Now, parse as JSON, and emit.
             emit incommingMessage(QJsonDocument::fromJson(plainText).toVariant().toMap());
     } // end while
 } // end udpDataReady
+
+
+void QChannels::sslError(QAbstractSocket::SocketError error)
+{
+	qCritical() << "SSL Error: " << sslSocket->errorString();
+} // end sslDebug
+
+void QChannels::tcpError(QAbstractSocket::SocketError error)
+{
+	qCritical() << "TCP Error: " << tcpSocket->errorString();
+} // end sslDebug
+void QChannels::udpError(QAbstractSocket::SocketError error)
+{
+	qCritical() << "UDP Error: " << udpSocket->errorString();
+} // end sslError
+
+void QChannels::sslDisconnected()
+{
+	disconnect();
+} // end sslDisconnected
+
+void QChannels::tcpDisconnected()
+{
+	disconnect();
+} // end sslDisconnected
+
+void QChannels::udpDisconnected()
+{
+	disconnect();
+} // end sslDisconnected
 
 /**********************************************************************************************************************/

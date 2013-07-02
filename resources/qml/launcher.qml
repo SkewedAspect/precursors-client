@@ -2,10 +2,13 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
+import Precursors.Networking 1.0
+
 ApplicationWindow {
 	id: launcherWindow
 	title: "RFI: Precursors Launcher"
 	property int margin: 11
+	property var mainWindow: mainWindowLoader.item;
 
 	width: (mainLayout.implicitWidth + 2 * margin) + 80
     height: mainLayout.implicitHeight + 2 * margin
@@ -18,6 +21,11 @@ ApplicationWindow {
 
 	// Make the window show itself.
     Component.onCompleted: launcherWindow.show();
+
+	Loader {
+		id: mainWindowLoader
+		source: "main.qml"
+	}
 
     ColumnLayout {
         id: mainLayout
@@ -60,7 +68,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 TextField {
 					id: server
-					placeholderText: "localhost:6096"
+					placeholderText: "localhost:6006"
                     Layout.fillWidth: true
                 }
                 Button {
@@ -68,38 +76,31 @@ ApplicationWindow {
                     text: "Login"
 
 					onClicked: {
-						updateBar.visible = true;
-						updateTimer.running = true
-					}
+						var parts = server.text.split(':');
+						var svrAddress = parts[0] || "localhost";
+						var svrPort = parseInt(parts[1]) || 6006;
 
-					Timer {
-						id: updateTimer
-						interval: 20
-						running: false
-						repeat: true
-						onTriggered: {
-							updateBar.value += 1;
-							if(updateBar.value >= 100)
-							{
-								updateTimer.running = false;
-								updateBar.visible = false;
-								updateBar.value = 0;
-							}
-						}
+						// Connect to the server
+						networking.connectToServer(svrAddress, svrPort, username.text, password.text);
 					}
                 }
             }
         }
 
-		ProgressBar {
-			id: updateBar
-			visible: false
+		QChannels {
+			id: networking
 
-			value: 0
-			maximumValue: 100
-			minimumValue: 0
+			onConnected: {
+				mainWindow.show();
+				launcherWindow.hide();
+				console.log("IT CONNECTED!");
+			}
 
-			Layout.fillWidth: true
+			onDisconnected: {
+				mainWindow.hide();
+				launcherWindow.show();
+				console.log("Disconnected.");
+			}
 		}
     }
 }

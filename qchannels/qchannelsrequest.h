@@ -12,7 +12,7 @@ public:
     explicit QChannelsRequest(QChannels* parent, QString channel, QVariant message, QChannels::ChannelMode mode);
 
     bool isOutstanding();
-    void send();
+    void send(bool encrypted = true);
 
     // Out of a cannon!
     void fireReply();
