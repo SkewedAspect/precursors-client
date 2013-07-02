@@ -23,7 +23,7 @@ public:
     {
         CM_SECURE,
         CM_RELIABLE,
-        CM_UNRELABLE
+        CM_UNRELIABLE
     };
 
     enum ErrorType

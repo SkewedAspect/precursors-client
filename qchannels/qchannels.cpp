@@ -120,13 +120,15 @@ void QChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
             break;
         } // end CM_SECURE
 
-        case CM_UNRELABLE:
+        case CM_UNRELIABLE:
         {
 			QByteArray ciphertext = jsonData;
 			if(encrypted)
 			{
 				ciphertext = cipher->encrypt(jsonData);
 			} // end if
+
+			qDebug() << "msg: " << ciphertext << "server: " << serverAddress << "port: " << udpPort;
 
             udpSocket->writeDatagram(ciphertext, this->serverAddress, this->udpPort);
             break;
@@ -135,17 +137,17 @@ void QChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
         case CM_RELIABLE:
         default:
         {
-			QByteArray data = QNetString::encode(jsonData);
-
-			qDebug() << "netstring:" << QString(data);
-
 			QByteArray ciphertext = jsonData;
 			if(encrypted)
 			{
 				ciphertext = cipher->encrypt(jsonData);
 			} // end if
 
-            tcpSocket->write(ciphertext);
+			QByteArray data = QNetString::encode(ciphertext);
+
+			qDebug() << "netstring:" << QString(data);
+
+            tcpSocket->write(data);
             break;
         } // end CM_RELIABLE
     }
@@ -170,6 +172,9 @@ void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode, b
 void QChannels::sendRequest(QChannelsRequest* request, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(request->channel, "request", request->requestMessage);
+
+	qDebug() << "Sending request:" << envelope;
+
 	envelope["id"] = request->id;
     send(envelope, request->mode, encrypted);
 } // end sendRequest
@@ -239,7 +244,7 @@ void QChannels::connectTransports()
     msg["cookie"] = this->sessionCookie;
 
     // Setup a request
-    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELABLE);
+    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELIABLE);
     connect(udpRequest, SIGNAL(reply(bool)), this, SLOT(handleUDPResponse(bool)));
 
     // Send the udp request
@@ -354,6 +359,7 @@ void QChannels::handleTCPResponse(bool confirmed)
     }
     else
     {
+		qDebug("Server approved TCP connection.");
         this->_tcpConnected = true;
         if(this->_udpConnected)
         {
@@ -365,6 +371,7 @@ void QChannels::handleTCPResponse(bool confirmed)
 
 void QChannels::handleUDPResponse(bool confirmed)
 {
+	qDebug("handleUDPResponse...");
     //TODO: There might be reasons to avoid this... but it was easier, for now.
     QChannelsRequest* udpReq = qobject_cast<QChannelsRequest*>(QObject::sender());
     QVariantMap replyMessage = udpReq->replyMessage;
@@ -376,12 +383,14 @@ void QChannels::handleUDPResponse(bool confirmed)
     }
     else
     {
+		qDebug("Server approved UDP connection.");
         this->_udpConnected = true;
         if(this->_tcpConnected)
         {
             emit connected();
         } // end if
     } // end if
+	qDebug("handleUDPResponse finished.");
 } // end handleUDPResponse
 
 void QChannels::handleIncommingMessage(QByteArray data)
@@ -460,16 +469,19 @@ void QChannels::udpError(QAbstractSocket::SocketError error)
 void QChannels::sslDisconnected()
 {
 	qDebug("SSL Disconnected.");
+	disconnect();
 } // end sslDisconnected
 
 void QChannels::tcpDisconnected()
 {
 	qDebug("TCP Disconnected.");
+	disconnect();
 } // end sslDisconnected
 
 void QChannels::udpDisconnected()
 {
 	qDebug("UDP Disconnected.");
+	disconnect();
 } // end sslDisconnected
 
 /**********************************************************************************************************************/
