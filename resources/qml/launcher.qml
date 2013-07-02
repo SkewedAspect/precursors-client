@@ -25,7 +25,7 @@ ApplicationWindow {
 	Loader {
 		id: mainWindowLoader
 		source: "main.qml"
-	}
+	} // end Loader
 
     ColumnLayout {
         id: mainLayout
@@ -49,14 +49,19 @@ ApplicationWindow {
                 TextField {
 					id: username
                     Layout.fillWidth: true
-				}
+				} // end Textfield
+
                 TextField {
 					id: password
-						echoMode: TextInput.Password
+					echoMode: TextInput.Password
                     Layout.fillWidth: true
-				}
-            }
-        }
+
+					onAccepted: {
+						loginBtn.login();
+					} // end onAccepted
+				} // end Textfield
+            } // end GridLayout
+        } // end Groupbox
 
         GroupBox {
             id: rowBox
@@ -65,42 +70,60 @@ ApplicationWindow {
 
             RowLayout {
                 id: rowLayout
-                anchors.fill: parent
+				anchors.fill: parent
+
                 TextField {
 					id: server
 					placeholderText: "localhost:6006"
                     Layout.fillWidth: true
-                }
+
+					onAccepted: {
+						loginBtn.login();
+					} // end onAccepted
+				} // end TextField
+
                 Button {
 					id: loginBtn
                     text: "Login"
+					isDefault: true
 
-					onClicked: {
+					property var login: function()
+					{
 						var parts = server.text.split(':');
 						var svrAddress = parts[0] || "localhost";
 						var svrPort = parseInt(parts[1]) || 6006;
 
 						// Connect to the server
 						networking.connectToServer(svrAddress, svrPort, username.text, password.text);
-					}
-                }
-            }
-        }
+					} // end login
 
-		QChannels {
-			id: networking
+					onClicked: {
+						login();
+					} // end onClicked
+                } // end Button
+            } // end RowLayout
+        } // end GroupBox
+    } // end ColumnLayout
 
-			onConnected: {
-				mainWindow.show();
-				launcherWindow.hide();
-				console.log("IT CONNECTED!");
-			}
+	//-------------------------------------------------------------------------
+	// The Networking stack
+	//-------------------------------------------------------------------------
 
-			onDisconnected: {
-				mainWindow.hide();
-				launcherWindow.show();
-				console.log("Disconnected.");
-			}
-		}
-    }
-}
+	QChannels {
+		id: networking
+
+		onConnected: {
+			mainWindow.show();
+			launcherWindow.hide();
+			console.log("IT CONNECTED!");
+		} // end onConnected
+
+		onDisconnected: {
+			mainWindow.hide();
+			launcherWindow.show();
+			console.log("Disconnected.");
+		} // end onDisconnected
+	} // end QChannels
+
+	//-------------------------------------------------------------------------
+} // end ApplicationWindow
