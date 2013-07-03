@@ -6,7 +6,7 @@ project(PrecursorsClient)
 
 
 # Add our CMake modules to the path.
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "")
@@ -40,6 +40,9 @@ find_package(Qt5OpenGL REQUIRED)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
+
+# Find Horde3D
+find_package(Horde3D REQUIRED)
 
 file(MAKE_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}/dist/bin

@@ -12,7 +12,10 @@ set(CLIENT_SOURCES
 	h3ditemanim.cpp
 	)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
+include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}/..
+	${Horde3D_INCLUDE_DIRS}
+	)
 
 add_executable(PrecursorsClient WIN32
 	${CLIENT_HEADERS}
@@ -24,8 +27,7 @@ set_target_properties(PrecursorsClient PROPERTIES DEBUG_POSTFIX _d)
 
 # Tell CMake what to link with
 target_link_libraries(PrecursorsClient
-	Horde3D
-	Horde3DUtils
+	${Horde3D_LIBRARIES}
 
 	Qt5::Core
 	Qt5::Gui

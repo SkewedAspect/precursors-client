@@ -2,7 +2,7 @@
 #include "h3ditem.h"
 #include "cameranodeobject.h"
 
-#include <horde3d/Horde3DUtils.h>
+#include <Horde3DUtils.h>
 
 #include <QtCore/QPropertyAnimation>
 #include <QtCore/QCoreApplication>
@@ -11,8 +11,6 @@
 #include <QtGui/QOpenGLFramebufferObject>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
-
-#include <GL/glext.h>
 
 
 Horde3DItem::Horde3DItem(QQuickItem *parent) :

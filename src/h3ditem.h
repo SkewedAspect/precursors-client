@@ -6,7 +6,7 @@
 #include <QtQuick/QSGTextureMaterial>
 #include <QtCore/QPropertyAnimation>
 
-#include <horde3d/Horde3D.h>
+#include <Horde3D.h>
 
 #include "h3ditemanim.h"
 

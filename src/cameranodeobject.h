@@ -3,7 +3,7 @@
 
 #include <QtCore/QObject>
 
-#include <horde3d/Horde3D.h>
+#include <Horde3D.h>
 
 
 class CameraNodeObject : public QObject
