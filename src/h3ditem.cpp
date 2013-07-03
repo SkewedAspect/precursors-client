@@ -23,7 +23,8 @@ Horde3DItem::Horde3DItem(QQuickItem *parent) :
 		m_samples(0),
 		m_AAEnabled(false),
 		m_initialized(false),
-		m_dirtyFBO(false)
+		m_dirtyFBO(false),
+		m_animTime(0.0f)
 {
     setFlag(ItemHasContents);
     setSmooth(false);
@@ -79,7 +80,12 @@ void Horde3DItem::renderHorde()
 {
 	if(m_node)
 	{
-		// TODO: Update scene.
+		m_animTime += 0.4f;
+
+		// Do animation blending
+		h3dSetModelAnimParams(m_knight, 0, m_animTime, 0.5f);
+		h3dSetModelAnimParams(m_knight, 1, m_animTime, 0.5f);
+		h3dUpdateModel(m_knight, H3DModelUpdateFlags::Animation | H3DModelUpdateFlags::Geometry);
 
 		if(m_qtContext && m_h3dContext && m_fbo && m_camera)
 		{
@@ -271,15 +277,19 @@ void Horde3DItem::init()
 
     H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
     H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
+	H3DRes knightAnim1Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_order.anim", 0 );
+	H3DRes knightAnim2Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_attack.anim", 0 );
 
     h3dutLoadResourcesFromDisk("Content");
 
-    H3DNode node = h3dAddNodes(H3DRootNode, knight);
-    h3dSetNodeTransform(node,
+    m_knight = h3dAddNodes(H3DRootNode, knight);
+    h3dSetNodeTransform(m_knight,
 			0, 0, 0,
 			0, 0, 0,
 			1, 1, 1
 			);
+	h3dSetupModelAnimStage(m_knight, 0, knightAnim1Res, 0, "", false);
+	h3dSetupModelAnimStage(m_knight, 1, knightAnim2Res, 0, "", false);
 
 	m_camera = h3dAddCameraNode(H3DRootNode, "cam", pipeline);
 	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);

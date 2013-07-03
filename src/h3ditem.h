@@ -73,10 +73,12 @@ private:
     int m_samples;
     bool m_AAEnabled;
     QSize m_size;
+	float m_animTime;
 
 	bool m_firstRun;
 	bool m_valid;
 	Horde3DItemAnimation m_animation;
+	H3DNode m_knight;
 	H3DNode m_camera;
 
     CameraNodeObject *m_cameraObject;
