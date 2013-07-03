@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 
 import Precursors.Networking 1.0
@@ -7,13 +8,14 @@ import Precursors.Networking 1.0
 ApplicationWindow {
 	id: launcherWindow
 	title: "RFI: Precursors Launcher"
+
 	property int margin: 11
 	property var mainWindow: mainWindowLoader.item;
 
 	width: (mainLayout.implicitWidth + 2 * margin) + 80
     height: mainLayout.implicitHeight + 2 * margin
 
-	minimumWidth: (mainLayout.Layout.minimumWidth + 2 * margin) + 20
+	minimumWidth: (mainLayout.Layout.minimumWidth + 2 * margin) + 80
     minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
 
 	maximumHeight: minimumHeight
@@ -32,9 +34,18 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: margin
 
+		Text {
+			id: title
+			anchors.fill: parent
+			text: "RFI: Precursors"
+			horizontalAlignment: Text.AlignHCenter
+
+			font.family: "Trajan Pro";
+			font.pointSize: 42;
+		} // end Text
+
         GroupBox {
             id: gridBox
-            title: "Login"
             Layout.fillWidth: true
 
             GridLayout {
@@ -43,18 +54,28 @@ ApplicationWindow {
                 flow: GridLayout.TopToBottom
                 anchors.fill: parent
 
-                Label { text: "Username" }
-                Label { text: "Password" }
+				Label {
+					text: "Username"
+					font.family: "Titillium Web";
+				} // end Label
+
+				Label {
+					text: "Password"
+					font.family: "Titillium Web";
+				} // end Label
 
                 TextField {
 					id: username
+					focus: true
                     Layout.fillWidth: true
+					font.family: "Titillium Web";
 				} // end Textfield
 
                 TextField {
 					id: password
 					echoMode: TextInput.Password
                     Layout.fillWidth: true
+					font.family: "Titillium Web";
 
 					onAccepted: {
 						loginBtn.login();
@@ -65,7 +86,6 @@ ApplicationWindow {
 
         GroupBox {
             id: rowBox
-            title: "Server"
             Layout.fillWidth: true
 
             RowLayout {
@@ -76,6 +96,7 @@ ApplicationWindow {
 					id: server
 					placeholderText: "localhost:6006"
                     Layout.fillWidth: true
+					font.family: "Titillium Web";
 
 					onAccepted: {
 						loginBtn.login();
@@ -115,7 +136,6 @@ ApplicationWindow {
 		onConnected: {
 			mainWindow.show();
 			launcherWindow.hide();
-			console.log("IT CONNECTED!");
 		} // end onConnected
 
 		onDisconnected: {

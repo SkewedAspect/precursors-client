@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Particles 2.0
 import QtQuick.Layouts 1.0
 
+import Precursors.Networking 1.0
 import Ogre 1.0
 
 
@@ -14,6 +15,30 @@ ApplicationWindow {
 
     color: "black"
 
+	Component.onCompleted: {
+		networking.connected.connect(onConnected);
+	}
+
+	function onConnected()
+	{
+		// Send a request for a list of characters.
+		var charReq = networking.buildRequest("control", { type: "getCharacters" }, QChannels.CM_SECURE);
+		charReq.reply.connect(onCharListReply);
+		charReq.send();
+
+		function onCharListReply(confirmed)
+		{
+			var characters = charReq.replyMessage.characters;
+
+			charList.clear();
+			characters.forEach(function(character)
+			{
+				charList.append(character);
+			}); // end forEach
+		} // end onCharListReply
+	} // end onConnected
+
+	/*
 	OgreItem {
 		id: ogreItem
 
@@ -81,69 +106,45 @@ ApplicationWindow {
 			onReleased: { prevX = -1; prevY = -1 }
 		}
 	}
+	*/
 
 	SubWindow {
-		x: 100; y: (parent.height - height) / 2
-		width: 300; height: 80
+		id: charWindow
+		x: (parent.width - width) / 2
+		y: (parent.height - height) / 2
+		width: 300
+		height: charWinLayout.implicitHeight + 4 * margin
 
-		title: "Choose Your Destiny"
-
-		ProgressBar {
-			anchors.fill: parent
-			value: 0.5
-			style: progressBarStyle
-		}
-
+		title: "Choose a Character"
 		style: SubWindowStyle { }
-	}
 
-	property Component progressBarStyle: ProgressBarStyle {
-		background: BorderImage {
-			source: "../progress-background.png"
-			border.left: 2 ; border.right: 2 ; border.top: 2 ; border.bottom: 2
-		}
+		ColumnLayout {
+			id: charWinLayout
+			anchors.fill: parent
+			anchors.margins: margin
 
-		progress: Item {
-			clip: true
-
-			BorderImage {
-				anchors.fill: parent
-				anchors.rightMargin: (control.value < control.maximumValue) ? -4 : 0
-				source: "../progress-fill.png"
-				border.left: 2 ; border.right: 2 ; border.top: 2 ; border.bottom: 2
-
-				Rectangle {
-					width: 1
-					color: "#a70"
-					opacity: 0.8
-					anchors.top: parent.top
-					anchors.bottom: parent.bottom
-					anchors.bottomMargin: 1
+			ListView {
+				clip: true
+				focus: true
+				height: 80
+				Layout.fillWidth: true
+				model : ListModel { id: charList }
+				delegate: GroupBox {
+					anchors.left: parent.left
 					anchors.right: parent.right
-					visible: control.value < control.maximumValue
-					anchors.rightMargin: -parent.anchors.rightMargin
+
+					Text {
+						text: first_name + " " + middle_name + " " + last_name
+						font.family: "Titillium Web";
+						color: "white";
+					}
 				}
+				highlight: Rectangle { color: "orange"; radius: 5 }
 			}
 
-			ParticleSystem { id: bubbles }
-			ImageParticle {
-				id: fireball
-				system: bubbles
-				source: "../bubble.png"
-				opacity: 0.7
-			}
-			Emitter {
-				system: bubbles
-				anchors.bottom: parent.bottom
-				anchors.margins: 4
-				anchors.bottomMargin: -4
-				anchors.left: parent.left
-				anchors.right: parent.right
-				size: 4
-				sizeVariation: 4
-				acceleration: PointDirection{ y: -6; xVariation: 3 }
-				emitRate: 6 * control.value
-				lifeSpan: 3000
+			Button {
+				Layout.fillWidth: true
+				text: "Select Character"
 			}
 		}
 	}

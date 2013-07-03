@@ -35,6 +35,7 @@ Style {
 
 			anchors.top: parent.top
 			anchors.left: parent.left
+			anchors.right: parent.right
 			anchors.margins: 4
 			z: 1
 
@@ -44,6 +45,8 @@ Style {
 			renderType: Text.NativeRendering
 			font.weight: Font.DemiBold
 			font.pointSize: 12
+			horizontalAlignment: Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
 		}
 
 		Rectangle {
