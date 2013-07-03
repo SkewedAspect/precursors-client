@@ -53,12 +53,12 @@ protected:
     void timerEvent(QTimerEvent *);
 
 private:
-    int m_timerID;
-
 	void printHordeMessages();
 	void renderHorde();
 
-    QObject *m_cameraQObject;
+    int m_timerID;
+
+    QObject* m_cameraQObject;
 
     QSGSimpleTextureNode* m_node;
 	QOpenGLFramebufferObject* m_fbo;

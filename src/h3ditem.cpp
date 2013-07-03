@@ -18,8 +18,12 @@
 Horde3DItem::Horde3DItem(QQuickItem *parent) :
 		QQuickItem(parent),
 		m_timerID(0),
-		m_node(0),
-		m_texture(0),
+		m_cameraQObject(NULL),
+		m_node(NULL),
+		m_fbo(NULL),
+		m_texture(NULL),
+		m_qtContext(NULL),
+		m_h3dContext(NULL),
 		m_samples(0),
 		m_AAEnabled(false),
 		m_initialized(false),
@@ -171,11 +175,20 @@ void Horde3DItem::updateFBO()
 
 	m_qtContext = QOpenGLContext::currentContext();
 
-    // Create a new shared OpenGL context to be used exclusively by Horde3D
-    m_h3dContext = new QOpenGLContext();
-    m_h3dContext->setFormat(window()->requestedFormat());
-    m_h3dContext->setShareContext(m_qtContext);
-    m_h3dContext->create();
+	if(m_h3dContext && (m_h3dContext->format() != window()->requestedFormat()))
+	{
+		m_h3dContext->deleteLater();
+		m_h3dContext = NULL;
+	} // end if
+
+	if(!m_h3dContext)
+	{
+		// Create a new shared OpenGL context to be used exclusively by Horde3D
+		m_h3dContext = new QOpenGLContext();
+		m_h3dContext->setFormat(window()->requestedFormat());
+		m_h3dContext->setShareContext(m_qtContext);
+		m_h3dContext->create();
+	} // end if
 
     m_h3dContext->makeCurrent(window());
 	m_fbo = new QOpenGLFramebufferObject(m_size, QOpenGLFramebufferObject::CombinedDepthStencil);
