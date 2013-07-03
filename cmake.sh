@@ -1,8 +1,37 @@
 #!/bin/bash
 
+function find_all_qmake5()
+{
+	# Returns as soon as it successfully finds a matching qmake executable.
+	for qmakeName in qmake-qt5 qmake-5.1 qmake; do
+		qmakePath="$(which $qmakeName 2>/dev/null)"
+
+		if [ $? -eq 0 ]; then
+			# Check Qt version
+			"$qmakePath" -version | sed -r 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
+		fi
+	done
+
+	# Check paths relative to the current directory. (if you built Qt 5 from source in a similar directory to this one)
+	for qmakePath in "$(dirname $0)/../qt5/qtbase/bin/qmake" "$(dirname $0)/../../other/qt5/qtbase/bin/qmake"; do
+		if [ -x "$qmakePath" ]; then
+			# Check Qt version
+			"$qmakePath" -version | sed -r 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
+		fi
+	done
+}
+
 if [ -z "$QMAKE" ]; then
-	QMAKE=$PWD/../qt5/qtbase/bin/qmake
+	# Find all Qt 5.x versions of qmake, sort by Qt version (descending), and print the corresponding path.
+	QMAKE=$(find_all_qmake5 | sort -Vr | head -n 1 | cut -d ':' -f 2)
 fi
+
+if [ ! -x "$QMAKE" ]; then
+	echo -e "\033[1;31mA valid, executable 'qmake' was not found! (QMAKE=$QMAKE)\033[m"
+	exit 1
+fi
+echo -e "\033[1;32mUsing 'qmake' at $QMAKE\033[m"
+
 QT_INSTALL_BINS="$($QMAKE -query | awk -F : '$1 == "QT_INSTALL_BINS" {print $2}')"
 QT_INSTALL_LIBS="$($QMAKE -query | awk -F : '$1 == "QT_INSTALL_LIBS" {print $2}')"
 
