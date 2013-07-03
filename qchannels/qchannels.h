@@ -18,6 +18,8 @@ class QNetString;
 class QCHANNELSSHARED_EXPORT QChannels : public QObject
 {
     Q_OBJECT
+	Q_ENUMS(ChannelMode)
+	Q_ENUMS(ErrorType)
 public:
     enum ChannelMode
     {
@@ -43,7 +45,7 @@ public:
     void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
     void sendRequest(QChannelsRequest* request, bool encrypted = true);
 
-    QChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode);
+    Q_INVOKABLE QChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode = CM_RELIABLE);
 
     QHostAddress serverAddress;
     quint16 port;
