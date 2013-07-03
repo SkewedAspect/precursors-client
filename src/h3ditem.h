@@ -6,9 +6,13 @@
 #include <QtQuick/QSGTextureMaterial>
 #include <QtCore/QPropertyAnimation>
 
+#include <horde3d/Horde3D.h>
+
+#include "h3ditemanim.h"
+
 
 class QSGSimpleTextureNode;
-class QGLFramebufferObject;
+class QOpenGLFramebufferObject;
 
 class CameraNodeObject;
 
@@ -18,15 +22,13 @@ class Horde3DItem : public QQuickItem
     Q_OBJECT
 
     Q_PROPERTY(QObject *camera READ camera)
+	Q_PROPERTY(QImage image READ image NOTIFY imageChanged)
 
 public:
     Horde3DItem(QQuickItem *parent = 0);
     ~Horde3DItem();
 
     QObject *camera() const { return m_cameraQObject; }
-
-    void setSize(const QSize &size);
-    QSize size() const { return m_size; }
 
     void setAAEnabled(bool enable);
 
@@ -35,10 +37,17 @@ public:
     void init();
 
     void saveH3DState();
-    void restoreH3DState();
+    bool restoreH3DState();
+
+	QImage image();
+
+signals:
+	void imageChanged();
 
 protected:
-    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data);
+
+	virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
 
     void timerEvent(QTimerEvent *);
 
@@ -47,12 +56,15 @@ private:
 
     QObject *m_cameraQObject;
 
-    QSGSimpleTextureNode *m_node;
+    QSGSimpleTextureNode* m_node;
+	QOpenGLFramebufferObject* m_fbo;
 
-    QSGTextureMaterial m_material;
-    QSGOpaqueTextureMaterial m_materialO;
-    QSGGeometry m_geometry;
-    QSGTexture *m_texture;
+    QSGTexture* m_texture;
+
+    // Qt's OpenGL context
+    QOpenGLContext* m_qtContext;
+    // The context to be used by Horde3D
+    QOpenGLContext* m_h3dContext;
 
     int m_samples;
     bool m_AAEnabled;
@@ -60,14 +72,13 @@ private:
 
 	bool m_firstRun;
 	bool m_valid;
-	QGLFramebufferObject *m_fbo;
-	HordeViewportAnimation m_animation;
+	Horde3DItemAnimation m_animation;
 	H3DNode m_camera;
 
     CameraNodeObject *m_cameraObject;
 
     bool m_initialized;
     bool m_dirtyFBO;
-};
+}; // end Horde3DItem
 
 #endif // H3DITEM_H

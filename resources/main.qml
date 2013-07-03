@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Particles 2.0
 import QtQuick.Layouts 1.0
 
-import Ogre 1.0
+import Horde3D 1.0
 
 
 ApplicationWindow {
@@ -16,73 +16,109 @@ ApplicationWindow {
 
     color: "black"
 
-	OgreItem {
-		id: ogreItem
+	SubWindow {
+		x: 600; y: (parent.height - height) / 2
+		width: 800; height: 600
 
-		anchors.fill: parent
+		title: "HOLY CRAP HORDE"
 
+		style: SubWindowStyle { }
 
-		Behavior on opacity { NumberAnimation { } }
-		Behavior on width { NumberAnimation { } }
-		Behavior on height { NumberAnimation { } }
+		Horde3DItem {
+			id: h3dItem
 
-		states: [
-			State {
-				name: "State1"
-
-				PropertyChanges {
-					target: ogreItem
-					width: ogre.width
-					height: ogre.height
-				}
-				PropertyChanges {
-					target: toolbar1
-					x: 5
-					y: -toolbar1.height - 6
-				}
-
-				PropertyChanges {
-					target: toolbar4
-					anchors.top: ogreItem.top
-					anchors.topMargin: 5
-				}
-				PropertyChanges {
-					target: toolbar3
-					anchors.top: ogreItem.top
-					anchors.topMargin: 5
-				}
-				PropertyChanges {
-					target: back
-					opacity: 0
-				}
-			}
-		]
-
-		MouseArea {
 			anchors.fill: parent
-			acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-			property int prevX: -1
-			property int prevY: -1
 
-			onPositionChanged: {
-				if (pressedButtons & Qt.LeftButton) {
-					if (prevX > -1)
-					ogreItem.camera.yaw -= (mouse.x - prevX) / 2
-					if (prevY > -1)
-					ogreItem.camera.pitch -= (mouse.y - prevY) / 2
-					prevX = mouse.x
-					prevY = mouse.y
+			Behavior on opacity { NumberAnimation { } }
+			Behavior on width { NumberAnimation { } }
+			Behavior on height { NumberAnimation { } }
+
+			states: [
+				State {
+					name: "State1"
+
+					PropertyChanges {
+						target: h3dItem
+						width: h3d.width
+						height: h3d.height
+					}
+					PropertyChanges {
+						target: toolbar1
+						x: 5
+						y: -toolbar1.height - 6
+					}
+
+					PropertyChanges {
+						target: toolbar4
+						anchors.top: h3dItem.top
+						anchors.topMargin: 5
+					}
+					PropertyChanges {
+						target: toolbar3
+						anchors.top: h3dItem.top
+						anchors.topMargin: 5
+					}
+					PropertyChanges {
+						target: back
+						opacity: 0
+					}
 				}
-				if (pressedButtons & Qt.RightButton) {
-					if (prevY > -1)
-					ogreItem.camera.zoom = Math.min(6, Math.max(0.1, ogreItem.camera.zoom - (mouse.y - prevY) / 100));
-					prevY = mouse.y
+			]
+
+			MouseArea {
+				anchors.fill: parent
+				acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+				property int prevX: -1
+				property int prevY: -1
+
+				onPositionChanged: {
+					if (pressedButtons & Qt.LeftButton) {
+						if (prevX > -1)
+						h3dItem.camera.yaw -= (mouse.x - prevX) / 2
+						if (prevY > -1)
+						h3dItem.camera.pitch -= (mouse.y - prevY) / 2
+						prevX = mouse.x
+						prevY = mouse.y
+					}
+					if (pressedButtons & Qt.RightButton) {
+						if (prevY > -1)
+						h3dItem.camera.zoom = Math.min(6, Math.max(0.1, h3dItem.camera.zoom - (mouse.y - prevY) / 100));
+						prevY = mouse.y
+					}
 				}
+				onReleased: { prevX = -1; prevY = -1 }
 			}
-			onReleased: { prevX = -1; prevY = -1 }
 		}
 	}
+
+	/*
+	ParticleSystem { id: stars2 }
+	ImageParticle {
+		id: star2
+		system: stars2
+
+		source: "./bubble.png"
+		opacity: 0.7
+	}
+	Emitter {
+		id: starEmitter2
+		system: stars2
+
+		anchors.top: parent.top
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		width: 1
+
+		size: 1
+		sizeVariation: 1
+		lifeSpan: 3000
+
+		velocity: PointDirection { x: -1000; xVariation: 500 }
+		emitRate: 80
+	}
+	*/
 
 	SubWindow {
 		x: 100; y: (parent.height - height) / 2
@@ -127,6 +163,84 @@ ApplicationWindow {
 				}
 			}
 
+			ParticleSystem { id: stars }
+			ImageParticle {
+				id: star
+				system: stars
+
+				source: "./bubble.png"
+				opacity: 0.7
+			}
+			Emitter {
+				id: starEmitter
+				system: stars
+
+				anchors.top: parent.top
+				anchors.right: parent.right
+				anchors.bottom: parent.bottom
+				anchors.margins: 2
+				width: 1
+
+				size: 1
+				sizeVariation: 1
+				lifeSpan: 3000
+
+				velocity: PointDirection { x: -100; xVariation: 50 }
+				emitRate: 20 * control.value
+			}
+
+			MouseArea {
+				anchors.fill: parent
+				/*
+				onClicked: {
+					starEmitter.burst(100)
+				}
+				*/
+				onPressed: {
+					laserEmitter.enabled = true
+				}
+				onReleased: {
+					laserEmitter.enabled = false
+				}
+				onPositionChanged: {
+					laserEmitter.x = mouse.x
+					laserEmitter.y = mouse.y
+				}
+			}
+
+			ParticleSystem { id: lasers }
+			/*
+			ImageParticle {
+				id: laser
+				system: lasers
+
+				source: "./progress-background.png"
+				opacity: 0.7
+			}
+			*/
+			ItemParticle {
+				system: lasers
+				delegate: Rectangle {
+					color: "red"
+					width: 10; height: 1
+				}
+			}
+			Emitter {
+				id: laserEmitter
+				system: lasers
+				enabled: false
+
+				width: 1
+				height: 1
+
+				size: 5
+				lifeSpan: 1000
+
+				velocity: PointDirection { x: -1000 }
+				emitRate: 200
+			}
+
+			/*
 			ParticleSystem { id: bubbles }
 			ImageParticle {
 				id: fireball
@@ -147,6 +261,7 @@ ApplicationWindow {
 				emitRate: 6 * control.value
 				lifeSpan: 3000
 			}
+			*/
 		}
 	}
 }

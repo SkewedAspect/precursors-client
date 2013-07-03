@@ -3,6 +3,8 @@
 
 #include <QtCore/QObject>
 
+#include <horde3d/Horde3D.h>
+
 
 class CameraNodeObject : public QObject
 {
@@ -12,9 +14,9 @@ class CameraNodeObject : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom)
 
 public:
-    explicit CameraNodeObject(H3DNode *cam, QObject *parent = 0);
+    explicit CameraNodeObject(H3DNode cam, QObject *parent = 0);
 
-    H3DNode *camera() const { return m_camera; }
+    H3DNode camera() const { return m_camera; }
 
     qreal yaw() const { return m_yaw; }
     qreal pitch() const { return m_pitch; }
@@ -27,7 +29,7 @@ public:
 private:
     void updateRotation();
 
-    H3DNode *m_camera;
+    H3DNode m_camera;
 
     qreal m_yaw;
     qreal m_pitch;
