@@ -12,6 +12,8 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
 
+#define USE_BEFORE_RENDER 1
+
 
 Horde3DItem::Horde3DItem(QQuickItem *parent) :
 		QQuickItem(parent),
@@ -26,7 +28,7 @@ Horde3DItem::Horde3DItem(QQuickItem *parent) :
     setFlag(ItemHasContents);
     setSmooth(false);
 
-	connect(this, SIGNAL(initFinished()), this, SLOT(onInitFinished()));
+	connect(this, SIGNAL(initFinished()), this, SLOT(onInitFinished()), Qt::QueuedConnection);
 } // end Horde3DItem
 
 Horde3DItem::~Horde3DItem()
@@ -66,34 +68,33 @@ QSGNode* Horde3DItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* dat
 
     setAAEnabled(smooth());
 
-	m_node->markDirty(QSGNode::DirtyMaterial);
-
-	// TODO: Update scene.
-
-	// Render scene.
-	if(m_fbo && m_camera)
-	{
-		if(restoreH3DState())
-		{
-			h3dRender(m_camera);
-			h3dFinalizeFrame();
-		} // end if
-
-		saveH3DState();
-	} // end if
+#	ifndef USE_BEFORE_RENDER
+		renderHorde();
+#	endif // USE_BEFORE_RENDER
 
     return m_node;
 } // end updatePaintNode
 
-QImage Horde3DItem::image()
+void Horde3DItem::renderHorde()
 {
-	if(m_fbo)
+	if(m_node)
 	{
-		return m_fbo->toImage();
-	} // end if
+		// TODO: Update scene.
 
-	return QImage();
-} // end image
+		if(m_qtContext && m_h3dContext && m_fbo && m_camera)
+		{
+			if(restoreH3DState())
+			{
+				h3dRender(m_camera);
+				h3dFinalizeFrame();
+			} // end if
+
+			saveH3DState();
+		} // end if
+
+		m_node->markDirty(QSGNode::DirtyMaterial);
+	} // end if
+} // end renderHorde
 
 void Horde3DItem::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
@@ -122,13 +123,6 @@ void Horde3DItem::printHordeMessages()
 		qDebug() << msgLevel << "message from Horde3D at" << msgTime << ":" << message;
 	} // end while
 } // end printHordeMessages
-
-void Horde3DItem::timerEvent(QTimerEvent *)
-{
-	printHordeMessages();
-
-	update();
-} // end timerEvent
 
 bool Horde3DItem::restoreH3DState()
 {
@@ -211,6 +205,10 @@ void Horde3DItem::updateFBO()
 	m_texture->setVerticalWrapMode(QSGTexture::ClampToEdge);
 
     m_dirtyFBO = false;
+
+	// Appease the angry QML gods.
+	restoreH3DState();
+	saveH3DState();
 } // end updateFBO
 
 void Horde3DItem::setAAEnabled(bool enable)
@@ -224,9 +222,27 @@ void Horde3DItem::setAAEnabled(bool enable)
 	} // end if
 } // end setAAEnabled
 
+void Horde3DItem::timerEvent(QTimerEvent *)
+{
+	printHordeMessages();
+
+	update();
+} // end timerEvent
+
+void Horde3DItem::onBeforeRendering()
+{
+	renderHorde();
+
+	printHordeMessages();
+} // end onBeforeRendering
+
 void Horde3DItem::onInitFinished()
 {
-    startTimer(16);
+	startTimer(16);
+
+#	ifdef USE_BEFORE_RENDER
+		connect(window(), SIGNAL(beforeRendering()), this, SLOT(onBeforeRendering()), Qt::DirectConnection);
+#	endif // USE_BEFORE_RENDER
 } // end onInitFinished
 
 void Horde3DItem::init()

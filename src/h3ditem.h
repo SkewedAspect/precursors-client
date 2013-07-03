@@ -22,7 +22,6 @@ class Horde3DItem : public QQuickItem
     Q_OBJECT
 
     Q_PROPERTY(QObject *camera READ camera)
-	Q_PROPERTY(QImage image READ image NOTIFY imageChanged)
 
 public:
     Horde3DItem(QQuickItem *parent = 0);
@@ -39,14 +38,12 @@ public:
     void saveH3DState();
     bool restoreH3DState();
 
-	QImage image();
-
 signals:
-	void imageChanged();
 	void initFinished();
 
 protected slots:
 	void onInitFinished();
+	void onBeforeRendering();
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data);
@@ -59,6 +56,7 @@ private:
     int m_timerID;
 
 	void printHordeMessages();
+	void renderHorde();
 
     QObject *m_cameraQObject;
 
