@@ -14,13 +14,13 @@
 find_path(HORDE3D_INCLUDE_DIR Horde3D.h
 			PATHS
 				/usr/include
-				/user/local/include
+				/usr/local/include
 				${CMAKE_SOURCE_DIR}/deps
 			PATH_SUFFIXES
 				horde3d
 				Horde3D.framework/Headers
 )
-if (HORDE3D_INCLUDE_DIR)
+if(HORDE3D_INCLUDE_DIR)
 	message (STATUS "Found Horde3D includes: " ${HORDE3D_INCLUDE_DIR})
 	set(Horde3D_INCLUDE_DIRS ${HORDE3D_INCLUDE_DIR})
 else()
@@ -32,14 +32,14 @@ endif()
 find_path(HORDE3DUTILS_INCLUDE_DIR Horde3DUtils.h
 			PATHS
 				/usr/include
-				/user/local/include
+				/usr/local/include
 				${CMAKE_SOURCE_DIR}/deps
 			PATH_SUFFIXES
 				horde3d
 				Horde3DUtils.framework/Headers
 )
 
-if (HORDE3DUTILS_INCLUDE_DIR)
+if(HORDE3DUTILS_INCLUDE_DIR)
 	message (STATUS "Found Horde3DUtils includes: " ${HORDE3DUTILS_INCLUDE_DIR})
 	set(Horde3D_INCLUDE_DIRS ${Horde3D_INCLUDE_DIRS} ${HORDE3DUTILS_INCLUDE_DIR})
 else()
@@ -50,16 +50,16 @@ endif()
 # Find Horde3D Libraries
 #------------------------------------------------------------------------------
 
-find_path(HORDE3D_LIBRARY Horde3D
+find_library(HORDE3D_LIBRARY Horde3D
 			PATHS
 				/usr/lib
-				/user/local/lib
+				/usr/local/lib
 				${CMAKE_SOURCE_DIR}/deps
 			PATH_SUFFIXES
 				horde3d
 				Horde3D.framework
 )
-if (HORDE3D_LIBRARY)
+if(HORDE3D_LIBRARY)
 	message (STATUS "Found Horde3D lib: " ${HORDE3D_LIBRARY})
 	set(Horde3D_LIBRARIES ${HORDE3D_LIBRARY})
 else()
@@ -68,16 +68,16 @@ endif()
 
 #------------------------------------------------------------------------------
 
-find_path(HORDE3DUTILS_LIBRARY Horde3DUtils
+find_library(HORDE3DUTILS_LIBRARY Horde3DUtils
 			PATHS
 				/usr/lib
-				/user/local/lib
+				/usr/local/lib
 				${CMAKE_SOURCE_DIR}/deps
 			PATH_SUFFIXES
 				horde3d
 				Horde3DUtils.framework
 )
-if (HORDE3DUTILS_LIBRARY)
+if(HORDE3DUTILS_LIBRARY)
 	message (STATUS "Found Horde3DUtils lib: " ${HORDE3DUTILS_LIBRARY})
 	set(Horde3D_LIBRARIES ${Horde3D_LIBRARIES} ${HORDE3DUTILS_LIBRARY})
 else()
