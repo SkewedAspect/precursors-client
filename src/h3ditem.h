@@ -43,6 +43,10 @@ public:
 
 signals:
 	void imageChanged();
+	void initFinished();
+
+protected slots:
+	void onInitFinished();
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data);
@@ -53,6 +57,8 @@ protected:
 
 private:
     int m_timerID;
+
+	void printHordeMessages();
 
     QObject *m_cameraQObject;
 

@@ -26,7 +26,7 @@ Horde3DItem::Horde3DItem(QQuickItem *parent) :
     setFlag(ItemHasContents);
     setSmooth(false);
 
-    startTimer(16);
+	connect(this, SIGNAL(initFinished()), this, SLOT(onInitFinished()));
 } // end Horde3DItem
 
 Horde3DItem::~Horde3DItem()
@@ -111,8 +111,22 @@ void Horde3DItem::geometryChanged(const QRectF& newGeometry, const QRectF& oldGe
 	} // end if
 } // end geometryChanged
 
+void Horde3DItem::printHordeMessages()
+{
+	int msgLevel;
+	float msgTime;
+	const char* message;
+
+	while((message = h3dGetMessage(&msgLevel, &msgTime)) && strlen(message) > 0)
+	{
+		qDebug() << msgLevel << "message from Horde3D at" << msgTime << ":" << message;
+	} // end while
+} // end printHordeMessages
+
 void Horde3DItem::timerEvent(QTimerEvent *)
 {
+	printHordeMessages();
+
 	update();
 } // end timerEvent
 
@@ -179,6 +193,12 @@ void Horde3DItem::updateFBO()
 	// Set virtual camera parameters
 	float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
 	h3dSetupCameraView(m_camera, 45.0f, aspectRatio, 0.1f, 1000.0f);
+    h3dSetNodeTransform(m_camera,
+			0, 40, -40,
+			//-40, 40, -70,
+			23, -166, 180,
+			1, 1, 1
+			);
 
 	H3DRes cameraPipeRes = h3dGetNodeParamI(m_camera, H3DCamera::PipeResI);
 	h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
@@ -204,6 +224,11 @@ void Horde3DItem::setAAEnabled(bool enable)
 	} // end if
 } // end setAAEnabled
 
+void Horde3DItem::onInitFinished()
+{
+    startTimer(16);
+} // end onInitFinished
+
 void Horde3DItem::init()
 {
 	qDebug() << "Horde3DItem::init()";
@@ -214,6 +239,18 @@ void Horde3DItem::init()
 	if(!h3dInit())
 	{
 		qCritical() << "h3dInit failed";
+	} // end if
+
+	int textureAnisotropy = 8;
+	if(!h3dSetOption(H3DOptions::MaxAnisotropy, textureAnisotropy))
+	{
+		qDebug() << "Couldn't set texture anisotropy to" << textureAnisotropy << "!";
+	} // end if
+
+	int aaSamples = m_AAEnabled ? m_samples : 0;
+	if(!h3dSetOption(H3DOptions::SampleCount, m_samples))
+	{
+		qDebug() << "Couldn't set antialiasing samples to" << m_samples << "!";
 	} // end if
 
     H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
@@ -229,15 +266,15 @@ void Horde3DItem::init()
 			);
 
 	m_camera = h3dAddCameraNode(H3DRootNode, "cam", pipeline);
-    h3dSetNodeTransform(m_camera,
-			0, 40, -40,
-			//-40, 40, -70,
-			23, -166, 0,
-			1, 1, 1
-			);
+	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);
 
 	m_cameraObject = new CameraNodeObject(m_camera);
     m_cameraQObject = static_cast<QObject *>(m_cameraObject);
 
     m_initialized = true;
+
+	printHordeMessages();
+	qDebug() << "--------- Initialization Finished ---------";
+
+	emit initFinished();
 } // end init
