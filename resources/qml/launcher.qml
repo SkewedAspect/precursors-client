@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 
 import Precursors.Networking 1.0
+import Precursors.Settings 1.0
 
 ApplicationWindow {
 	id: launcherWindow
@@ -69,6 +70,8 @@ ApplicationWindow {
 					focus: true
                     Layout.fillWidth: true
 					font.family: "Titillium Web";
+
+					text: settingsMan.get('lastUser', "");
 				} // end Textfield
 
                 TextField {
@@ -98,6 +101,14 @@ ApplicationWindow {
                     Layout.fillWidth: true
 					font.family: "Titillium Web";
 
+					text: {
+						var serverText = settingsMan.get("server", "localhost") + ":" + settingsMan.get("port", "6006");
+						if(serverText != "localhost:6006")
+						{
+							return serverText;
+						} // end if
+					}
+
 					onAccepted: {
 						loginBtn.login();
 					} // end onAccepted
@@ -113,6 +124,11 @@ ApplicationWindow {
 						var parts = server.text.split(':');
 						var svrAddress = parts[0] || "localhost";
 						var svrPort = parseInt(parts[1]) || 6006;
+
+						settingsMan.set('server', svrAddress);
+						settingsMan.set('port', svrPort);
+
+						settingsMan.save();
 
 						// Connect to the server
 						networking.connectToServer(svrAddress, svrPort, username.text, password.text);
@@ -136,6 +152,8 @@ ApplicationWindow {
 		onConnected: {
 			mainWindow.show();
 			launcherWindow.hide();
+			settingsMan.set('lastUser', username.text);
+			settingsMan.save();
 		} // end onConnected
 
 		onDisconnected: {

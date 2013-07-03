@@ -143,5 +143,6 @@ configure_file(
 	)
 
 
+ADD_SUBDIRECTORY(psettings psettings)
 ADD_SUBDIRECTORY(qchannels qchannels)
 ADD_SUBDIRECTORY(src src)

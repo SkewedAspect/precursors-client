@@ -37,6 +37,7 @@ target_link_libraries(PrecursorsClient
 	python2.7
 
 	QChannels
+	PSettings
 	)
 
 
