@@ -8,7 +8,7 @@ function find_all_qmake5()
 
 		if [ $? -eq 0 ]; then
 			# Check Qt version
-			"$qmakePath" -version | sed -r 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
+			"$qmakePath" -version | sed 's@^Using Qt version \(5\.[0-9]\+\.[0-9]\+\) in .*@\1:'"$qmakePath"'@p;d'
 		fi
 	done
 
@@ -16,7 +16,7 @@ function find_all_qmake5()
 	for qmakePath in "$(dirname $0)/../qt5/qtbase/bin/qmake" "$(dirname $0)/../../other/qt5/qtbase/bin/qmake"; do
 		if [ -x "$qmakePath" ]; then
 			# Check Qt version
-			"$qmakePath" -version | sed -r 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
+			"$qmakePath" -version | sed 's@^Using Qt version \(5\.[0-9]\+\.[0-9]\+\) in .*@\1:'"$qmakePath"'@p;d'
 		fi
 	done
 }
