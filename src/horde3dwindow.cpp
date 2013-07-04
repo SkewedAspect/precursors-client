@@ -12,7 +12,10 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
 
-#define USE_BEFORE_RENDER 1
+#include <GL/gl.h>
+
+
+static const bool USE_SEPARATE_CONTEXT = false;
 
 
 Horde3DWindow::Horde3DWindow(QWindow *parent) :
@@ -46,14 +49,17 @@ void Horde3DWindow::renderHorde()
 	h3dSetModelAnimParams(m_knight, 1, m_animTime, 0.5f);
 	h3dUpdateModel(m_knight, H3DModelUpdateFlags::Animation | H3DModelUpdateFlags::Geometry);
 
-	if(m_qtContext && m_h3dContext && m_camera)
+	if(m_camera)
 	{
-		restoreH3DState();
+		if(!USE_SEPARATE_CONTEXT || (m_qtContext && m_h3dContext))
+		{
+			restoreH3DState();
 
-		h3dRender(m_camera);
-		h3dFinalizeFrame();
+			h3dRender(m_camera);
+			h3dFinalizeFrame();
 
-		saveH3DState();
+			saveH3DState();
+		} // end if
 	} // end if
 } // end renderHorde
 
@@ -84,11 +90,18 @@ void Horde3DWindow::printHordeMessages()
 
 void Horde3DWindow::restoreH3DState()
 {
-    m_qtContext->doneCurrent();
-    m_h3dContext->makeCurrent(this);
+	if(USE_SEPARATE_CONTEXT)
+	{
+		m_qtContext->doneCurrent();
+		m_h3dContext->makeCurrent(this);
+	}
+	else
+	{
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+	} // end if
 
-	QOpenGLFunctions glFunctions(m_h3dContext);
-    glFunctions.glUseProgram(0);
+	QOpenGLFunctions glFunctions(QOpenGLContext::currentContext());
+	glFunctions.glUseProgram(0);
 
 	if(renderTarget())
 	{
@@ -103,8 +116,15 @@ void Horde3DWindow::saveH3DState()
 		renderTarget()->release();
 	} // end if
 
-    m_h3dContext->doneCurrent();
-    m_qtContext->makeCurrent(this);
+	if(USE_SEPARATE_CONTEXT)
+	{
+		m_h3dContext->doneCurrent();
+		m_qtContext->makeCurrent(this);
+	}
+	else
+	{
+		glPopAttrib();
+	} // end if
 } // end saveH3DState
 
 void Horde3DWindow::updateView()
@@ -156,22 +176,23 @@ void Horde3DWindow::onBeforeRendering()
 		updateView();
 	} // end if
 
-	m_qtContext = QOpenGLContext::currentContext();
-
-	if(m_h3dContext && (m_h3dContext->format() != m_qtContext->format()))
+	if(USE_SEPARATE_CONTEXT)
 	{
-		m_h3dContext->deleteLater();
-		m_h3dContext = NULL;
-	} // end if
+		if(m_h3dContext && (m_h3dContext->format() != m_qtContext->format()))
+		{
+			m_h3dContext->deleteLater();
+			m_h3dContext = NULL;
+		} // end if
 
-	if(!m_h3dContext)
-	{
-		qDebug() << "Creating new OpenGL context.";
-		// Create a new shared OpenGL context to be used exclusively by Horde3D
-		m_h3dContext = new QOpenGLContext();
-		m_h3dContext->setFormat(requestedFormat());
-		m_h3dContext->setShareContext(m_qtContext);
-		m_h3dContext->create();
+		if(!m_h3dContext)
+		{
+			qDebug() << "Creating new OpenGL context.";
+			// Create a new shared OpenGL context to be used exclusively by Horde3D
+			m_h3dContext = new QOpenGLContext();
+			m_h3dContext->setFormat(requestedFormat());
+			m_h3dContext->setShareContext(m_qtContext);
+			m_h3dContext->create();
+		} // end if
 	} // end if
 
 	renderHorde();
@@ -188,8 +209,8 @@ void Horde3DWindow::init()
 {
 	qDebug() << "Horde3DWindow::init()";
 
-    const QOpenGLContext *ctx = openglContext();
-    m_samples = ctx->format().samples();
+	m_qtContext = openglContext();
+	m_samples = m_qtContext->format().samples();
 
 	if(!h3dInit())
 	{
@@ -207,15 +228,15 @@ void Horde3DWindow::init()
 		qDebug() << "Couldn't set antialiasing samples to" << m_samples << "!";
 	} // end if
 
-    H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
-    H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
+	H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
+	H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
 	H3DRes knightAnim1Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_order.anim", 0 );
 	H3DRes knightAnim2Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_attack.anim", 0 );
 
-    h3dutLoadResourcesFromDisk("Content");
+	h3dutLoadResourcesFromDisk("Content");
 
-    m_knight = h3dAddNodes(H3DRootNode, knight);
-    h3dSetNodeTransform(m_knight,
+	m_knight = h3dAddNodes(H3DRootNode, knight);
+	h3dSetNodeTransform(m_knight,
 			0, 0, 0,
 			0, 0, 0,
 			1, 1, 1
@@ -227,13 +248,13 @@ void Horde3DWindow::init()
 	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);
 
 	m_cameraObject = new CameraNodeObject(m_camera);
-    m_cameraQObject = static_cast<QObject *>(m_cameraObject);
+	m_cameraQObject = static_cast<QObject *>(m_cameraObject);
 
 	setClearBeforeRendering(false);
 
 	printHordeMessages();
 	qDebug() << "--------- Initialization Finished ---------";
 
-    m_initialized = true;
+	m_initialized = true;
 	emit initFinished();
 } // end init
