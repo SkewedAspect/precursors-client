@@ -13,7 +13,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
 
-#include <GL/gl.h>
+#include <gl.h>
 
 
 static const bool USE_SEPARATE_CONTEXT = false;
