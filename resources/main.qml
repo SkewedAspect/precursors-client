@@ -7,15 +7,16 @@ import QtQuick.Layouts 1.0
 import Horde3D 1.0
 
 
-ApplicationWindow {
-	id: exampleWindow
+Horde3DWindow {
+	id: mainWindow
 
-    Component.onCompleted: exampleWindow.show();
+    Component.onCompleted: mainWindow.show();
 
 	width: 1024; height: 768
 
     color: "black"
 
+	/*
 	SubWindow {
 		x: 600; y: (parent.height - height) / 2
 		width: 800; height: 600
@@ -92,6 +93,7 @@ ApplicationWindow {
 			}
 		}
 	}
+	*/
 
 	/*
 	ParticleSystem { id: stars2 }

@@ -3,6 +3,7 @@ set(CLIENT_HEADERS
 	cameranodeobject.h
 	h3ditem.h
 	h3ditemanim.h
+	horde3dwindow.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
 set(CLIENT_SOURCES
@@ -10,6 +11,7 @@ set(CLIENT_SOURCES
 	cameranodeobject.cpp
 	h3ditem.cpp
 	h3ditemanim.cpp
+	horde3dwindow.cpp
 	)
 
 include_directories(
