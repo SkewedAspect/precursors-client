@@ -107,6 +107,8 @@ ApplicationWindow {
 						{
 							return serverText;
 						} // end if
+
+						return "";
 					}
 
 					onAccepted: {

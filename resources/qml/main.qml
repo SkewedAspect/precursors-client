@@ -38,6 +38,7 @@ ApplicationWindow {
 		} // end onCharListReply
 	} // end onConnected
 
+	/*
 	OgreItem {
 		id: ogreItem
 
@@ -105,6 +106,7 @@ ApplicationWindow {
 			onReleased: { prevX = -1; prevY = -1 }
 		}
 	}
+	*/
 
 	SubWindow {
 		id: charWindow
