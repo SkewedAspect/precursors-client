@@ -175,7 +175,7 @@ void Horde3DItem::updateFBO()
 
 	m_qtContext = QOpenGLContext::currentContext();
 
-	if(m_h3dContext && (m_h3dContext->format() != window()->requestedFormat()))
+	if(m_h3dContext && (m_h3dContext->format() != m_qtContext->format()))
 	{
 		m_h3dContext->deleteLater();
 		m_h3dContext = NULL;
@@ -283,9 +283,9 @@ void Horde3DItem::init()
 	} // end if
 
 	int aaSamples = m_AAEnabled ? m_samples : 0;
-	if(!h3dSetOption(H3DOptions::SampleCount, m_samples))
+	if(!h3dSetOption(H3DOptions::SampleCount, aaSamples))
 	{
-		qDebug() << "Couldn't set antialiasing samples to" << m_samples << "!";
+		qDebug() << "Couldn't set antialiasing samples to" << aaSamples << "!";
 	} // end if
 
     H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);

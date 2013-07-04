@@ -50,7 +50,7 @@ protected:
 
 	virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
 
-    void timerEvent(QTimerEvent *);
+    virtual void timerEvent(QTimerEvent *);
 
 private:
 	void printHordeMessages();
