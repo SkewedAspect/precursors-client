@@ -149,7 +149,7 @@ void Horde3DWindow::updateView()
 		h3dSetNodeTransform(m_camera,
 				0, 40, -40,
 				//-40, 40, -70,
-				23, -166, 180,
+				23, -166, 0,
 				1, 1, 1
 				);
 
