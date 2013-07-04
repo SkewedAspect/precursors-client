@@ -256,6 +256,9 @@ void Horde3DWindow::init()
 	printHordeMessages();
 	qDebug() << "--------- Initialization Finished ---------";
 
+	m_size = size() * screen()->devicePixelRatio();
+	m_dirtyView = true;
+
 	m_initialized = true;
 	emit initFinished();
 } // end init
