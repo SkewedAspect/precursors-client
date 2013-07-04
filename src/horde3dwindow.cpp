@@ -9,6 +9,7 @@
 #include <QtCore/QDir>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLFramebufferObject>
+#include <QtGui/QScreen>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
 
@@ -65,11 +66,11 @@ void Horde3DWindow::renderHorde()
 
 void Horde3DWindow::resizeEvent(QResizeEvent* event)
 {
-	qDebug() << "Horde3DWindow::resizeEvent(" << event->oldSize() << "->" << event->size() << ")";
+	qDebug() << "Horde3DWindow::resizeEvent(" << event->oldSize() << "->" << event->size() << "); devicePixelRatio:" << screen()->devicePixelRatio();
 
 	if(event->size() != event->oldSize())
 	{
-		m_size = event->size();
+		m_size = event->size() * screen()->devicePixelRatio();
 		m_dirtyView = true;
 	} // end if
 
