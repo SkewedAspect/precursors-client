@@ -14,6 +14,10 @@
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
+	app.setApplicationName("RFI: Precursors Client");
+	app.setApplicationVersion("0.5.0 QML Edition");
+	app.setOrganizationDomain("skewedaspect.com");
+	app.setOrganizationName("Skewed Aspect");
 
 	// Setup our settings
 	PSettingsManager& settings = PSettingsManager::instance();
