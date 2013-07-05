@@ -20,6 +20,8 @@ set_target_properties(PSettings PROPERTIES DEBUG_POSTFIX _d)
 target_link_libraries(PSettings
 	Qt5::Core
 	Qt5::Network
+
+	PLogging
 	)
 
 # post-build copy for win32

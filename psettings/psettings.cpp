@@ -16,7 +16,7 @@
  * @param parent The parent QObject.
  */
 PSettingsManager::PSettingsManager(QObject *parent) :
-	QObject(parent)
+	QObject(parent), logger("settings")
 {
 	// Get the writable location for config files
 	settingsPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
@@ -27,7 +27,7 @@ PSettingsManager::PSettingsManager(QObject *parent) :
 	// Make sure the path exists
 	if(!QDir().mkpath(settingsPath))
 	{
-		qCritical("Failed to make settings directory.");
+		logger.error("Failed to make settings directory.");
 	} // end if
 
 	// load our files initially
@@ -110,7 +110,7 @@ void PSettingsManager::save()
 	QFile settingsFile(this->settingsPath + "/precursors.config.json");
 	if (!settingsFile.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
-		qCritical("Unable to save settings file!");
+		logger.error("Unable to save settings file!");
 	} // end if
 
 	settingsFile.write(configJson);

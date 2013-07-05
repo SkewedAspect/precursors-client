@@ -5,6 +5,7 @@
 #include <QVariant>
 
 #include "psettings_global.h"
+#include "../plogging/plogging.h"
 
 class PSETTINGSSHARED_EXPORT PSettingsManager : public QObject
 {
@@ -26,6 +27,8 @@ private:
 	QVariantMap _settings;
 	QVariantMap getSettings();
 	QString settingsPath;
+
+	PLogger logger;
 
 signals:
 	void loaded();
