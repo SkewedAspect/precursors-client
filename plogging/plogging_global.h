@@ -1,0 +1,13 @@
+#ifndef PLOGGING_GLOBAL_H
+#define PLOGGING_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(PLOGGING_LIBRARY)
+#  define PLOGGINGSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define PLOGGINGSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // PLOGGING_GLOBAL_H
+

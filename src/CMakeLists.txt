@@ -44,6 +44,7 @@ target_link_libraries(PrecursorsClient
 
 	PChannels
 	PSettings
+	PLogging
 	)
 
 
