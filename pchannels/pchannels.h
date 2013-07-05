@@ -1,5 +1,5 @@
-#ifndef QCHANNELS_H
-#define QCHANNELS_H
+#ifndef PCHANNELS_H
+#define PCHANNELS_H
 
 #include <QObject>
 #include <QHostInfo>
@@ -9,13 +9,13 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
-#include "qchannels_global.h"
+#include "pchannels_global.h"
 #include "aes.h"
 
-class QChannelsRequest;
+class PChannelsRequest;
 class QNetString;
 
-class QCHANNELSSHARED_EXPORT QChannels : public QObject
+class PCHANNELSSHARED_EXPORT PChannels : public QObject
 {
     Q_OBJECT
 	Q_ENUMS(ChannelMode)
@@ -36,16 +36,16 @@ public:
         QC_RECEIVE_ERROR
     };
 
-    explicit QChannels(QObject *parent = 0);
+    explicit PChannels(QObject *parent = 0);
 
     Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
     void disconnect();
 
     void send(QVariant envelope, ChannelMode mode, bool encrypted = true);
     void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
-    void sendRequest(QChannelsRequest* request, bool encrypted = true);
+    void sendRequest(PChannelsRequest* request, bool encrypted = true);
 
-    Q_INVOKABLE QChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode = CM_RELIABLE);
+    Q_INVOKABLE PChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode = CM_RELIABLE);
 
     QHostAddress serverAddress;
     quint16 port;
@@ -64,7 +64,7 @@ private:
     QVariantMap wrapMessage(QString channel, QString type, QVariant message);
 
     quint32 idCounter;
-    QHash<quint32, QChannelsRequest*> requests;
+    QHash<quint32, PChannelsRequest*> requests;
 
 	AES* cipher;
 
@@ -108,4 +108,4 @@ private slots:
     void handleIncommingMessage(QByteArray data);
 };
 
-#endif // QCHANNELS_H
+#endif // PCHANNELS_H

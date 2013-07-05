@@ -3,8 +3,8 @@
 #include <QtGui/QFontDatabase>
 #include <QtQml/QQmlContext>
 
-#include "qchannels/qchannels.h"
-#include "qchannels/qchannelsrequest.h"
+#include "pchannels/pchannels.h"
+#include "pchannels/pchannelsrequest.h"
 #include "psettings/psettings.h"
 
 #include "h3ditem.h"
@@ -17,15 +17,15 @@ int main(int argc, char **argv)
 
 	// Setup our settings
 	PSettingsManager settings;
-	QChannels networking;
+	PChannels networking;
 
 	// Register application fonts
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
 	QFontDatabase::addApplicationFont("resources/fonts/titillium.ttf");
 
 	// Register the networking code with QML
-	qmlRegisterType<QChannels>("Precursors.Networking", 1, 0, "QChannels");
-	qmlRegisterType<QChannelsRequest>("Precursors.Networking", 1, 0, "QChannelsRequest");
+	qmlRegisterType<PChannels>("Precursors.Networking", 1, 0, "PChannels");
+	qmlRegisterType<PChannelsRequest>("Precursors.Networking", 1, 0, "PChannelsRequest");
 
 	// Register the Horde3D components
 	qmlRegisterType<Horde3DItem>("Horde3D", 1, 0, "Horde3DItem");

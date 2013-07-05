@@ -53,7 +53,7 @@ file(MAKE_DIRECTORY
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
-	add_custom_command(TARGET QChannels PRE_BUILD
+	add_custom_command(TARGET PChannels PRE_BUILD
 		COMMAND if not exist .\\dist\\bin mkdir .\\dist\\bin
 		)
 endif(WIN32 AND NOT MINGW)
@@ -65,5 +65,5 @@ configure_file(
 
 
 ADD_SUBDIRECTORY(psettings psettings)
-ADD_SUBDIRECTORY(qchannels qchannels)
+ADD_SUBDIRECTORY(pchannels pchannels)
 ADD_SUBDIRECTORY(src src)

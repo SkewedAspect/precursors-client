@@ -1,17 +1,17 @@
-#ifndef QCHANNELSREQUEST_H
-#define QCHANNELSREQUEST_H
+#ifndef PCHANNELSREQUEST_H
+#define PCHANNELSREQUEST_H
 
 #include <QObject>
 
-#include "qchannels.h"
+#include "pchannels.h"
 
-class QChannelsRequest : public QObject
+class PChannelsRequest : public QObject
 {
     Q_OBJECT
 	Q_PROPERTY(QVariantMap replyMessage READ getReply)
 public:
-    explicit QChannelsRequest();
-    explicit QChannelsRequest(QChannels* parent, QString channel, QVariant message, QChannels::ChannelMode mode);
+    explicit PChannelsRequest();
+    explicit PChannelsRequest(PChannels* parent, QString channel, QVariant message, PChannels::ChannelMode mode);
 
     Q_INVOKABLE bool isOutstanding();
     Q_INVOKABLE void send(bool encrypted = true);
@@ -21,7 +21,7 @@ public:
 
     quint32 id;
     QString channel;
-    QChannels::ChannelMode mode;
+    PChannels::ChannelMode mode;
     QVariant requestMessage;
     QVariantMap replyMessage;
 
@@ -33,8 +33,8 @@ signals:
     void reply(bool confirmed);
 
 private:
-    QChannels* parent;
+    PChannels* parent;
     bool _isOutstanding;
 };
 
-#endif // QCHANNELSREQUEST_H
+#endif // PCHANNELSREQUEST_H

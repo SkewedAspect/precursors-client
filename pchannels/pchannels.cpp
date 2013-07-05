@@ -1,7 +1,7 @@
 #include <QJsonDocument>
 
-#include "qchannels.h"
-#include "qchannelsrequest.h"
+#include "pchannels.h"
+#include "pchannelsrequest.h"
 #include "qnetstring.h"
 
 /**********************************************************************************************************************/
@@ -12,7 +12,7 @@
  * @brief The default constructor.
  * @param parent The parent QObject.
  */
-QChannels::QChannels(QObject *parent) :
+PChannels::PChannels(QObject *parent) :
 	QObject(parent)
 {
 	// Setup our AES class
@@ -49,14 +49,14 @@ QChannels::QChannels(QObject *parent) :
     connect(this->udpSocket, SIGNAL(readyRead()), this, SLOT(udpDataReady()));
     connect(this->udpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(udpError(QAbstractSocket::SocketError)));
     connect(this->udpSocket, SIGNAL(disconnected()), this, SLOT(udpDisconnected()));
-} // end QChannels
+} // end PChannels
 
 /**
  * @brief Connects to sever, on the given port.
  * @param serverHostName A string, representing the hostname of the server.
  * @param port The port to connect to the server on. (Note: this should be the ssl port.)
  */
-void QChannels::connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash)
+void PChannels::connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash)
 {
     // Store variable
     this->port = port;
@@ -70,7 +70,7 @@ void QChannels::connectToServer(QString serverHostName, quint16 port, QString us
 /**
  * @brief Disconnects from the server.
  */
-void QChannels::disconnect()
+void PChannels::disconnect()
 {
     // Clear our IP and port
     this->port = 0;
@@ -97,11 +97,11 @@ void QChannels::disconnect()
 } // end disconnect
 
 /**
- * @brief QChannels::send
+ * @brief PChannels::send
  * @param envelope
  * @param mode
  */
-void QChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
+void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 {
     QByteArray jsonData = QJsonDocument::fromVariant(envelope).toJson(QJsonDocument::Compact);
 
@@ -148,22 +148,22 @@ void QChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 } // end send
 
 /**
- * @brief QChannels::send
+ * @brief PChannels::send
  * @param channel
  * @param message
  * @param mode
  */
-void QChannels::sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted)
+void PChannels::sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(channel, "event", message);
     send(envelope, mode, encrypted);
 } // end sendEvent
 
 /**
- * @brief QChannels::sendRequest
+ * @brief PChannels::sendRequest
  * @param request
  */
-void QChannels::sendRequest(QChannelsRequest* request, bool encrypted)
+void PChannels::sendRequest(PChannelsRequest* request, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(request->channel, "request", request->requestMessage);
 	envelope["id"] = request->id;
@@ -171,16 +171,16 @@ void QChannels::sendRequest(QChannelsRequest* request, bool encrypted)
 } // end sendRequest
 
 /**
- * @brief QChannels::buildRequest
+ * @brief PChannels::buildRequest
  * @param channel
  * @param message
  * @param mode
  * @return
  */
-QChannelsRequest* QChannels::buildRequest(QString channel, QVariant message, ChannelMode mode)
+PChannelsRequest* PChannels::buildRequest(QString channel, QVariant message, ChannelMode mode)
 {
-    // Build a new QChannelsRequest, get a new id for it and add it to our list of outstanding requests.
-    QChannelsRequest* request = new QChannelsRequest(this, channel, message, mode);
+    // Build a new PChannelsRequest, get a new id for it and add it to our list of outstanding requests.
+    PChannelsRequest* request = new PChannelsRequest(this, channel, message, mode);
     request->id = getNextID();
     this->requests.insert(request->id, request);
 
@@ -192,7 +192,7 @@ QChannelsRequest* QChannels::buildRequest(QString channel, QVariant message, Cha
 /**********************************************************************************************************************/
 
 // Get the next available request id.
-quint32 QChannels::getNextID()
+quint32 PChannels::getNextID()
 {
     // In the really obscure case wherewe roll over our 32bit id, we just keep incremeting till we find an id not
     // currently in use. If we have 4,294,967,295 outstanding requests, we've got problem.
@@ -206,9 +206,9 @@ quint32 QChannels::getNextID()
 } // end getNextID()
 
 // Handle an incoming reply.
-void QChannels::handleReply(QVariantMap envelope)
+void PChannels::handleReply(QVariantMap envelope)
 {
-    QChannelsRequest* request = requests.take(envelope["id"].toUInt());
+    PChannelsRequest* request = requests.take(envelope["id"].toUInt());
     request->replyMessage = envelope["contents"].toMap();
     request->fireReply();
 
@@ -217,13 +217,13 @@ void QChannels::handleReply(QVariantMap envelope)
 } // end handleReply
 
 // Handle an incomming event.
-void QChannels::handleEvent(QVariantMap envelope)
+void PChannels::handleEvent(QVariantMap envelope)
 {
     emit incommingMessage(envelope["content"].toMap());
 } // end handleEvent
 
 // Connect the TCP and UDP transports to the server.
-void QChannels::connectTransports()
+void PChannels::connectTransports()
 {
     tcpSocket->connectToHost(this->serverAddress, this->tcpPort);
     udpSocket->bind(this->serverAddress, this->udpPort);
@@ -234,7 +234,7 @@ void QChannels::connectTransports()
     msg["cookie"] = this->sessionCookie;
 
     // Setup a request
-    QChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELIABLE);
+    PChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELIABLE);
     connect(udpRequest, SIGNAL(reply(bool)), this, SLOT(handleUDPResponse(bool)));
 
     // Send the udp request
@@ -242,7 +242,7 @@ void QChannels::connectTransports()
 } // end connectTransports
 
 // Wraps the mesage in an envelope for sending
-QVariantMap QChannels::wrapMessage(QString channel, QString type, QVariant message)
+QVariantMap PChannels::wrapMessage(QString channel, QString type, QVariant message)
 {
     QVariantMap envelope;
     envelope["type"] = type;
@@ -256,7 +256,7 @@ QVariantMap QChannels::wrapMessage(QString channel, QString type, QVariant messa
 /* Private Slots                                                                                                      */
 /**********************************************************************************************************************/
 
-void QChannels::sslConnected()
+void PChannels::sslConnected()
 {
     // Store the IP address of the server.
     this->serverAddress = this->sslSocket->peerAddress();
@@ -283,14 +283,14 @@ void QChannels::sslConnected()
     msg["key"] = cipher->key.toBase64();
 
     // Setup a request
-    QChannelsRequest* loginRequest = buildRequest("control", msg, CM_SECURE);
+    PChannelsRequest* loginRequest = buildRequest("control", msg, CM_SECURE);
     connect(loginRequest, SIGNAL(reply(bool)), this, SLOT(handleLoginResponse(bool)));
 
     // Send the login request
     loginRequest->send();
 } // end sslConnected
 
-void QChannels::tcpConnected()
+void PChannels::tcpConnected()
 {
     // Send the TCP login message
     QVariantMap msg;
@@ -298,17 +298,17 @@ void QChannels::tcpConnected()
     msg["cookie"] = this->sessionCookie;
 
     // Setup a request
-    QChannelsRequest* tcpRequest = buildRequest("control", msg, CM_RELIABLE);
+    PChannelsRequest* tcpRequest = buildRequest("control", msg, CM_RELIABLE);
     connect(tcpRequest, SIGNAL(reply(bool)), this, SLOT(handleTCPResponse(bool)));
 
     // Send the tcp request
     tcpRequest->send(false);
 } // end tcpConnected
 
-void QChannels::handleLoginResponse(bool confirmed)
+void PChannels::handleLoginResponse(bool confirmed)
 {
     //TODO: There might be reasons to avoid this... but it was easier, for now.
-    QChannelsRequest* loginReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    PChannelsRequest* loginReq = qobject_cast<PChannelsRequest*>(QObject::sender());
     QVariantMap replyMessage = loginReq->replyMessage;
 
     if(!confirmed)
@@ -328,10 +328,10 @@ void QChannels::handleLoginResponse(bool confirmed)
     } // end if
 } // end handleLoginResponse
 
-void QChannels::handleTCPResponse(bool confirmed)
+void PChannels::handleTCPResponse(bool confirmed)
 {
     //TODO: There might be reasons to avoid this... but it was easier, for now.
-    QChannelsRequest* tcpReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    PChannelsRequest* tcpReq = qobject_cast<PChannelsRequest*>(QObject::sender());
     QVariantMap replyMessage = tcpReq->replyMessage;
 
     if(!confirmed)
@@ -349,10 +349,10 @@ void QChannels::handleTCPResponse(bool confirmed)
     } // end if
 } // end handleTCPResponse
 
-void QChannels::handleUDPResponse(bool confirmed)
+void PChannels::handleUDPResponse(bool confirmed)
 {
     //TODO: There might be reasons to avoid this... but it was easier, for now.
-    QChannelsRequest* udpReq = qobject_cast<QChannelsRequest*>(QObject::sender());
+    PChannelsRequest* udpReq = qobject_cast<PChannelsRequest*>(QObject::sender());
     QVariantMap replyMessage = udpReq->replyMessage;
 
     if(!confirmed)
@@ -370,7 +370,7 @@ void QChannels::handleUDPResponse(bool confirmed)
     } // end if
 } // end handleUDPResponse
 
-void QChannels::handleIncommingMessage(QByteArray data)
+void PChannels::handleIncommingMessage(QByteArray data)
 {
 	QByteArray plainText = data;
 
@@ -396,17 +396,17 @@ void QChannels::handleIncommingMessage(QByteArray data)
     qCritical() << "Received incoming message with unknown type: " << envelope["type"];
 } // end handleIncommingMessage
 
-void QChannels::sslDataReady()
+void PChannels::sslDataReady()
 {
     sslNetstring->addData(sslSocket->readAll());
 } // end sslDataReady
 
-void QChannels::tcpDataReady()
+void PChannels::tcpDataReady()
 {
     tcpNetstring->addData(tcpSocket->readAll());
 } // end tcpDataReady
 
-void QChannels::udpDataReady()
+void PChannels::udpDataReady()
 {
     while (udpSocket->hasPendingDatagrams())
     {
@@ -426,31 +426,31 @@ void QChannels::udpDataReady()
 } // end udpDataReady
 
 
-void QChannels::sslError(QAbstractSocket::SocketError error)
+void PChannels::sslError(QAbstractSocket::SocketError error)
 {
 	qCritical() << "SSL Error: " << sslSocket->errorString();
 } // end sslDebug
 
-void QChannels::tcpError(QAbstractSocket::SocketError error)
+void PChannels::tcpError(QAbstractSocket::SocketError error)
 {
 	qCritical() << "TCP Error: " << tcpSocket->errorString();
 } // end sslDebug
-void QChannels::udpError(QAbstractSocket::SocketError error)
+void PChannels::udpError(QAbstractSocket::SocketError error)
 {
 	qCritical() << "UDP Error: " << udpSocket->errorString();
 } // end sslError
 
-void QChannels::sslDisconnected()
+void PChannels::sslDisconnected()
 {
 	disconnect();
 } // end sslDisconnected
 
-void QChannels::tcpDisconnected()
+void PChannels::tcpDisconnected()
 {
 	disconnect();
 } // end sslDisconnected
 
-void QChannels::udpDisconnected()
+void PChannels::udpDisconnected()
 {
 	disconnect();
 } // end sslDisconnected

@@ -1,35 +1,35 @@
 FIND_PACKAGE(OpenSSL)
 
 # List project files
-set(QCHANNELS_HEADERS
-	qchannels.h
-	qchannels_global.h
-	qchannelsrequest.h
+set(PCHANNELS_HEADERS
+	pchannels.h
+	pchannels_global.h
+	pchannelsrequest.h
 	qnetstring.h
 	aes.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
-set(QCHANNELS_SOURCES
-	qchannels.cpp
-	qchannelsrequest.cpp
+set(PCHANNELS_SOURCES
+	pchannels.cpp
+	pchannelsrequest.cpp
 	qnetstring.cpp
 	aes.cpp
 	)
 
-add_library(QChannels SHARED
-	${QCHANNELS_HEADERS}
-	${QCHANNELS_SOURCES}
+add_library(PChannels SHARED
+	${PCHANNELS_HEADERS}
+	${PCHANNELS_SOURCES}
 	)
 
-set_target_properties(QChannels PROPERTIES COMPILE_FLAGS -fPIC)
-set_target_properties(QChannels PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(PChannels PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(PChannels PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${OPENSSL_INCLUDE_DIR}
 )
 
 # Tell CMake what to link with
-target_link_libraries(QChannels
+target_link_libraries(PChannels
 	Qt5::Core
 	Qt5::Network
 	${OPENSSL_LIBRARIES}
@@ -38,7 +38,7 @@ target_link_libraries(QChannels
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
-	add_custom_command(TARGET QChannels POST_BUILD
+	add_custom_command(TARGET PChannels POST_BUILD
 		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
 		)
 endif(WIN32 AND NOT MINGW)
@@ -50,11 +50,11 @@ endif(MINGW OR UNIX)
 
 
 if(WIN32)
-	install(TARGETS QChannels
+	install(TARGETS PChannels
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 elseif(UNIX)
-	install(TARGETS QChannels
+	install(TARGETS PChannels
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 endif()

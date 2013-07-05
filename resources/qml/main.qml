@@ -23,7 +23,7 @@ Horde3DWindow {
 	function onConnected()
 	{
 		// Send a request for a list of characters.
-		var charReq = networking.buildRequest("control", { type: "getCharacters" }, QChannels.CM_SECURE);
+		var charReq = networking.buildRequest("control", { type: "getCharacters" }, PChannels.CM_SECURE);
 		charReq.reply.connect(onCharListReply);
 		charReq.send();
 
