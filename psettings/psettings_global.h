@@ -1,0 +1,13 @@
+#ifndef PSETTINGS_GLOBAL_H
+#define PSETTINGS_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(PSETTINGS_LIBRARY)
+#  define PSETTINGSSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define PSETTINGSSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // PSETTINGS_GLOBAL_H
+

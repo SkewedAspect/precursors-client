@@ -22,6 +22,14 @@ QChannelsRequest::QChannelsRequest(QChannels* parent, QString channel, QVariant 
     this->mode = mode;
 } // end QChannelsRequest
 
+
+QChannelsRequest::QChannelsRequest() :
+    QObject(), _isOutstanding(true)
+{
+    this->parent = 0;
+} // end QChannelsRequest
+
+
 /**
  * @brief Checks to see if the reply is still outstanding, or if it's been replied to.
  * @return Returns true if this request is still outstanding, or false if it's been replied to. Defaults to true.
