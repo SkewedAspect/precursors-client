@@ -13,7 +13,7 @@
  * @param parent The parent QObject.
  */
 PChannels::PChannels(QObject *parent) :
-	QObject(parent)
+	QObject(parent), logger("networking")
 {
 	// Setup our AES class
 	this->cipher = new AES();
@@ -152,7 +152,7 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 
         default:
 		{
-			qCritical() << "Send with unknown mode: " << envelope << ", " << mode << ", " << encrypted;
+			logger.critical(QString("Send with unknown mode: %1, $2, %3").arg(envelope.toString()).arg(mode).arg(encrypted));
 		} // end default
     }
 } // end send
@@ -323,7 +323,7 @@ void PChannels::handleLoginResponse(bool confirmed)
 
     if(!confirmed)
     {
-        qCritical() << "Server denied login: " << replyMessage["reason"].toString();
+        logger.notice(QString("Server denied login: \"%1\".").arg(replyMessage["reason"].toString()));
         emit disconnected(replyMessage["reason"].toString());
     }
     else
@@ -346,7 +346,7 @@ void PChannels::handleTCPResponse(bool confirmed)
 
     if(!confirmed)
     {
-        qCritical() << "Server denied tcp connection: " << replyMessage["reason"].toString();
+        logger.error(QString("Server denied tcp connection: \"%1\".").arg(replyMessage["reason"].toString()));
         emit disconnected(replyMessage["reason"].toString());
     }
     else
@@ -367,7 +367,7 @@ void PChannels::handleUDPResponse(bool confirmed)
 
     if(!confirmed)
     {
-        qCritical() << "Server denied udp connection: " << replyMessage["reason"].toString();
+        logger.error(QString("Server denied udp connection: \"%1\".").arg(replyMessage["reason"].toString()));
         emit disconnected(replyMessage["reason"].toString());
     }
     else
@@ -403,7 +403,7 @@ void PChannels::handleIncommingMessage(QByteArray data)
 		return;
     } // end if
 
-    qCritical() << "Received incoming message with unknown type: " << envelope["type"];
+    logger.warning(QString("Received incoming message with unknown type: \"%1\".").arg(envelope["type"].toString()));
 } // end handleIncommingMessage
 
 void PChannels::sslDataReady()
@@ -438,16 +438,16 @@ void PChannels::udpDataReady()
 
 void PChannels::sslError(QAbstractSocket::SocketError error)
 {
-	qCritical() << "SSL Error: " << sslSocket->errorString();
+	logger.error(QString("SSL Error: \"%1\".").arg(sslSocket->errorString()));
 } // end sslDebug
 
 void PChannels::tcpError(QAbstractSocket::SocketError error)
 {
-	qCritical() << "TCP Error: " << tcpSocket->errorString();
+	logger.error(QString("TCP Error: \"%1\".").arg(tcpSocket->errorString()));
 } // end sslDebug
 void PChannels::udpError(QAbstractSocket::SocketError error)
 {
-	qCritical() << "UDP Error: " << udpSocket->errorString();
+	logger.error(QString("UDP Error: \"%1\".").arg(udpSocket->errorString()));
 } // end sslError
 
 void PChannels::sslDisconnected()

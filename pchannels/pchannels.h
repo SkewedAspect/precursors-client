@@ -11,6 +11,7 @@
 
 #include "pchannels_global.h"
 #include "aes.h"
+#include "../plogging/plogging.h"
 
 class PChannelsRequest;
 class QNetString;
@@ -81,6 +82,8 @@ private:
     bool _udpConnected;
 
     QString sessionCookie;
+
+	PLogger logger;
 
 signals:
     void error(ErrorType errorType, QString errorMessage);

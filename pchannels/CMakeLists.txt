@@ -33,6 +33,8 @@ target_link_libraries(PChannels
 	Qt5::Core
 	Qt5::Network
 	${OPENSSL_LIBRARIES}
+
+	PLogging
 	)
 
 
