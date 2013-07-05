@@ -1,4 +1,5 @@
-#include <stdarg.h>
+#include <cstdio>
+
 
 #include <QDir>
 #include <QJsonDocument>
@@ -27,7 +28,7 @@ PLogger::PLogger(QString name) :
 
 void PLogger::debug(QString message)
 {
-	qDebug() << buildLogString("DEBUG", message);
+	log("DEBUG", message);
 } // end debug
 
 void PLogger::debug(QString message, QVariantList args)
@@ -42,7 +43,7 @@ void PLogger::debug(QString message, QVariantList args)
 
 void PLogger::info(QString message)
 {
-	qDebug() << buildLogString("INFO", message);
+	log("INFO", message);
 } // end info
 
 void PLogger::info(QString message, QVariantList args)
@@ -57,7 +58,7 @@ void PLogger::info(QString message, QVariantList args)
 
 void PLogger::notice(QString message)
 {
-	qDebug() << buildLogString("NOTICE", message);
+	log("NOTICE", message);
 } // end notice
 
 void PLogger::notice(QString message, QVariantList args)
@@ -82,7 +83,7 @@ void PLogger::notify(QString message, QVariantList args)
 
 void PLogger::warning(QString message)
 {
-	qWarning() << buildLogString("WARNING", message);
+	log("WARNING", message);
 } // end warning
 
 void PLogger::warning(QString message, QVariantList args)
@@ -107,7 +108,7 @@ void PLogger::warn(QString message, QVariantList args)
 
 void PLogger::error(QString message)
 {
-	qCritical() << buildLogString("ERROR", message);
+	log("ERROR", message);
 } // end error
 
 void PLogger::error(QString message, QVariantList args)
@@ -122,7 +123,7 @@ void PLogger::error(QString message, QVariantList args)
 
 void PLogger::critical(QString message)
 {
-	qCritical() << buildLogString("CRITICAL", message);
+	log("CRITICAL", message);
 } // end critical
 
 void PLogger::critical(QString message, QVariantList args)
@@ -137,7 +138,7 @@ void PLogger::critical(QString message, QVariantList args)
 
 void PLogger::fatal(QString message)
 {
-	qFatal(buildLogMessage(buildLogString("FATAL", message)));
+	log("FATAL", message);
 	exit(EXIT_FAILURE);
 } // end fatal
 
@@ -153,14 +154,25 @@ void PLogger::fatal(QString message, QVariantList args)
 
 /**********************************************************************************************************************/
 
-QString PLogger::buildLogString(QString level, QString message)
+QString PLogger::buildString(QString level, QString message)
 {
 	// Formats the log message into the format we want to use.
-	return QString("%1  [%2] %3:  %4").arg((QTime::currentTime().toString("h:mm:ss")).arg(level).arg(this->name).arg(message));
-} // end buildLogString
+	return QString("%1 [%2] %3: %4").arg(QTime::currentTime().toString("h:mm:ss")).arg(level).arg(this->name).arg(message);
+} // end buildString
 
-const char * PLogger::buildLogMessage(QString message)
+void PLogger::log(QString level, QString message)
 {
-	return message.toLatin1().constData();
+	message = buildString(level, message);
+	const char* cMessage = message.toLatin1().constData();
+
+	if(level == "ERROR" || level == "CRITICAL" || level == "FATAL")
+	{
+
+		fprintf(stderr, "%s\n", cMessage);
+	}
+	else
+	{
+		fprintf(stdout, "%s\n", cMessage);
+	} // end if
 } // end buildLogMessage
 

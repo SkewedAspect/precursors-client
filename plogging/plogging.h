@@ -42,8 +42,8 @@ public:
     Q_INVOKABLE void fatal(QString message, QVariantList args);
 
 private:
-	QString buildLogString(QString level, QString message);
-	const char * buildLogMessage(QString message);
+	QString buildString(QString level, QString message);
+	void log(QString level, QString message);
 };
 
 #endif // PLOGGING_H
