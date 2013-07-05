@@ -16,8 +16,8 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 
 	// Setup our settings
-	PSettingsManager settings;
-	PChannels networking;
+	PSettingsManager& settings = PSettingsManager::instance();
+	PChannels& networking = PChannels::instance();
 
 	// Register application fonts
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");

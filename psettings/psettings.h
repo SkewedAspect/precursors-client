@@ -13,6 +13,8 @@ class PSETTINGSSHARED_EXPORT PSettingsManager : public QObject
 public:
     explicit PSettingsManager(QObject *parent = 0);
 
+	static PSettingsManager& instance();
+
     Q_INVOKABLE void reload();
     Q_INVOKABLE void save();
 

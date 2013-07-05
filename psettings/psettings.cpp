@@ -34,6 +34,16 @@ PSettingsManager::PSettingsManager(QObject *parent) :
 	reload();
 } // end PSettingsManager
 
+/**
+ * @brief Get the single instance of the settings manager.
+ * @return Returns the static instance of the settings manager.
+ */
+PSettingsManager& PSettingsManager::instance()
+{
+	static PSettingsManager _instance;
+	return _instance;
+} // end instance
+
 void PSettingsManager::reload()
 {
 	bool updated = false;

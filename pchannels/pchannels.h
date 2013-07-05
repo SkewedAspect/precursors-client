@@ -38,6 +38,8 @@ public:
 
     explicit PChannels(QObject *parent = 0);
 
+	static PChannels& instance();
+
     Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
     void disconnect();
 

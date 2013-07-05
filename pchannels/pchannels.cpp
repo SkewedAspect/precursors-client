@@ -52,6 +52,16 @@ PChannels::PChannels(QObject *parent) :
 } // end PChannels
 
 /**
+ * @brief Get the single instance of the networking code.
+ * @return Returns the static instance of the networking code.
+ */
+PChannels& PChannels::instance()
+{
+	static PChannels _instance;
+	return _instance;
+} // end instance
+
+/**
  * @brief Connects to sever, on the given port.
  * @param serverHostName A string, representing the hostname of the server.
  * @param port The port to connect to the server on. (Note: this should be the ssl port.)
