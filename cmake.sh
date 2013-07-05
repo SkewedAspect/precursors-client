@@ -1,5 +1,18 @@
 #!/bin/bash
 
+case "$(uname)" in
+	Darwin)
+		SED_EXT_RE_OPT=-E
+		;;
+	Linux)
+		SED_EXT_RE_OPT=-r
+		;;
+	*)
+		echo "Unrecognized platform \"$(uname)\"!"
+		exit 1
+		;;
+esac
+
 function find_all_qmake5()
 {
 	# Returns as soon as it successfully finds a matching qmake executable.
@@ -8,7 +21,7 @@ function find_all_qmake5()
 
 		if [ $? -eq 0 ]; then
 			# Check Qt version
-			"$qmakePath" -version | sed 's@^Using Qt version \(5\.[0-9]\+\.[0-9]\+\) in .*@\1:'"$qmakePath"'@p;d'
+			"$qmakePath" -version | sed $SED_EXT_RE_OPT 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
 		fi
 	done
 
@@ -16,14 +29,14 @@ function find_all_qmake5()
 	for qmakePath in "$(dirname $0)/../qt5/qtbase/bin/qmake" "$(dirname $0)/../../other/qt5/qtbase/bin/qmake"; do
 		if [ -x "$qmakePath" ]; then
 			# Check Qt version
-			"$qmakePath" -version | sed 's@^Using Qt version \(5\.[0-9]\+\.[0-9]\+\) in .*@\1:'"$qmakePath"'@p;d'
+			"$qmakePath" -version | sed $SED_EXT_RE_OPT 's@^Using Qt version (5\.[0-9]+\.[0-9]+) in .*@\1:'"$qmakePath"'@p;d'
 		fi
 	done
 }
 
 if [ -z "$QMAKE" ]; then
 	# Find all Qt 5.x versions of qmake, sort by Qt version (descending), and print the corresponding path.
-	QMAKE=$(find_all_qmake5 | sort -Vr | head -n 1 | cut -d ':' -f 2)
+	QMAKE=$(find_all_qmake5 | sort -nrt . -k 1,1 -k 2,2 -k 3,3 | head -n 1 | cut -d ':' -f 2)
 fi
 
 if [ ! -x "$QMAKE" ]; then
