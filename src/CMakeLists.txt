@@ -17,6 +17,7 @@ set(CLIENT_SOURCES
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
 	${Horde3D_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIR}
 	)
 
 add_executable(PrecursorsClient WIN32

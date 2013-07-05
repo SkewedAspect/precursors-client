@@ -13,7 +13,12 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleTextureNode>
 
-#include <gl.h>
+#ifdef __APPLE__
+	// Because Apple loves being a special snowflake?
+#	include <OpenGL/gl.h>
+#else
+#	include <GL/gl.h>
+#endif
 
 
 static const bool USE_SEPARATE_CONTEXT = false;
