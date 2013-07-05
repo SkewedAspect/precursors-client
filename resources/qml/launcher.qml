@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 
 import Precursors.Networking 1.0
-import Precursors.Settings 1.0
 
 ApplicationWindow {
 	id: launcherWindow
@@ -22,8 +21,33 @@ ApplicationWindow {
 	maximumHeight: minimumHeight
 	maximumWidth: (mainLayout.implicitWidth + 2 * margin) + 80
 
-	// Make the window show itself.
-    Component.onCompleted: launcherWindow.show();
+	//-------------------------------------------------------------------------
+	// Signal Handlers
+	//-------------------------------------------------------------------------
+
+	Component.onCompleted: {
+		// Make the window show itself.
+		launcherWindow.show();
+
+		// Handle the networking connected message
+		networking.connected.connect(function onConnected()
+		{
+			mainWindow.show();
+			launcherWindow.hide();
+			settings.set('lastUser', username.text);
+			settings.save();
+		}); // end connect handler
+
+		// Handle the networking disconnected message
+		networking.disconnected.connect(function onDisconnected()
+		{
+			mainWindow.hide();
+			launcherWindow.show();
+			console.log("Disconnected.");
+		}); // end disconnected handler
+	} // end onCompleted
+
+	//-------------------------------------------------------------------------
 
 	Loader {
 		id: mainWindowLoader
@@ -71,7 +95,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
 					font.family: "Titillium Web";
 
-					text: settingsMan.get('lastUser', "");
+					text: settings.get('lastUser', "");
 				} // end Textfield
 
                 TextField {
@@ -102,7 +126,7 @@ ApplicationWindow {
 					font.family: "Titillium Web";
 
 					text: {
-						var serverText = settingsMan.get("server", "localhost") + ":" + settingsMan.get("port", "6006");
+						var serverText = settings.get("server", "localhost") + ":" + settings.get("port", "6006");
 						if(serverText != "localhost:6006")
 						{
 							return serverText;
@@ -127,10 +151,10 @@ ApplicationWindow {
 						var svrAddress = parts[0] || "localhost";
 						var svrPort = parseInt(parts[1]) || 6006;
 
-						settingsMan.set('server', svrAddress);
-						settingsMan.set('port', svrPort);
+						settings.set('server', svrAddress);
+						settings.set('port', svrPort);
 
-						settingsMan.save();
+						settings.save();
 
 						// Connect to the server
 						networking.connectToServer(svrAddress, svrPort, username.text, password.text);
@@ -143,27 +167,4 @@ ApplicationWindow {
             } // end RowLayout
         } // end GroupBox
     } // end ColumnLayout
-
-	//-------------------------------------------------------------------------
-	// The Networking stack
-	//-------------------------------------------------------------------------
-
-	QChannels {
-		id: networking
-
-		onConnected: {
-			mainWindow.show();
-			launcherWindow.hide();
-			settingsMan.set('lastUser', username.text);
-			settingsMan.save();
-		} // end onConnected
-
-		onDisconnected: {
-			mainWindow.hide();
-			launcherWindow.show();
-			console.log("Disconnected.");
-		} // end onDisconnected
-	} // end QChannels
-
-	//-------------------------------------------------------------------------
 } // end ApplicationWindow
