@@ -14,7 +14,7 @@ Horde3DWindow {
 
 	width: 1024; height: 768
 
-    color: "black"
+	color: "black"
 
 	Component.onCompleted: {
 		networking.connected.connect(onConnected);
@@ -39,6 +39,59 @@ Horde3DWindow {
 		} // end onCharListReply
 	} // end onConnected
 
+	GridLayout {
+		id: cameraControlsLayout
+		columns: 2
+		flow: GridLayout.LeftToRight
+		anchors.top: parent.top
+		anchors.left: parent.left
+
+		Button {
+			Layout.fillWidth: true
+			text: "+"
+			onClicked: {
+				mainWindow.camera.zoom += 1;
+			} // end onClicked
+		} // end Button
+		Button {
+			Layout.fillWidth: true
+			text: "-"
+			onClicked: {
+				mainWindow.camera.zoom -= 1;
+			} // end onClicked
+		} // end Button
+
+		Button {
+			Layout.fillWidth: true
+			text: "<-"
+			onClicked: {
+				mainWindow.camera.yaw += 1;
+			} // end onClicked
+		} // end Button
+		Button {
+			Layout.fillWidth: true
+			text: "->"
+			onClicked: {
+				mainWindow.camera.yaw -= 1;
+			} // end onClicked
+		} // end Button
+
+		Button {
+			Layout.fillWidth: true
+			text: "/\\"
+			onClicked: {
+				mainWindow.camera.pitch += 1;
+			} // end onClicked
+		} // end Button
+		Button {
+			Layout.fillWidth: true
+			text: "\\/"
+			onClicked: {
+				mainWindow.camera.pitch -= 1;
+			} // end onClicked
+		} // end Button
+	} // end GridLayout
+
 	SubWindow {
 		id: charWindow
 		x: (parent.width - width) / 2
@@ -59,13 +112,22 @@ Horde3DWindow {
 				focus: true
 				height: 80
 				Layout.fillWidth: true
-				model : ListModel { id: charList }
+				model: ListModel { id: charList }
 				delegate: GroupBox {
 					anchors.left: parent.left
 					anchors.right: parent.right
 
 					Text {
-						text: first_name + " " + middle_name + " " + last_name
+						text: {
+							try
+							{
+								return first_name + " " + middle_name + " " + last_name;
+							}
+							catch(e)
+							{
+								return first_name + " " + last_name;
+							}
+						}
 						font.family: "Titillium Web";
 						color: "white";
 					}
