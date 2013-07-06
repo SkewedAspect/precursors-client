@@ -94,6 +94,39 @@ void Horde3DWindow::printHordeMessages()
 	} // end while
 } // end printHordeMessages
 
+void Horde3DWindow::saveQtState()
+{
+	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	glShadeModel(GL_FLAT);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+} // end saveQtState
+
+void Horde3DWindow::restoreQtState()
+{
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	glPopAttrib();
+	glPopClientAttrib();
+} // end restoreQtState
+
 void Horde3DWindow::restoreH3DState()
 {
 	if(USE_SEPARATE_CONTEXT)
@@ -169,6 +202,8 @@ void Horde3DWindow::timerEvent(QTimerEvent* event)
 
 void Horde3DWindow::onBeforeRendering()
 {
+	saveQtState();
+
 	if(!m_initialized)
 	{
 		init();
@@ -201,6 +236,8 @@ void Horde3DWindow::onBeforeRendering()
 	renderHorde();
 
 	printHordeMessages();
+
+	restoreQtState();
 } // end onBeforeRendering
 
 void Horde3DWindow::onInitFinished()
