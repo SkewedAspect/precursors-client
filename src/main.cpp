@@ -4,6 +4,7 @@
 #include <QtQml/QQmlContext>
 
 #include "preutil/preutil.h"
+#include "plogging/plogging.h"
 #include "pchannels/pchannels.h"
 #include "pchannels/pchannelsrequest.h"
 #include "psettings/psettings.h"
@@ -14,11 +15,15 @@
 
 int main(int argc, char **argv)
 {
+	PLogger logger("app");
+
 	QApplication app(argc, argv);
 	app.setApplicationName("Precursors QML Client");
 	app.setApplicationVersion("0.5.0-alpha1");
 	app.setOrganizationDomain("skewedaspect.com");
 	app.setOrganizationName("Skewed Aspect");
+
+	logger.info("Starting " + QString("%1 v%2").arg(app.applicationName()).arg(app.applicationVersion()));
 
 	// Setup our settings
 	PSettingsManager& settings = PSettingsManager::instance();
