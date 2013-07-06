@@ -26,9 +26,9 @@ public:
     void setPitch(qreal p);
     void setZoom(qreal z);
 
-private:
     void updateRotation();
 
+private:
     H3DNode m_camera;
 
     qreal m_yaw;
