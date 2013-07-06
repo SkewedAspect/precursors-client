@@ -33,6 +33,8 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		m_qtContext(NULL),
 		m_h3dContext(NULL)
 {
+	lastFrameStart.start();
+
 	connect(this, SIGNAL(beforeRendering()), this, SLOT(onBeforeRendering()), Qt::DirectConnection);
 	connect(this, SIGNAL(initFinished()), this, SLOT(onInitFinished()), Qt::QueuedConnection);
 } // end Horde3DWindow
@@ -194,9 +196,14 @@ void Horde3DWindow::timerEvent(QTimerEvent* event)
 
 void Horde3DWindow::onBeforeRendering()
 {
-	lastFPS = 1000.0 / lastFrameStart.elapsed();
+	float fps = 1000.0 / lastFrameStart.elapsed();
 	lastFrameStart.restart();
-	emit fpsChanged(lastFPS);
+
+	if(fps != std::numeric_limits<float>::infinity())
+	{
+		lastFPS = fps;
+		emit fpsChanged(lastFPS);
+	} // end if
 
 	saveQtState();
 
@@ -304,6 +311,4 @@ void Horde3DWindow::init()
 
 	m_initialized = true;
 	emit initFinished();
-
-	lastFrameStart.start();
 } // end init
