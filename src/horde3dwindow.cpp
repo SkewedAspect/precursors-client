@@ -133,10 +133,6 @@ void Horde3DWindow::restoreH3DState()
 	{
 		m_qtContext->doneCurrent();
 		m_h3dContext->makeCurrent(this);
-	}
-	else
-	{
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
 	} // end if
 
 	QOpenGLFunctions glFunctions(QOpenGLContext::currentContext());
@@ -159,10 +155,6 @@ void Horde3DWindow::saveH3DState()
 	{
 		m_h3dContext->doneCurrent();
 		m_qtContext->makeCurrent(this);
-	}
-	else
-	{
-		glPopAttrib();
 	} // end if
 } // end saveH3DState
 
