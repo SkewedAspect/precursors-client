@@ -39,6 +39,27 @@ Horde3DWindow {
 		} // end onCharListReply
 	} // end onConnected
 
+	function onFPSChanged() {
+		onFPSChanged.fpsWindow = onFPSChanged.fpsWindow || [];
+		onFPSChanged.fpsSum = onFPSChanged.fpsSum || 0;
+
+		onFPSChanged.fpsSum += mainWindow.fps;
+		onFPSChanged.fpsWindow.push(mainWindow.fps);
+
+		if(onFPSChanged.fpsWindow.length > 100)
+		{
+			onFPSChanged.fpsSum -= onFPSChanged.fpsWindow.shift();
+		}
+
+		var fps = (onFPSChanged.fpsSum / onFPSChanged.fpsWindow.length).toFixed(1);
+		while(fps.length < 6)
+		{
+			fps = ' ' + fps;
+		}
+		fpsText.text = "FPS: " + fps;
+	} // end onFPSChanged
+	onFpsChanged: onFPSChanged()
+
 	GridLayout {
 		id: cameraControlsLayout
 		columns: 2
@@ -91,6 +112,17 @@ Horde3DWindow {
 			} // end onClicked
 		} // end Button
 	} // end GridLayout
+
+	Text {
+		id: fpsText
+		anchors.top: parent.top
+		anchors.right: parent.right
+
+		color: "white"
+		font.family: "monospace"
+		font.pointSize: 24
+		font.weight: Font.DemiBold
+	}
 
 	SubWindow {
 		id: charWindow

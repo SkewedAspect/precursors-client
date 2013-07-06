@@ -194,6 +194,10 @@ void Horde3DWindow::timerEvent(QTimerEvent* event)
 
 void Horde3DWindow::onBeforeRendering()
 {
+	lastFPS = 1000.0 / lastFrameStart.elapsed();
+	lastFrameStart.restart();
+	emit fpsChanged(lastFPS);
+
 	saveQtState();
 
 	if(!m_initialized)
@@ -300,4 +304,6 @@ void Horde3DWindow::init()
 
 	m_initialized = true;
 	emit initFinished();
+
+	lastFrameStart.start();
 } // end init
