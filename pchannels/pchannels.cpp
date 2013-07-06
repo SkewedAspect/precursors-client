@@ -1,4 +1,7 @@
+#include <QCoreApplication>
 #include <QJsonDocument>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include "pchannels.h"
 #include "pchannelsrequest.h"
@@ -271,12 +274,24 @@ void PChannels::sslConnected()
     // Store the IP address of the server.
     this->serverAddress = this->sslSocket->peerAddress();
 
-    // Buid our version list
+	// Get our version from the application
+	QString versionString = QCoreApplication::instance()->applicationVersion();
+	QRegularExpression versionRe = QRegularExpression("(?<major>\\d)\\.(?<minor>\\d)\\.(?<micro>\\d)(?:-(?<tag>\\w+))?(?: (?<revision>.*))?");
+	QRegularExpressionMatch matches = versionRe.match(versionString);
     QList<QVariant> version;
-    version.append(0);						// Major
-    version.append(5);						// Minor
-    version.append(0);						// Micro
-    version.append("Client PreAlpha 1");	// Release name
+
+	if(matches.hasMatch())
+	{
+		version.append(matches.captured("major").toInt());
+		version.append(matches.captured("minor").toInt());
+		version.append(matches.captured("micro").toInt());
+		version.append(matches.captured("tag"));
+	}
+	else
+	{
+		logger.warning("Failed to parse application version number.");
+		version << 0 << 0 << 0 << "unknown_version";
+	} // end if
 
     // Build the login message
     QVariantMap msg;
@@ -284,9 +299,8 @@ void PChannels::sslConnected()
     msg["user"] = this->username;
     msg["password"] = this->pwdHash;
 
-    //TODO: We should get this information somehow. Perhaps from a header?
     msg["version"] = version;
-    msg["clientName"] = "Official Precursors Client";
+    msg["clientName"] = QCoreApplication::instance()->applicationName();
 
     // Send our AES key/iv
     msg["vector"] = cipher->iv.toBase64();

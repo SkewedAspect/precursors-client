@@ -14,8 +14,8 @@
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
-	app.setApplicationName("RFI: Precursors Client");
-	app.setApplicationVersion("0.5.0 QML Edition");
+	app.setApplicationName("Precursors QML Client");
+	app.setApplicationVersion("0.5.0-alpha1");
 	app.setOrganizationDomain("skewedaspect.com");
 	app.setOrganizationName("Skewed Aspect");
 
