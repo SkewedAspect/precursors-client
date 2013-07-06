@@ -1,4 +1,4 @@
-#include <QtWidgets/QApplication>
+#include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtGui/QFontDatabase>
 #include <QtQml/QQmlContext>
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
 	PLogger logger("app");
 
-	QApplication app(argc, argv);
+	QGuiApplication app(argc, argv);
 	app.setApplicationName("Precursors QML Client");
 	app.setApplicationVersion("0.5.0-alpha1");
 	app.setOrganizationDomain("skewedaspect.com");
