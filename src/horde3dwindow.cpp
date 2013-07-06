@@ -24,7 +24,7 @@
 static const bool USE_SEPARATE_CONTEXT = false;
 
 
-Horde3DWindow::Horde3DWindow(QWindow *parent) :
+Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		QQuickWindow(parent),
 		m_samples(0),
 		m_initialized(false),
@@ -151,12 +151,7 @@ void Horde3DWindow::updateView()
 		// Set virtual camera parameters
 		float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
 		h3dSetupCameraView(m_camera, 45.0f, aspectRatio, 0.1f, 1000.0f);
-		h3dSetNodeTransform(m_camera,
-				0, 40, -40,
-				//-40, 40, -70,
-				23, -166, 0,
-				1, 1, 1
-				);
+		m_cameraObject->updateRotation();
 
 		H3DRes cameraPipeRes = h3dGetNodeParamI(m_camera, H3DCamera::PipeResI);
 		h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
@@ -165,8 +160,10 @@ void Horde3DWindow::updateView()
 	} // end if
 } // end updateView
 
-void Horde3DWindow::timerEvent(QTimerEvent *)
+void Horde3DWindow::timerEvent(QTimerEvent* event)
 {
+	Q_UNUSED(event);
+
 	update();
 } // end timerEvent
 
@@ -236,10 +233,11 @@ void Horde3DWindow::init()
 
 	H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
 	H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
-	H3DRes knightAnim1Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_order.anim", 0 );
-	H3DRes knightAnim2Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_attack.anim", 0 );
+	H3DRes knightAnim1Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_order.anim", 0);
+	H3DRes knightAnim2Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_attack.anim", 0);
+	H3DRes ares = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
 
-	h3dutLoadResourcesFromDisk("Content");
+	h3dutLoadResourcesFromDisk("content");
 
 	m_knight = h3dAddNodes(H3DRootNode, knight);
 	h3dSetNodeTransform(m_knight,
@@ -250,11 +248,18 @@ void Horde3DWindow::init()
 	h3dSetupModelAnimStage(m_knight, 0, knightAnim1Res, 0, "", false);
 	h3dSetupModelAnimStage(m_knight, 1, knightAnim2Res, 0, "", false);
 
+	m_ares = h3dAddNodes(H3DRootNode, ares);
+	h3dSetNodeTransform(m_ares,
+			0, 0, 0,
+			0, 0, 0,
+			1, 1, 1
+			);
+
 	m_camera = h3dAddCameraNode(H3DRootNode, "cam", pipeline);
 	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);
 
 	m_cameraObject = new CameraNodeObject(m_camera);
-	m_cameraQObject = static_cast<QObject *>(m_cameraObject);
+	m_cameraQObject = static_cast<QObject*>(m_cameraObject);
 
 	setClearBeforeRendering(false);
 

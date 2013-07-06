@@ -15,7 +15,7 @@
 #define USE_BEFORE_RENDER 1
 
 
-Horde3DItem::Horde3DItem(QQuickItem *parent) :
+Horde3DItem::Horde3DItem(QQuickItem* parent) :
 		QQuickItem(parent),
 		m_timerID(0),
 		m_cameraQObject(NULL),
@@ -61,7 +61,7 @@ QSGNode* Horde3DItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* dat
         return 0;
     } // end if
 
-    m_node = static_cast<QSGSimpleTextureNode *>(oldNode);
+    m_node = static_cast<QSGSimpleTextureNode*>(oldNode);
     if(!m_node)
     {
         m_node = new QSGSimpleTextureNode();
@@ -206,12 +206,7 @@ void Horde3DItem::updateFBO()
 	// Set virtual camera parameters
 	float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
 	h3dSetupCameraView(m_camera, 45.0f, aspectRatio, 0.1f, 1000.0f);
-    h3dSetNodeTransform(m_camera,
-			0, 40, -40,
-			//-40, 40, -70,
-			23, -166, 180,
-			1, 1, 1
-			);
+	m_cameraObject->updateRotation();
 
 	H3DRes cameraPipeRes = h3dGetNodeParamI(m_camera, H3DCamera::PipeResI);
 	h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
@@ -241,8 +236,10 @@ void Horde3DItem::setAAEnabled(bool enable)
 	} // end if
 } // end setAAEnabled
 
-void Horde3DItem::timerEvent(QTimerEvent *)
+void Horde3DItem::timerEvent(QTimerEvent* event)
 {
+	Q_UNUSED(event);
+
 	printHordeMessages();
 
 	update();
@@ -268,7 +265,7 @@ void Horde3DItem::init()
 {
 	qDebug() << "Horde3DItem::init()";
 
-    const QOpenGLContext *ctx = window()->openglContext();
+    const QOpenGLContext* ctx = window()->openglContext();
     m_samples = ctx->format().samples();
 
 	if(!h3dInit())
@@ -290,8 +287,9 @@ void Horde3DItem::init()
 
     H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
     H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
-	H3DRes knightAnim1Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_order.anim", 0 );
-	H3DRes knightAnim2Res = h3dAddResource( H3DResTypes::Animation, "animations/knight_attack.anim", 0 );
+	H3DRes knightAnim1Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_order.anim", 0);
+	H3DRes knightAnim2Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_attack.anim", 0);
+	H3DRes ares = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
 
     h3dutLoadResourcesFromDisk("Content");
 
@@ -304,16 +302,24 @@ void Horde3DItem::init()
 	h3dSetupModelAnimStage(m_knight, 0, knightAnim1Res, 0, "", false);
 	h3dSetupModelAnimStage(m_knight, 1, knightAnim2Res, 0, "", false);
 
+	m_ares = h3dAddNodes(H3DRootNode, ares);
+	h3dSetNodeTransform(m_ares,
+			0, 0, 0,
+			0, 0, 0,
+			1, 1, 1
+			);
+
 	m_camera = h3dAddCameraNode(H3DRootNode, "cam", pipeline);
 	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);
 
 	m_cameraObject = new CameraNodeObject(m_camera);
-    m_cameraQObject = static_cast<QObject *>(m_cameraObject);
-
-    m_initialized = true;
+    m_cameraQObject = static_cast<QObject*>(m_cameraObject);
 
 	printHordeMessages();
 	qDebug() << "--------- Initialization Finished ---------";
 
+	m_dirtyFBO = true;
+
+	m_initialized = true;
 	emit initFinished();
 } // end init

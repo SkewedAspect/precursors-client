@@ -21,13 +21,13 @@ class Horde3DItem : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject *camera READ camera)
+    Q_PROPERTY(QObject* camera READ camera)
 
 public:
-    Horde3DItem(QQuickItem *parent = 0);
+    Horde3DItem(QQuickItem* parent = 0);
     ~Horde3DItem();
 
-    QObject *camera() const { return m_cameraQObject; }
+    QObject* camera() const { return m_cameraQObject; }
 
     void setAAEnabled(bool enable);
 
@@ -50,7 +50,7 @@ protected:
 
 	virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
 
-    virtual void timerEvent(QTimerEvent *);
+    virtual void timerEvent(QTimerEvent* event);
 
 private:
 	void printHordeMessages();
@@ -75,13 +75,12 @@ private:
     QSize m_size;
 	float m_animTime;
 
-	bool m_firstRun;
-	bool m_valid;
 	Horde3DItemAnimation m_animation;
 	H3DNode m_knight;
+	H3DNode m_ares;
 	H3DNode m_camera;
 
-    CameraNodeObject *m_cameraObject;
+    CameraNodeObject* m_cameraObject;
 
     bool m_initialized;
     bool m_dirtyFBO;

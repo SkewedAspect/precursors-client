@@ -18,13 +18,13 @@ class Horde3DWindow : public QQuickWindow
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject *camera READ camera)
+    Q_PROPERTY(QObject* camera READ camera)
 
 public:
-    Horde3DWindow(QWindow *parent = 0);
+    Horde3DWindow(QWindow* parent = 0);
     ~Horde3DWindow();
 
-    QObject *camera() const { return m_cameraQObject; }
+    QObject* camera() const { return m_cameraQObject; }
 
     void restoreH3DState();
     void saveH3DState();
@@ -39,7 +39,7 @@ protected slots:
 protected:
 	virtual void resizeEvent(QResizeEvent* event);
 
-    virtual void timerEvent(QTimerEvent *);
+    virtual void timerEvent(QTimerEvent* event);
 
 private:
     void updateView();
@@ -59,10 +59,11 @@ private:
 	float m_animTime;
 
 	H3DNode m_knight;
+	H3DNode m_ares;
 	H3DNode m_camera;
 
-    CameraNodeObject *m_cameraObject;
-    QObject *m_cameraQObject;
+    CameraNodeObject* m_cameraObject;
+    QObject* m_cameraQObject;
 
     bool m_initialized;
     bool m_dirtyView;
