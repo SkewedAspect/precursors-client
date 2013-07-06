@@ -102,18 +102,22 @@ Horde3DWindow {
 		title: "Choose a Character"
 		style: SubWindowStyle { }
 
-		ColumnLayout {
-			id: charWinLayout
-			anchors.fill: parent
-			anchors.margins: margin
+		Component {
+			id: characterItem
 
-			ListView {
-				clip: true
-				focus: true
-				height: 80
-				Layout.fillWidth: true
-				model: ListModel { id: charList }
-				delegate: GroupBox {
+			MouseArea {
+				id: wrapper
+				anchors.left: parent.left
+				anchors.right: parent.right
+				//anchors.margins: 4
+				height: group.height
+
+				onClicked: {
+					wrapper.ListView.view.currentIndex = index;
+				}
+
+				GroupBox {
+					id: group
 					anchors.left: parent.left
 					anchors.right: parent.right
 
@@ -132,6 +136,21 @@ Horde3DWindow {
 						color: "white";
 					}
 				}
+			}
+		}
+
+		ColumnLayout {
+			id: charWinLayout
+			anchors.fill: parent
+			anchors.margins: margin
+
+			ListView {
+				clip: true
+				height: 80
+				Layout.fillWidth: true
+
+				model: ListModel { id: charList }
+				delegate: characterItem
 				highlight: Rectangle { color: "orange"; radius: 5 }
 			}
 
