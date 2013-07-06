@@ -25,6 +25,7 @@ set_target_properties(PChannels PROPERTIES COMPILE_FLAGS -fPIC)
 set_target_properties(PChannels PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}/..
 	${OPENSSL_INCLUDE_DIR}
 )
 
@@ -35,6 +36,7 @@ target_link_libraries(PChannels
 	${OPENSSL_LIBRARIES}
 
 	PLogging
+	PreUtil
 	)
 
 

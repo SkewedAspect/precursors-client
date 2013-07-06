@@ -42,9 +42,10 @@ target_link_libraries(PrecursorsClient
 
 	python2.7
 
+	PLogging
+	PreUtil
 	PChannels
 	PSettings
-	PLogging
 	)
 
 

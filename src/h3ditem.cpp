@@ -1,4 +1,4 @@
-#include "../config.h"
+#include "config.h"
 #include "h3ditem.h"
 #include "cameranodeobject.h"
 

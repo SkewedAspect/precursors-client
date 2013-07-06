@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 
+import Precursors 1.0
 import Precursors.Networking 1.0
 
 ApplicationWindow {

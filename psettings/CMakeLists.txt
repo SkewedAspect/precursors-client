@@ -16,6 +16,10 @@ add_library(PSettings SHARED
 set_target_properties(PSettings PROPERTIES COMPILE_FLAGS -fPIC)
 set_target_properties(PSettings PROPERTIES DEBUG_POSTFIX _d)
 
+include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}/..
+)
+
 # Tell CMake what to link with
 target_link_libraries(PSettings
 	Qt5::Core

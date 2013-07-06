@@ -3,6 +3,7 @@
 #include <QtGui/QFontDatabase>
 #include <QtQml/QQmlContext>
 
+#include "preutil/preutil.h"
 #include "pchannels/pchannels.h"
 #include "pchannels/pchannelsrequest.h"
 #include "psettings/psettings.h"
@@ -22,10 +23,14 @@ int main(int argc, char **argv)
 	// Setup our settings
 	PSettingsManager& settings = PSettingsManager::instance();
 	PChannels& networking = PChannels::instance();
+	PreUtil& utils = PreUtil::instance();
 
 	// Register application fonts
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
 	QFontDatabase::addApplicationFont("resources/fonts/titillium.ttf");
+
+	// Register the networking code with QML
+	qmlRegisterType<PChannels>("Precursors", 1, 0, "PreUtil");
 
 	// Register the networking code with QML
 	qmlRegisterType<PChannels>("Precursors.Networking", 1, 0, "PChannels");
@@ -41,6 +46,7 @@ int main(int argc, char **argv)
 	// Put our settings on the root context
 	engine.rootContext()->setContextProperty("settings", &settings);
 	engine.rootContext()->setContextProperty("networking", &networking);
+	engine.rootContext()->setContextProperty("utils", &utils);
 
 	// load our main qml file
 	engine.load("resources/qml/launcher.qml");

@@ -5,7 +5,7 @@
 #include <QVariant>
 
 #include "psettings_global.h"
-#include "../plogging/plogging.h"
+#include "plogging/plogging.h"
 
 class PSETTINGSSHARED_EXPORT PSettingsManager : public QObject
 {

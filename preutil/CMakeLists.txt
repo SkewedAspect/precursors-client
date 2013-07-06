@@ -1,33 +1,36 @@
 # List project files
-set(PLOGGING_HEADERS
-	plogging.h
-	plogging_global.h
+set(PREUTIL_HEADERS
+	preutil.h
+	preutil_global.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
-set(PLOGGING_SOURCES
-	plogging.cpp
+set(PREUTIL_SOURCES
+	preutil.cpp
 	)
 
-add_library(PLogging SHARED
-	${PLOGGING_HEADERS}
-	${PLOGGING_SOURCES}
+add_library(PreUtil SHARED
+	${PREUTIL_HEADERS}
+	${PREUTIL_SOURCES}
 	)
 
-set_target_properties(PLogging PROPERTIES COMPILE_FLAGS -fPIC)
-set_target_properties(PLogging PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(PreUtil PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(PreUtil PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
 # Tell CMake what to link with
-target_link_libraries(PLogging
+target_link_libraries(PreUtil
 	Qt5::Core
+	Qt5::Network
+
+	PLogging
 	)
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
-	add_custom_command(TARGET PLogging POST_BUILD
+	add_custom_command(TARGET PreUtil POST_BUILD
 		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
 		)
 endif(WIN32 AND NOT MINGW)
@@ -39,11 +42,11 @@ endif(MINGW OR UNIX)
 
 
 if(WIN32)
-	install(TARGETS PLogging
+	install(TARGETS PreUtil
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 elseif(UNIX)
-	install(TARGETS PLogging
+	install(TARGETS PreUtil
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 endif()

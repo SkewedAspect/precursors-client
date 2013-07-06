@@ -64,7 +64,8 @@ configure_file(
 	)
 
 
+ADD_SUBDIRECTORY(plogging plogging)
+ADD_SUBDIRECTORY(preutil preutil)
 ADD_SUBDIRECTORY(psettings psettings)
 ADD_SUBDIRECTORY(pchannels pchannels)
-ADD_SUBDIRECTORY(plogging plogging)
 ADD_SUBDIRECTORY(src src)

@@ -11,7 +11,7 @@
 
 #include "pchannels_global.h"
 #include "aes.h"
-#include "../plogging/plogging.h"
+#include "plogging/plogging.h"
 
 class PChannelsRequest;
 class QNetString;

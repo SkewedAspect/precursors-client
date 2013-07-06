@@ -1,4 +1,4 @@
-#include "../config.h"
+#include "config.h"
 #include "horde3dwindow.h"
 #include "cameranodeobject.h"
 

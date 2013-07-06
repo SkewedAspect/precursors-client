@@ -3,6 +3,8 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 
+#include "preutil/preutil.h"
+
 #include "pchannels.h"
 #include "pchannelsrequest.h"
 #include "qnetstring.h"
@@ -274,24 +276,7 @@ void PChannels::sslConnected()
     // Store the IP address of the server.
     this->serverAddress = this->sslSocket->peerAddress();
 
-	// Get our version from the application
-	QString versionString = QCoreApplication::instance()->applicationVersion();
-	QRegularExpression versionRe = QRegularExpression("(?<major>\\d)\\.(?<minor>\\d)\\.(?<micro>\\d)(?:-(?<tag>\\w+))?(?: (?<revision>.*))?");
-	QRegularExpressionMatch matches = versionRe.match(versionString);
-    QList<QVariant> version;
-
-	if(matches.hasMatch())
-	{
-		version.append(matches.captured("major").toInt());
-		version.append(matches.captured("minor").toInt());
-		version.append(matches.captured("micro").toInt());
-		version.append(matches.captured("tag"));
-	}
-	else
-	{
-		logger.warning("Failed to parse application version number.");
-		version << 0 << 0 << 0 << "unknown_version";
-	} // end if
+    QList<QVariant> version = PreUtil::instance().getClientVersionAsList();
 
     // Build the login message
     QVariantMap msg;
