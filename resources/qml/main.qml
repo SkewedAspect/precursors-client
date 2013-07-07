@@ -100,12 +100,27 @@ Horde3DWindow {
 
 			// On OSX, Qt 5.1 has a bug where event.isAutoRepeat isn't correctly set, and it segfaults when you check
 			// it too much.
-			if(!Qt.platform == "osx" && event.isAutoRepeat)
+			if(Qt.platform != "osx" && event.isAutoRepeat)
 			{
 				factor = 0;
 			}
 
 			switch(event.key) {
+				case Qt.Key_MediaTogglePlayPause:
+					if(Qt.platform == "osx")
+					{
+						pitchVel = 0;
+						headingVel = 0;
+					}
+					break;
+				case Qt.Key_F8:
+					if(Qt.platform != "osx")
+					{
+						pitchVel = 0;
+						headingVel = 0;
+					}
+					break;
+
 				case Qt.Key_Up:
 					pitchVel += factor * pitchSpeed;
 					break;
