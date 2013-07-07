@@ -1,6 +1,7 @@
 # List project files
 set(CLIENT_HEADERS
 	cameranodeobject.h
+	entity.h
 	h3ditem.h
 	h3ditemanim.h
 	horde3dwindow.h
@@ -9,6 +10,7 @@ set(CLIENT_HEADERS
 set(CLIENT_SOURCES
 	main.cpp
 	cameranodeobject.cpp
+	entity.cpp
 	h3ditem.cpp
 	h3ditemanim.cpp
 	horde3dwindow.cpp

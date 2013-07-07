@@ -12,21 +12,23 @@
 class QSGSimpleTextureNode;
 class QOpenGLFramebufferObject;
 
-class CameraNodeObject;
+class Entity;
 
 
 class Horde3DWindow : public QQuickWindow
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QObject* camera READ camera)
+	Q_PROPERTY(Entity* camera READ camera)
+	Q_PROPERTY(Entity* camDolly READ camDolly)
 	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
 
 public:
 	Horde3DWindow(QWindow* parent = 0);
 	~Horde3DWindow();
 
-	QObject* camera() const { return m_cameraQObject; }
+	Entity* camera() const { return _cameraEnt; }
+	Entity* camDolly() const { return _camDollyEnt; }
 	float fps() const { return lastFPS; }
 
 	void saveQtState();
@@ -56,26 +58,27 @@ private:
 	void renderHorde();
 
 	// Qt's OpenGL context
-	QOpenGLContext* m_qtContext;
+	QOpenGLContext* _qtContext;
 	// The context to be used by Horde3D
-	QOpenGLContext* m_h3dContext;
+	QOpenGLContext* _h3dContext;
 
 	QTime lastFrameStart;
 	float lastFPS;
 
-	int m_samples;
-	QSize m_size;
-	float m_animTime;
+	int _samples;
+	QSize _size;
+	float _animTime;
 
-	H3DNode m_knight;
-	H3DNode m_ares;
-	H3DNode m_camera;
+	H3DNode _ares;
 
-	CameraNodeObject* m_cameraObject;
-	QObject* m_cameraQObject;
+	H3DNode _camDolly;
+	Entity* _camDollyEnt;
 
-	bool m_initialized;
-	bool m_dirtyView;
+	H3DNode _camera;
+	Entity* _cameraEnt;
+
+	bool _initialized;
+	bool _dirtyView;
 }; // end Horde3DWindow
 
 #endif // HORDE3DWINDOW_H

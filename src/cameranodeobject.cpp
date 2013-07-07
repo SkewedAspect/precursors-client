@@ -29,7 +29,7 @@ void CameraNodeObject::updateRotation()
 {
 	h3dSetNodeTransform(m_camera,
 			0, 0, 1000 - (100 * m_zoom), // translation
-			m_pitch, 0, m_yaw,        // orientation
+			m_pitch, m_yaw, 0,        // orientation
 			1, 1, 1                   // scale
 			);
 } // end updateRotation

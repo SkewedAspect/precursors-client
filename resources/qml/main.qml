@@ -60,58 +60,25 @@ Horde3DWindow {
 	} // end onFPSChanged
 	onFpsChanged: onFPSChanged()
 
-	GridLayout {
-		id: cameraControlsLayout
-		columns: 2
-		flow: GridLayout.LeftToRight
-		anchors.top: parent.top
-		anchors.left: parent.left
+	MouseArea {
+		id: wrapper
+		anchors.fill: parent
+		function updateRotation(mouse) {
+			var mouseSensitivity = settings.get('mouseSensitivity', 0.1);
+			mainWindow.camDolly.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+			mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
 
-		Button {
-			Layout.fillWidth: true
-			text: "+"
-			onClicked: {
-				mainWindow.camera.zoom += 1;
-			} // end onClicked
-		} // end Button
-		Button {
-			Layout.fillWidth: true
-			text: "-"
-			onClicked: {
-				mainWindow.camera.zoom -= 1;
-			} // end onClicked
-		} // end Button
-
-		Button {
-			Layout.fillWidth: true
-			text: "<-"
-			onClicked: {
-				mainWindow.camera.yaw += 1;
-			} // end onClicked
-		} // end Button
-		Button {
-			Layout.fillWidth: true
-			text: "->"
-			onClicked: {
-				mainWindow.camera.yaw -= 1;
-			} // end onClicked
-		} // end Button
-
-		Button {
-			Layout.fillWidth: true
-			text: "/\\"
-			onClicked: {
-				mainWindow.camera.pitch += 1;
-			} // end onClicked
-		} // end Button
-		Button {
-			Layout.fillWidth: true
-			text: "\\/"
-			onClicked: {
-				mainWindow.camera.pitch -= 1;
-			} // end onClicked
-		} // end Button
-	} // end GridLayout
+			updateRotation.lastX = mouse.x;
+			updateRotation.lastY = mouse.y;
+		}
+		onPressed: {
+			updateRotation.lastX = mouse.x;
+			updateRotation.lastY = mouse.y;
+		}
+		onPositionChanged: {
+			updateRotation(mouse);
+		}
+	}
 
 	Text {
 		id: fpsText
@@ -126,7 +93,8 @@ Horde3DWindow {
 
 	SubWindow {
 		id: charWindow
-		x: (parent.width - width) / 2
+		//x: (parent.width - width) / 2
+		x: 100
 		y: (parent.height - height) / 2
 		width: 300
 		height: charWinLayout.implicitHeight + 4 * margin

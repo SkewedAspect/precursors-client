@@ -9,6 +9,7 @@
 #include "pchannels/pchannelsrequest.h"
 #include "psettings/psettings.h"
 
+#include "entity.h"
 #include "h3ditem.h"
 #include "horde3dwindow.h"
 
@@ -35,14 +36,14 @@ int main(int argc, char **argv)
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
 	QFontDatabase::addApplicationFont("resources/fonts/titillium.ttf");
 
-	// Register the networking code with QML
+	// Register custom types with QML
+	qmlRegisterType<Entity>("Precursors", 1, 0, "Entity");
+
 	qmlRegisterType<PLogger>("Precursors.Logging", 1, 0, "PLogger");
 
-	// Register the networking code with QML
 	qmlRegisterType<PChannels>("Precursors.Networking", 1, 0, "PChannels");
 	qmlRegisterType<PChannelsRequest>("Precursors.Networking", 1, 0, "PChannelsRequest");
 
-	// Register the Horde3D components
 	qmlRegisterType<Horde3DItem>("Horde3D", 1, 0, "Horde3DItem");
 	qmlRegisterType<Horde3DWindow>("Horde3D", 1, 0, "Horde3DWindow");
 

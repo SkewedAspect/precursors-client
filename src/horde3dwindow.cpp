@@ -1,6 +1,6 @@
 #include "config.h"
 #include "horde3dwindow.h"
-#include "cameranodeobject.h"
+#include "entity.h"
 
 #include <Horde3DUtils.h>
 
@@ -26,12 +26,12 @@ static const bool USE_SEPARATE_CONTEXT = false;
 
 Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		QQuickWindow(parent),
-		m_samples(0),
-		m_initialized(false),
-		m_dirtyView(false),
-		m_animTime(0.0f),
-		m_qtContext(NULL),
-		m_h3dContext(NULL)
+		_samples(0),
+		_initialized(false),
+		_dirtyView(false),
+		_animTime(0.0f),
+		_qtContext(NULL),
+		_h3dContext(NULL)
 {
 	lastFrameStart.start();
 
@@ -41,29 +41,29 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 
 Horde3DWindow::~Horde3DWindow()
 {
-	if(m_h3dContext)
+	if(_h3dContext)
 	{
-		m_h3dContext->deleteLater();
-		m_h3dContext = NULL;
+		_h3dContext->deleteLater();
+		_h3dContext = NULL;
 	} // end if
 } // end ~Horde3DWindow
 
 void Horde3DWindow::renderHorde()
 {
-	m_animTime += 0.4f;
+	_animTime += 0.4f;
 
 	// Do animation blending
-	h3dSetModelAnimParams(m_knight, 0, m_animTime, 0.5f);
-	h3dSetModelAnimParams(m_knight, 1, m_animTime, 0.5f);
-	h3dUpdateModel(m_knight, H3DModelUpdateFlags::Animation | H3DModelUpdateFlags::Geometry);
+	//h3dSetModelAnimParams(_knight, 0, _animTime, 0.5f);
+	//h3dSetModelAnimParams(_knight, 1, _animTime, 0.5f);
+	//h3dUpdateModel(_knight, H3DModelUpdateFlags::Animation | H3DModelUpdateFlags::Geometry);
 
-	if(m_camera)
+	if(_camera)
 	{
-		if(!USE_SEPARATE_CONTEXT || (m_qtContext && m_h3dContext))
+		if(!USE_SEPARATE_CONTEXT || (_qtContext && _h3dContext))
 		{
 			restoreH3DState();
 
-			h3dRender(m_camera);
+			h3dRender(_camera);
 			h3dFinalizeFrame();
 
 			saveH3DState();
@@ -77,8 +77,8 @@ void Horde3DWindow::resizeEvent(QResizeEvent* event)
 
 	if(event->size() != event->oldSize())
 	{
-		m_size = event->size() * screen()->devicePixelRatio();
-		m_dirtyView = true;
+		_size = event->size() * screen()->devicePixelRatio();
+		_dirtyView = true;
 	} // end if
 
 	QQuickWindow::resizeEvent(event);
@@ -133,8 +133,8 @@ void Horde3DWindow::restoreH3DState()
 {
 	if(USE_SEPARATE_CONTEXT)
 	{
-		m_qtContext->doneCurrent();
-		m_h3dContext->makeCurrent(this);
+		_qtContext->doneCurrent();
+		_h3dContext->makeCurrent(this);
 	} // end if
 
 	QOpenGLFunctions glFunctions(QOpenGLContext::currentContext());
@@ -155,35 +155,36 @@ void Horde3DWindow::saveH3DState()
 
 	if(USE_SEPARATE_CONTEXT)
 	{
-		m_h3dContext->doneCurrent();
-		m_qtContext->makeCurrent(this);
+		_h3dContext->doneCurrent();
+		_qtContext->makeCurrent(this);
 	} // end if
 } // end saveH3DState
 
 void Horde3DWindow::updateView()
 {
-	if(m_initialized)
+	if(_initialized)
 	{
 		qDebug() << "Horde3DWindow::updateView()";
 
-		int deviceWidth = m_size.width();
-		int deviceHeight = m_size.height();
+		int deviceWidth = _size.width();
+		int deviceHeight = _size.height();
 
 		// Resize viewport
-		h3dSetNodeParamI(m_camera, H3DCamera::ViewportXI, 0);
-		h3dSetNodeParamI(m_camera, H3DCamera::ViewportYI, 0);
-		h3dSetNodeParamI(m_camera, H3DCamera::ViewportWidthI, deviceWidth);
-		h3dSetNodeParamI(m_camera, H3DCamera::ViewportHeightI, deviceHeight);
+		h3dSetNodeParamI(_camera, H3DCamera::ViewportXI, 0);
+		h3dSetNodeParamI(_camera, H3DCamera::ViewportYI, 0);
+		h3dSetNodeParamI(_camera, H3DCamera::ViewportWidthI, deviceWidth);
+		h3dSetNodeParamI(_camera, H3DCamera::ViewportHeightI, deviceHeight);
 
 		// Set virtual camera parameters
 		float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
-		h3dSetupCameraView(m_camera, 45.0f, aspectRatio, 0.1f, 1000.0f);
-		m_cameraObject->updateRotation();
+		h3dSetupCameraView(_camera, 45.0f, aspectRatio, 0.1f, 1000.0f);
+		_camDollyEnt->apply();
+		_cameraEnt->apply();
 
-		H3DRes cameraPipeRes = h3dGetNodeParamI(m_camera, H3DCamera::PipeResI);
+		H3DRes cameraPipeRes = h3dGetNodeParamI(_camera, H3DCamera::PipeResI);
 		h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
 
-		m_dirtyView = false;
+		_dirtyView = false;
 	} // end if
 } // end updateView
 
@@ -207,32 +208,32 @@ void Horde3DWindow::onBeforeRendering()
 
 	saveQtState();
 
-	if(!m_initialized)
+	if(!_initialized)
 	{
 		init();
 	} // end if
 
-	if(m_dirtyView)
+	if(_dirtyView)
 	{
 		updateView();
 	} // end if
 
 	if(USE_SEPARATE_CONTEXT)
 	{
-		if(m_h3dContext && (m_h3dContext->format() != m_qtContext->format()))
+		if(_h3dContext && (_h3dContext->format() != _qtContext->format()))
 		{
-			m_h3dContext->deleteLater();
-			m_h3dContext = NULL;
+			_h3dContext->deleteLater();
+			_h3dContext = NULL;
 		} // end if
 
-		if(!m_h3dContext)
+		if(!_h3dContext)
 		{
 			qDebug() << "Creating new OpenGL context.";
 			// Create a new shared OpenGL context to be used exclusively by Horde3D
-			m_h3dContext = new QOpenGLContext();
-			m_h3dContext->setFormat(requestedFormat());
-			m_h3dContext->setShareContext(m_qtContext);
-			m_h3dContext->create();
+			_h3dContext = new QOpenGLContext();
+			_h3dContext->setFormat(requestedFormat());
+			_h3dContext->setShareContext(_qtContext);
+			_h3dContext->create();
 		} // end if
 	} // end if
 
@@ -252,8 +253,8 @@ void Horde3DWindow::init()
 {
 	qDebug() << "Horde3DWindow::init()";
 
-	m_qtContext = openglContext();
-	m_samples = m_qtContext->format().samples();
+	_qtContext = openglContext();
+	_samples = _qtContext->format().samples();
 
 	if(!h3dInit())
 	{
@@ -266,49 +267,43 @@ void Horde3DWindow::init()
 		qDebug() << "Couldn't set texture anisotropy to" << textureAnisotropy << "!";
 	} // end if
 
-	if(!h3dSetOption(H3DOptions::SampleCount, m_samples))
+	if(!h3dSetOption(H3DOptions::SampleCount, _samples))
 	{
-		qDebug() << "Couldn't set antialiasing samples to" << m_samples << "!";
+		qDebug() << "Couldn't set antialiasing samples to" << _samples << "!";
 	} // end if
 
 	H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
-	H3DRes knight = h3dAddResource(H3DResTypes::SceneGraph, "models/knight/knight.scene.xml", 0);
-	H3DRes knightAnim1Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_order.anim", 0);
-	H3DRes knightAnim2Res = h3dAddResource(H3DResTypes::Animation, "animations/knight_attack.anim", 0);
 	H3DRes ares = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
 
 	h3dutLoadResourcesFromDisk("content");
 
-	m_knight = h3dAddNodes(H3DRootNode, knight);
-	h3dSetNodeTransform(m_knight,
-			0, 0, 0,
-			0, 0, 0,
-			1, 1, 1
-			);
-	h3dSetupModelAnimStage(m_knight, 0, knightAnim1Res, 0, "", false);
-	h3dSetupModelAnimStage(m_knight, 1, knightAnim2Res, 0, "", false);
-
-	m_ares = h3dAddNodes(H3DRootNode, ares);
-	h3dSetNodeTransform(m_ares,
+	_ares = h3dAddNodes(H3DRootNode, ares);
+	h3dSetNodeTransform(_ares,
 			0, 0, 0,
 			0, 0, 0,
 			1, 1, 1
 			);
 
-	m_camera = h3dAddCameraNode(H3DRootNode, "cam", pipeline);
-	h3dSetNodeParamF(m_camera, H3DCamera::FarPlaneF, 0, 100000);
+	_camDolly = h3dAddGroupNode(H3DRootNode, "camera dolly");
+	_camDollyEnt = Entity::getEntity(_camDolly);
 
-	m_cameraObject = new CameraNodeObject(m_camera);
-	m_cameraQObject = static_cast<QObject*>(m_cameraObject);
+	_camera = h3dAddCameraNode(_camDolly, "cam", pipeline);
+	h3dSetNodeParamF(_camera, H3DCamera::FarPlaneF, 0, 100000);
+	h3dSetNodeTransform(_camera,
+			0, 0, 100,
+			0, 0, 0,
+			1, 1, 1
+			);
+	_cameraEnt = Entity::getEntity(_camera);
 
 	setClearBeforeRendering(false);
 
 	printHordeMessages();
 	qDebug() << "--------- Initialization Finished ---------";
 
-	m_size = size() * screen()->devicePixelRatio();
-	m_dirtyView = true;
+	_size = size() * screen()->devicePixelRatio();
+	_dirtyView = true;
 
-	m_initialized = true;
+	_initialized = true;
 	emit initFinished();
 } // end init
