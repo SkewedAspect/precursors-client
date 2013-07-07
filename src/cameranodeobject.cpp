@@ -2,16 +2,16 @@
 
 
 CameraNodeObject::CameraNodeObject(H3DNode cam, QObject *parent) :
-    QObject(parent), m_camera(cam), m_yaw(0), m_pitch(0), m_zoom(3)
+    QObject(parent), m_camera(cam), m_heading(0), m_pitch(0), m_zoom(3)
 {
     updateRotation();
 } // end CameraNodeObject
 
-void CameraNodeObject::setYaw(qreal y)
+void CameraNodeObject::setHeading(qreal y)
 {
-	m_yaw = y;
+	m_heading = y;
 	updateRotation();
-} // end setYaw
+} // end setHeading
 
 void CameraNodeObject::setPitch(qreal p)
 {
@@ -29,7 +29,7 @@ void CameraNodeObject::updateRotation()
 {
 	h3dSetNodeTransform(m_camera,
 			0, 0, 1000 - (100 * m_zoom), // translation
-			m_pitch, m_yaw, 0,        // orientation
-			1, 1, 1                   // scale
+			m_pitch, m_heading, 0,       // orientation
+			1, 1, 1                      // scale
 			);
 } // end updateRotation

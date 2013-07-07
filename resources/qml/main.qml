@@ -85,7 +85,7 @@ Horde3DWindow {
 				}
 				else
 				{
-					mainWindow.avatar.yaw += headingVel;
+					mainWindow.avatar.heading += headingVel;
 					mainWindow.avatar.pitch += pitchVel;
 				}
 			}
@@ -163,9 +163,9 @@ Horde3DWindow {
 				var mouseSensitivity = settings.get('mouseSensitivity', 0.1);
 				if(updateRotation.lastX !== undefined && updateRotation.lastY !== undefined)
 				{
-					mainWindow.camDolly.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+					mainWindow.camDolly.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
 					mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
-					//mainWindow.avatar.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+					//mainWindow.avatar.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
 					//mainWindow.avatar.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
 				} // end if
 

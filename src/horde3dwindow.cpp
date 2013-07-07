@@ -71,7 +71,7 @@ void Horde3DWindow::renderHorde()
 			0, _shipRot, 0,
 			1, 1, 1
 			);
-	_avatarEnt->setYaw(_shipRot);
+	_avatarEnt->setHeading(_shipRot);
 	*/
 
 	Entity::runScheduled();

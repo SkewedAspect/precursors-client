@@ -6,11 +6,12 @@
 
 
 QHash<H3DNode, Entity*> Entity::entities;
-QList<Entity*> Entity::scheduledEntities;
+QList<Entity*> Entity::scheduledOnceEntities;
+QList<Entity*> Entity::scheduledRepeatingEntities;
 
 
 Entity::Entity() :
-    QObject(), logger(PLogManager::getLogger("entity"))
+    QObject(), logger(PLogManager::getLogger("entity")), scheduledOnce(false), scheduledRepeating(false)
 {
 	throw new std::exception;
 } // end Entity
@@ -28,10 +29,10 @@ Entity::Entity(H3DNode node, QObject *parent) :
 	_pos = QVector3D(x, y, z);
 } // end Entity
 
-qreal Entity::yaw() const
+qreal Entity::heading() const
 {
 	return _heading;
-} // end yaw
+} // end heading
 
 qreal Entity::pitch() const
 {
@@ -43,46 +44,66 @@ qreal Entity::roll() const
 	return _roll;
 } // end roll
 
-void Entity::setYaw(qreal heading)
+void Entity::setHeading(qreal heading)
 {
 	_heading = heading;
-	schedule();
-} // end setYaw
+	scheduleOnce();
+} // end setHeading
 
 void Entity::setPitch(qreal pitch)
 {
 	_pitch = pitch;
-	schedule();
+	scheduleOnce();
 } // end setPitch
 
 void Entity::setRoll(qreal roll)
 {
 	_roll = roll;
-	schedule();
+	scheduleOnce();
 } // end setRoll
 
-void Entity::changeYaw(qreal dY)
+void Entity::changeHeading(qreal dY)
 {
 	_heading += dY;
-	schedule();
-} // end changeYaw
+	scheduleOnce();
+} // end changeHeading
 
 void Entity::changePitch(qreal dP)
 {
 	_pitch += dP;
-	schedule();
+	scheduleOnce();
 } // end changePitch
 
 void Entity::changeRoll(qreal dR)
 {
 	_roll += dR;
-	schedule();
+	scheduleOnce();
 } // end changeRoll
 
-void Entity::schedule()
+void Entity::scheduleOnce()
 {
-	scheduledEntities.append(this);
-} // end schedule
+	if(!scheduledOnce && !scheduledRepeating)
+	{
+		scheduledOnceEntities.append(this);
+	} // end if
+
+	scheduledOnce = true;
+} // end scheduleOnce
+
+void Entity::scheduleRepeating()
+{
+	if(!scheduledRepeating)
+	{
+		scheduledRepeatingEntities.append(this);
+
+		scheduledRepeating = true;
+	} // end if
+} // end scheduleRepeating
+
+void Entity::stopRepeating()
+{
+	scheduledRepeatingEntities.removeAll(this);
+} // end scheduleRepeating
 
 void Entity::apply()
 {
@@ -90,14 +111,27 @@ void Entity::apply()
 			_pos.x(), _pos.y(), _pos.z(),
 			_pitch, _heading, _roll,
 			1, 1, 1);
+
+	if(scheduledOnce)
+	{
+		scheduledOnce = false;
+	} // end if
 } // end apply
+
+
+// Static Methods //
 
 void Entity::runScheduled()
 {
-	while(!scheduledEntities.isEmpty())
+	while(!scheduledOnceEntities.isEmpty())
 	{
-		scheduledEntities.takeFirst()->apply();
+		scheduledOnceEntities.takeFirst()->apply();
 	} // end while
+
+	for(int i = 0; i < scheduledRepeatingEntities.size(); i++)
+	{
+		scheduledRepeatingEntities.at(i)->apply();
+	} // end for
 } // end runScheduled
 
 Entity* Entity::getEntity(H3DNode node)
@@ -110,9 +144,9 @@ Entity* Entity::getEntity(H3DNode node)
 	return entities[node];
 } // end getEntity
 
-QQuaternion Entity::eulerToQuat(qreal yaw, qreal pitch, qreal roll)
+QQuaternion Entity::eulerToQuat(qreal heading, qreal pitch, qreal roll)
 {
-    qreal hy = yaw / 2;
+    qreal hy = heading / 2;
     qreal hp = pitch / 2;
     qreal hr = roll / 2;
 
@@ -124,7 +158,7 @@ QQuaternion Entity::eulerToQuat(qreal yaw, qreal pitch, qreal roll)
             );
 } // end eulerToQuat
 
-qreal Entity::matrixToYaw(QMatrix4x4 mat)
+qreal Entity::matrixToHeading(QMatrix4x4 mat)
 {
 	if(mat(1, 2) > 0.9999999998 || mat(1, 2) < -0.9999999998)
 	{
@@ -153,16 +187,16 @@ qreal Entity::matrixToRoll(QMatrix4x4 mat)
 	} // end if
 } // end eulerToQuat
 
-void Entity::matrixToEuler(QMatrix4x4 mat, qreal *yaw, qreal *pitch, qreal *roll)
+void Entity::matrixToEuler(QMatrix4x4 mat, qreal *heading, qreal *pitch, qreal *roll)
 {
 	if(mat(1, 2) > 0.9999999998 || mat(1, 2) < -0.9999999998)
 	{
-		*yaw = atan2(-mat(2, 0), mat(0, 0));
+		*heading = atan2(-mat(2, 0), mat(0, 0));
 		*roll = 0;
 	}
 	else
 	{
-		*yaw = atan2(mat(0, 2), mat(2, 2));
+		*heading = atan2(mat(0, 2), mat(2, 2));
 		*roll = atan2(mat(1, 0), mat(1, 1));
 	} // end if
 
