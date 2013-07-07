@@ -1,5 +1,5 @@
-#include "h3ditemanim.h"
-#include "h3ditem.h"
+#include "horde3ditemanim.h"
+#include "horde3ditem.h"
 
 
 Horde3DItemAnimation::Horde3DItemAnimation(Horde3DItem* parent) :

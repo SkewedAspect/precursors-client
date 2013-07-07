@@ -1,5 +1,5 @@
 #include "config.h"
-#include "h3ditem.h"
+#include "horde3ditem.h"
 #include "cameranodeobject.h"
 
 #include <Horde3DUtils.h>

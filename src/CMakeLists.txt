@@ -2,8 +2,8 @@
 set(CLIENT_HEADERS
 	cameranodeobject.h
 	entity.h
-	h3ditem.h
-	h3ditemanim.h
+	horde3ditem.h
+	horde3ditemanim.h
 	horde3dwindow.h
 	math3d.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
@@ -12,8 +12,8 @@ set(CLIENT_SOURCES
 	main.cpp
 	cameranodeobject.cpp
 	entity.cpp
-	h3ditem.cpp
-	h3ditemanim.cpp
+	horde3ditem.cpp
+	horde3ditemanim.cpp
 	horde3dwindow.cpp
 	math3d.cpp
 	)

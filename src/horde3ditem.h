@@ -1,5 +1,5 @@
-#ifndef H3DITEM_H
-#define H3DITEM_H
+#ifndef HORDE3DITEM_H
+#define HORDE3DITEM_H
 
 #include <QtQuick/QQuickItem>
 #include <QtQuick/QSGGeometry>
@@ -8,7 +8,7 @@
 
 #include <Horde3D.h>
 
-#include "h3ditemanim.h"
+#include "horde3ditemanim.h"
 
 
 class QSGSimpleTextureNode;
@@ -86,4 +86,4 @@ private:
     bool m_dirtyFBO;
 }; // end Horde3DItem
 
-#endif // H3DITEM_H
+#endif // HORDE3DITEM_H

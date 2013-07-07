@@ -6,7 +6,7 @@
 
 #include <Horde3D.h>
 
-#include "h3ditemanim.h"
+#include "horde3ditemanim.h"
 
 
 class QSGSimpleTextureNode;

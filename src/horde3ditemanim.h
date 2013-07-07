@@ -1,5 +1,5 @@
-#ifndef H3DITEMANIM_H
-#define H3DITEMANIM_H
+#ifndef HORDE3DITEMANIM_H
+#define HORDE3DITEMANIM_H
 
 #include <QtCore/QAbstractAnimation>
 
@@ -24,4 +24,4 @@ private:
 	Horde3DItem* m_item;
 }; // end Horde3DItemAnimation
 
-#endif // H3DITEM_H
+#endif // HORDE3DITEM_H

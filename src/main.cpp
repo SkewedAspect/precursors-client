@@ -10,7 +10,7 @@
 #include "psettings/psettings.h"
 
 #include "entity.h"
-#include "h3ditem.h"
+#include "horde3ditem.h"
 #include "horde3dwindow.h"
 
 
