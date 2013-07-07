@@ -8,7 +8,5 @@
 		<Mesh name="#Ares" material="models/ares/Heat_Sink.material.xml" batchStart="1980" batchCount="1878" vertRStart="1781" vertREnd="3642" />
 		<Mesh name="#Ares" material="models/ares/Gunmetal.material.xml" batchStart="3858" batchCount="2592" vertRStart="3643" vertREnd="6234" />
 	</Mesh>
-	<!--Mesh name="Ares" material="models/ares/League_Orange.material.xml" rx="4.07111e-13" ry="90" rz="-2.50448e-06" batchStart="1800" batchCount="180" vertRStart="1609" vertREnd="1780" /-->
 
-	<Light name="light" lightingContext="LIGHTING" shadowContext="SHADOWMAP" radius="1000000000" fov="360" col_R="1.0" col_G="1.0" col_B="1.0" tx="-50" ty="50" tz="100" />
 </Model>

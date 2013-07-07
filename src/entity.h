@@ -34,9 +34,12 @@ public:
 	Q_INVOKABLE void changePitch(qreal dP);
 	Q_INVOKABLE void changeRoll(qreal dR);
 
-    Q_INVOKABLE void apply();
+	Q_INVOKABLE void schedule();
 
 	Q_INVOKABLE static Entity* getEntity(H3DNode node);
+	Q_INVOKABLE static void runScheduled();
+
+    void apply();
 
 	static QQuaternion eulerToQuat(qreal yaw, qreal pitch, qreal roll);
 	static void matrixToEuler(QMatrix4x4 mat, qreal *yaw, qreal *pitch, qreal *roll);
@@ -57,6 +60,7 @@ private:
 	PLogger& logger;
 
 	static QHash<H3DNode, Entity*> entities;
+	static QList<Entity*> scheduledEntities;
 }; // end Entity
 
 #endif // ENTITY_H

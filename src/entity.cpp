@@ -6,6 +6,7 @@
 
 
 QHash<H3DNode, Entity*> Entity::entities;
+QList<Entity*> Entity::scheduledEntities;
 
 
 Entity::Entity() :
@@ -45,38 +46,43 @@ qreal Entity::roll() const
 void Entity::setYaw(qreal heading)
 {
 	_heading = heading;
-	apply();
+	schedule();
 } // end setYaw
 
 void Entity::setPitch(qreal pitch)
 {
 	_pitch = pitch;
-	apply();
+	schedule();
 } // end setPitch
 
 void Entity::setRoll(qreal roll)
 {
 	_roll = roll;
-	apply();
+	schedule();
 } // end setRoll
 
 void Entity::changeYaw(qreal dY)
 {
 	_heading += dY;
-	apply();
+	schedule();
 } // end changeYaw
 
 void Entity::changePitch(qreal dP)
 {
 	_pitch += dP;
-	apply();
+	schedule();
 } // end changePitch
 
 void Entity::changeRoll(qreal dR)
 {
 	_roll += dR;
-	apply();
+	schedule();
 } // end changeRoll
+
+void Entity::schedule()
+{
+	scheduledEntities.append(this);
+} // end schedule
 
 void Entity::apply()
 {
@@ -85,6 +91,14 @@ void Entity::apply()
 			_pitch, _heading, _roll,
 			1, 1, 1);
 } // end apply
+
+void Entity::runScheduled()
+{
+	while(!scheduledEntities.isEmpty())
+	{
+		scheduledEntities.takeFirst()->apply();
+	} // end while
+} // end runScheduled
 
 Entity* Entity::getEntity(H3DNode node)
 {

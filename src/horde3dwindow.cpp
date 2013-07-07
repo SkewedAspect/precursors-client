@@ -29,9 +29,13 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		_samples(0),
 		_initialized(false),
 		_dirtyView(false),
-		_animTime(0.0f),
+		_shipRot(0.0f),
 		_qtContext(NULL),
-		_h3dContext(NULL)
+		_h3dContext(NULL),
+		_avatarEnt(NULL),
+		_sceneEnt(NULL),
+		_camDollyEnt(NULL),
+		_cameraEnt(NULL)
 {
 	lastFrameStart.start();
 
@@ -50,12 +54,27 @@ Horde3DWindow::~Horde3DWindow()
 
 void Horde3DWindow::renderHorde()
 {
-	_animTime += 0.4f;
-
 	// Do animation blending
 	//h3dSetModelAnimParams(_knight, 0, _animTime, 0.5f);
 	//h3dSetModelAnimParams(_knight, 1, _animTime, 0.5f);
 	//h3dUpdateModel(_knight, H3DModelUpdateFlags::Animation | H3DModelUpdateFlags::Geometry);
+
+	/*
+	_shipRot += lastFrameTime / 10.0;
+	while(_shipRot > 360)
+	{
+		_shipRot -= 360;
+	} // end while
+
+	h3dSetNodeTransform(_avatar,
+			0, 0, 0,
+			0, _shipRot, 0,
+			1, 1, 1
+			);
+	_avatarEnt->setYaw(_shipRot);
+	*/
+
+	Entity::runScheduled();
 
 	if(_camera)
 	{
@@ -197,12 +216,13 @@ void Horde3DWindow::timerEvent(QTimerEvent* event)
 
 void Horde3DWindow::onBeforeRendering()
 {
-	float fps = 1000.0 / lastFrameStart.elapsed();
+	float frameTime = lastFrameStart.elapsed();
 	lastFrameStart.restart();
 
-	if(fps != std::numeric_limits<float>::infinity())
+	if(frameTime > 0.0000000000000000001f)
 	{
-		lastFPS = fps;
+		lastFrameTime = frameTime;
+		lastFPS = 1000.0 / lastFrameTime;
 		emit fpsChanged(lastFPS);
 	} // end if
 
@@ -273,16 +293,21 @@ void Horde3DWindow::init()
 	} // end if
 
 	H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, "pipelines/forward.pipeline.xml", 0);
-	H3DRes ares = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
+	H3DRes avatar = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
+	H3DRes scene = h3dAddResource(H3DResTypes::SceneGraph, "scenes/asteroids/asteroids.scene.xml", 0);
 
 	h3dutLoadResourcesFromDisk("content");
 
-	_ares = h3dAddNodes(H3DRootNode, ares);
-	h3dSetNodeTransform(_ares,
+	_avatar = h3dAddNodes(H3DRootNode, avatar);
+	h3dSetNodeTransform(_avatar,
 			0, 0, 0,
 			0, 0, 0,
 			1, 1, 1
 			);
+	_avatarEnt = Entity::getEntity(_avatar);
+
+	_scene = h3dAddNodes(H3DRootNode, scene);
+	_sceneEnt = Entity::getEntity(_scene);
 
 	_camDolly = h3dAddGroupNode(H3DRootNode, "camera dolly");
 	_camDollyEnt = Entity::getEntity(_camDolly);

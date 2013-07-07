@@ -8,13 +8,22 @@ import Precursors.Networking 1.0
 
 import Horde3D 1.0
 
+import "../js/logging.js" as Logging
+
 
 Horde3DWindow {
 	id: mainWindow
 
 	width: 1024; height: 768
-
 	color: "black"
+
+	property var logger: new Logging.Logger("mainWindow")
+
+	property var headingSpeed: 1
+	property var pitchSpeed: 1
+
+	property var headingVel: 0
+	property var pitchVel: 0
 
 	Component.onCompleted: {
 		networking.connected.connect(onConnected);
@@ -60,103 +69,194 @@ Horde3DWindow {
 	} // end onFPSChanged
 	onFpsChanged: onFPSChanged()
 
-	MouseArea {
-		id: wrapper
+	FocusScope {
+		focus: true
 		anchors.fill: parent
-		function updateRotation(mouse) {
-			var mouseSensitivity = settings.get('mouseSensitivity', 0.1);
-			mainWindow.camDolly.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
-			mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
 
-			updateRotation.lastX = mouse.x;
-			updateRotation.lastY = mouse.y;
-		}
-		onPressed: {
-			updateRotation.lastX = mouse.x;
-			updateRotation.lastY = mouse.y;
-		}
-		onPositionChanged: {
-			updateRotation(mouse);
-		}
-	}
-
-	Text {
-		id: fpsText
-		anchors.top: parent.top
-		anchors.right: parent.right
-
-		color: "white"
-		font.family: "monospace"
-		font.pointSize: 24
-		font.weight: Font.DemiBold
-	}
-
-	SubWindow {
-		id: charWindow
-		//x: (parent.width - width) / 2
-		x: 100
-		y: (parent.height - height) / 2
-		width: 300
-		height: charWinLayout.implicitHeight + 4 * margin
-
-		title: "Choose a Character"
-		style: SubWindowStyle { }
-
-		Component {
-			id: characterItem
-
-			MouseArea {
-				id: wrapper
-				anchors.left: parent.left
-				anchors.right: parent.right
-				//anchors.margins: 4
-				height: group.height
-
-				onClicked: {
-					wrapper.ListView.view.currentIndex = index;
+		Timer {
+			id: rotateTimer
+			interval: 16
+			running: false
+			repeat: true
+			onTriggered: {
+				if(headingVel == 0 && pitchVel == 0)
+				{
+					rotateTimer.stop();
 				}
+				else
+				{
+					mainWindow.avatar.yaw += headingVel;
+					mainWindow.avatar.pitch += pitchVel;
+				}
+			}
+		}
 
-				GroupBox {
-					id: group
+		Keys.onPressed: {
+			switch(event.key) {
+				case Qt.Key_Up:
+					pitchVel += pitchSpeed;
+					break;
+				case Qt.Key_Down:
+					pitchVel -= pitchSpeed;
+					break;
+
+				case Qt.Key_Left:
+					headingVel -= headingSpeed;
+					break;
+				case Qt.Key_Right:
+					headingVel += headingSpeed;
+					break;
+
+				default:
+					return;
+			}
+			rotateTimer.start();
+			event.accepted = true;
+		}
+
+		Keys.onReleased: {
+			switch(event.key) {
+				case Qt.Key_Up:
+					pitchVel -= pitchSpeed;
+					break;
+				case Qt.Key_Down:
+					pitchVel += pitchSpeed;
+					break;
+
+				case Qt.Key_Left:
+					headingVel += headingSpeed;
+					break;
+				case Qt.Key_Right:
+					headingVel -= headingSpeed;
+					break;
+
+				default:
+					return;
+			}
+			rotateTimer.start();
+			event.accepted = true;
+		}
+
+		MouseArea {
+			id: wrapper
+			anchors.fill: parent
+
+			NumberAnimation {
+				id: animateRotation
+				properties: "pitch"
+				from: 0.0
+				to: 360.0
+				loops: Animation.Infinite
+				duration: 1000
+			}
+
+			function updateRotation(mouse) {
+				var mouseSensitivity = settings.get('mouseSensitivity', 0.1);
+				if(updateRotation.lastX !== undefined && updateRotation.lastY !== undefined)
+				{
+					mainWindow.camDolly.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+					mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
+					//mainWindow.avatar.yaw -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+					//mainWindow.avatar.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
+				} // end if
+
+				updateRotation.lastX = mouse.x;
+				updateRotation.lastY = mouse.y;
+			}
+
+			onPressed: {
+				updateRotation.lastX = mouse.x;
+				updateRotation.lastY = mouse.y;
+			}
+			onPositionChanged: {
+				updateRotation(mouse);
+			}
+			/*
+			onClicked: {
+				animateRotation.target = mainWindow.avatar;
+				animateRotation.start();
+			}
+			*/
+		}
+
+		Text {
+			id: fpsText
+			anchors.top: parent.top
+			anchors.right: parent.right
+
+			color: "white"
+			font.family: "monospace"
+			font.pointSize: 24
+			font.weight: Font.DemiBold
+		}
+
+		SubWindow {
+			id: charWindow
+			//x: (parent.width - width) / 2
+			x: 100
+			y: (parent.height - height) / 2
+			width: 300
+			height: charWinLayout.implicitHeight + 4 * margin
+
+			title: "Choose a Character"
+			style: SubWindowStyle { }
+
+			Component {
+				id: characterItem
+
+				MouseArea {
+					id: wrapper
 					anchors.left: parent.left
 					anchors.right: parent.right
+					//anchors.margins: 4
+					height: group.height
 
-					Text {
-						text: {
-							try
-							{
-								return first_name + " " + middle_name + " " + last_name;
+					onClicked: {
+						wrapper.ListView.view.currentIndex = index;
+					}
+
+					GroupBox {
+						id: group
+						anchors.left: parent.left
+						anchors.right: parent.right
+
+						Text {
+							text: {
+								try
+								{
+									return first_name + " " + middle_name + " " + last_name;
+								}
+								catch(e)
+								{
+									return first_name + " " + last_name;
+								}
 							}
-							catch(e)
-							{
-								return first_name + " " + last_name;
-							}
+							font.family: "Titillium Web";
+							color: "white";
 						}
-						font.family: "Titillium Web";
-						color: "white";
 					}
 				}
 			}
-		}
 
-		ColumnLayout {
-			id: charWinLayout
-			anchors.fill: parent
-			anchors.margins: margin
+			ColumnLayout {
+				id: charWinLayout
+				anchors.fill: parent
+				anchors.margins: margin
 
-			ListView {
-				clip: true
-				height: 80
-				Layout.fillWidth: true
+				ListView {
+					clip: true
+					height: 80
+					Layout.fillWidth: true
 
-				model: ListModel { id: charList }
-				delegate: characterItem
-				highlight: Rectangle { color: "orange"; radius: 5 }
-			}
+					model: ListModel { id: charList }
+					delegate: characterItem
+					highlight: Rectangle { color: "orange"; radius: 5 }
+				}
 
-			Button {
-				Layout.fillWidth: true
-				text: "Select Character"
+				Button {
+					Layout.fillWidth: true
+					text: "Select Character"
+				}
 			}
 		}
 	}

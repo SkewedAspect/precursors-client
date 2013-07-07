@@ -21,6 +21,7 @@ class Horde3DWindow : public QQuickWindow
 
 	Q_PROPERTY(Entity* camera READ camera)
 	Q_PROPERTY(Entity* camDolly READ camDolly)
+	Q_PROPERTY(Entity* avatar READ avatar)
 	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
 
 public:
@@ -29,6 +30,7 @@ public:
 
 	Entity* camera() const { return _cameraEnt; }
 	Entity* camDolly() const { return _camDollyEnt; }
+	Entity* avatar() const { return _avatarEnt; }
 	float fps() const { return lastFPS; }
 
 	void saveQtState();
@@ -63,13 +65,18 @@ private:
 	QOpenGLContext* _h3dContext;
 
 	QTime lastFrameStart;
+	float lastFrameTime;
 	float lastFPS;
+	float _shipRot;
 
 	int _samples;
 	QSize _size;
-	float _animTime;
 
-	H3DNode _ares;
+	H3DNode _avatar;
+	Entity* _avatarEnt;
+
+	H3DNode _scene;
+	Entity* _sceneEnt;
 
 	H3DNode _camDolly;
 	Entity* _camDollyEnt;
