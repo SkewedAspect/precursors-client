@@ -158,6 +158,49 @@ QQuaternion Entity::eulerToQuat(qreal heading, qreal pitch, qreal roll)
             );
 } // end eulerToQuat
 
+qreal Entity::quatToHeading(QQuaternion quat)
+{
+	qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
+
+	if(halfSinePitch == 0.5) // north pole
+	{
+		return 2 * atan2(quat.x(), quat.scalar());
+	}
+	else if(halfSinePitch == -0.5) // south pole
+	{
+		return -2 * atan2(quat.x(), quat.scalar());
+	}
+	else
+	{
+		return atan2(2 * quat.y() * quat.scalar() - 2 * quat.x() * quat.z(),
+				1 - 2 * pow(quat.y(), 2) - 2 * pow(quat.z(), 2));
+	} // end if
+} // end quatToHeading
+
+qreal Entity::quatToPitch(QQuaternion quat)
+{
+	return asin(2 * quat.x() * quat.y() + 2 * quat.z() * quat.scalar());
+} // end quatToPitch
+
+qreal Entity::quatToRoll(QQuaternion quat)
+{
+	qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
+
+	if(halfSinePitch == 0.5) // north pole
+	{
+		return 0;
+	}
+	else if(halfSinePitch == -0.5) // south pole
+	{
+		return 0;
+	}
+	else
+	{
+		return atan2(2 * quat.x() * quat.scalar() - 2 * quat.y() * quat.z(),
+				1 - 2 * pow(quat.x(), 2) - 2 * pow(quat.z(), 2));
+	} // end if
+} // end quatToRoll
+
 qreal Entity::matrixToHeading(QMatrix4x4 mat)
 {
 	if(mat(1, 2) > 0.9999999998 || mat(1, 2) < -0.9999999998)
