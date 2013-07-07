@@ -83,7 +83,7 @@ private:
 
     QString sessionCookie;
 
-	PLogger logger;
+	PLogger& logger;
 
 signals:
     void error(ErrorType errorType, QString errorMessage);

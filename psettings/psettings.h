@@ -28,7 +28,7 @@ private:
 	QVariantMap getSettings();
 	QString settingsPath;
 
-	PLogger logger;
+	PLogger& logger;
 
 signals:
 	void loaded();

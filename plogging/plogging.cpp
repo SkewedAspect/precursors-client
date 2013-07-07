@@ -12,7 +12,38 @@
 #include "plogging.h"
 
 /**********************************************************************************************************************/
-/* Public API                                                                                                         */
+/* PLogManager Public API                                                                                                         */
+/**********************************************************************************************************************/
+
+PLogManager::PLogManager(QObject* parent) :
+	QObject()
+{
+} // end PLogManager
+
+PLogManager& PLogManager::instance()
+{
+	static PLogManager _instance;
+	return _instance;
+} // end instance
+
+PLogger* PLogManager::logger(QString name)
+{
+	if(!_loggers.contains(name))
+	{
+		_loggers[name] = new PLogger(name);
+	} // end if
+
+	return _loggers[name];
+} // end getLogger
+
+PLogger& PLogManager::getLogger(QString name)
+{
+	return *PLogManager::instance().logger(name);
+} // end getLogger
+
+
+/**********************************************************************************************************************/
+/* PLogger Public API                                                                                                         */
 /**********************************************************************************************************************/
 
 /**

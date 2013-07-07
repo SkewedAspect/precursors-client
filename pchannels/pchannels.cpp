@@ -18,7 +18,8 @@
  * @param parent The parent QObject.
  */
 PChannels::PChannels(QObject *parent) :
-	QObject(parent), logger("networking")
+	QObject(parent),
+	logger(PLogManager::getLogger("networking"))
 {
 	// Setup our AES class
 	this->cipher = new AES();

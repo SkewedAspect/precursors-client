@@ -46,5 +46,20 @@ private:
 	void log(QString level, QString message);
 };
 
+class PLOGGINGSHARED_EXPORT PLogManager : public QObject
+{
+    Q_OBJECT
+public:
+    explicit PLogManager(QObject* parent = 0);
+
+	static PLogManager& instance();
+
+	Q_INVOKABLE PLogger* logger(QString name = "app");
+	static PLogger& getLogger(QString name = "app");
+
+private:
+	QMap<QString, PLogger*> _loggers;
+};
+
 #endif // PLOGGING_H
 

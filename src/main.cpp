@@ -25,17 +25,18 @@ int main(int argc, char **argv)
 
 	logger.info("Starting " + QString("%1 v%2").arg(app.applicationName()).arg(app.applicationVersion()));
 
-	// Setup our settings
+	// Setup our managers
 	PSettingsManager& settings = PSettingsManager::instance();
 	PChannels& networking = PChannels::instance();
 	PreUtil& utils = PreUtil::instance();
+	PLogManager& logMan = PLogManager::instance();
 
 	// Register application fonts
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
 	QFontDatabase::addApplicationFont("resources/fonts/titillium.ttf");
 
 	// Register the networking code with QML
-	qmlRegisterType<PChannels>("Precursors", 1, 0, "PreUtil");
+	qmlRegisterType<PLogger>("Precursors.Logging", 1, 0, "PLogger");
 
 	// Register the networking code with QML
 	qmlRegisterType<PChannels>("Precursors.Networking", 1, 0, "PChannels");
@@ -50,6 +51,7 @@ int main(int argc, char **argv)
 
 	// Put our settings on the root context
 	engine.rootContext()->setContextProperty("settings", &settings);
+	engine.rootContext()->setContextProperty("logMan", &logMan);
 	engine.rootContext()->setContextProperty("networking", &networking);
 	engine.rootContext()->setContextProperty("utils", &utils);
 

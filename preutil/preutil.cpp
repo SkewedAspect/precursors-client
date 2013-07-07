@@ -4,7 +4,7 @@
 
 #include "preutil.h"
 
-PreUtil::PreUtil() : QObject(), logger("preutil") {} // end PreUtil
+PreUtil::PreUtil() : QObject(), logger(PLogManager::getLogger("preutil")) {} // end PreUtil
 
 QString PreUtil::getClientVersion()
 {

@@ -19,7 +19,7 @@ public:
 	Q_INVOKABLE QList<QVariant> getClientVersionAsList();
 
 private:
-	PLogger logger;
+	PLogger& logger;
 };
 
 #endif // PREUTIL_H

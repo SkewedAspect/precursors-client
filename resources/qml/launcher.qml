@@ -3,8 +3,9 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Layouts 1.0
 
-import Precursors 1.0
 import Precursors.Networking 1.0
+
+import "../js/logging.js" as Logging
 
 ApplicationWindow {
 	id: launcherWindow
@@ -12,6 +13,7 @@ ApplicationWindow {
 
 	property int margin: 11
 	property var mainWindow: mainWindowLoader.item;
+	property var logger: new Logging.Logger("launcher")
 
 	width: (mainLayout.implicitWidth + 2 * margin) + 80
     height: mainLayout.implicitHeight + 2 * margin
@@ -27,6 +29,9 @@ ApplicationWindow {
 	//-------------------------------------------------------------------------
 
 	Component.onCompleted: {
+
+		logger.debug("The cow says: %1. Dave says: %2", "Hello World", 23);
+
 		// Make the window show itself.
 		launcherWindow.show();
 

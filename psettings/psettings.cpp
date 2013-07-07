@@ -16,7 +16,7 @@
  * @param parent The parent QObject.
  */
 PSettingsManager::PSettingsManager(QObject *parent) :
-	QObject(parent), logger("settings")
+	QObject(parent), logger(PLogManager::getLogger("settings"))
 {
 	// Get the writable location for config files
 	settingsPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
