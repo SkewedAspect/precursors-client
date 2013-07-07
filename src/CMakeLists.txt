@@ -5,6 +5,7 @@ set(CLIENT_HEADERS
 	h3ditem.h
 	h3ditemanim.h
 	horde3dwindow.h
+	math3d.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
 set(CLIENT_SOURCES
@@ -14,6 +15,7 @@ set(CLIENT_SOURCES
 	h3ditem.cpp
 	h3ditemanim.cpp
 	horde3dwindow.cpp
+	math3d.cpp
 	)
 
 include_directories(

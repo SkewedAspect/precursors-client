@@ -2,7 +2,6 @@
 #define ENTITY_H
 
 #include <QtCore/QObject>
-#include <QtGui/QMatrix4x4>
 #include <QtGui/QVector3D>
 
 #include <Horde3D.h>
@@ -42,16 +41,6 @@ public:
 	Q_INVOKABLE static void runScheduled();
 
     void apply();
-
-	static QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll);
-	static qreal quatToHeading(QQuaternion quat);
-	static qreal quatToPitch(QQuaternion quat);
-	static qreal quatToRoll(QQuaternion quat);
-
-	static void matrixToEuler(QMatrix4x4 mat, qreal *heading, qreal *pitch, qreal *roll);
-	static qreal matrixToHeading(QMatrix4x4 mat);
-	static qreal matrixToPitch(QMatrix4x4 mat);
-	static qreal matrixToRoll(QMatrix4x4 mat);
 
 protected:
     explicit Entity(H3DNode node, QObject *parent = 0);
