@@ -91,51 +91,50 @@ Horde3DWindow {
 			}
 		}
 
-		Keys.onPressed: {
+		function doKeyShit(event, release) {
+			var factor = 1;
+			if(release)
+			{
+				factor = -1;
+			}
+
 			switch(event.key) {
 				case Qt.Key_Up:
-					pitchVel += pitchSpeed;
+					if(!event.isAutoRepeat)
+					{
+						pitchVel += factor * pitchSpeed;
+					}
 					break;
 				case Qt.Key_Down:
-					pitchVel -= pitchSpeed;
+					if(!event.isAutoRepeat)
+					{
+						pitchVel -= factor * pitchSpeed;
+					}
 					break;
 
 				case Qt.Key_Left:
-					headingVel -= headingSpeed;
+					if(!event.isAutoRepeat)
+					{
+						headingVel -= factor * headingSpeed;
+					}
 					break;
 				case Qt.Key_Right:
-					headingVel += headingSpeed;
+					if(!event.isAutoRepeat)
+					{
+						headingVel += factor * headingSpeed;
+					}
 					break;
 
 				default:
 					return;
 			}
+
 			rotateTimer.start();
 			event.accepted = true;
 		}
 
-		Keys.onReleased: {
-			switch(event.key) {
-				case Qt.Key_Up:
-					pitchVel -= pitchSpeed;
-					break;
-				case Qt.Key_Down:
-					pitchVel += pitchSpeed;
-					break;
-
-				case Qt.Key_Left:
-					headingVel += headingSpeed;
-					break;
-				case Qt.Key_Right:
-					headingVel -= headingSpeed;
-					break;
-
-				default:
-					return;
-			}
-			rotateTimer.start();
-			event.accepted = true;
-		}
+		Keys.onPressed: doKeyShit(event, false)
+		Keys.onReleased: doKeyShit(event, true)
 
 		MouseArea {
 			id: wrapper
