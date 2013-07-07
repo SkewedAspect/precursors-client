@@ -1,0 +1,7 @@
+<Group name="asteroids">
+
+	<!--Reference name="Ares" sceneGraph="" /-->
+
+	<Light name="light" lightingContext="LIGHTING" shadowContext="SHADOWMAP" radius="1000000000" fov="360" col_R="1.0" col_G="1.0" col_B="1.0" tx="-50" ty="50" tz="100" />
+
+</Group>
