@@ -2,11 +2,14 @@
 #define ENTITY_H
 
 #include <QtCore/QObject>
+#include <QtCore/QString>
 #include <QtGui/QVector3D>
 
 #include <Horde3D.h>
 
 #include "plogging/plogging.h"
+
+#include "horde3dmanager.h"
 
 
 class Entity : public QObject
@@ -33,6 +36,12 @@ public:
 	Q_INVOKABLE void changePitch(qreal dP);
 	Q_INVOKABLE void changeRoll(qreal dR);
 
+	Q_INVOKABLE Entity* newCamera(QString cameraName, QString pipelineName = QString());
+	Q_INVOKABLE Entity* newGroup(QString groupName);
+	Q_INVOKABLE Entity* loadModel(QString scenePath, int flags = 0);
+	Q_INVOKABLE Entity* loadScene(QString scenePath, int flags = 0);
+	Q_INVOKABLE Entity* loadEntityFromRes(H3DResTypes::List type, QString path, int flags = 0);
+
 	Q_INVOKABLE void scheduleOnce();
 	Q_INVOKABLE void scheduleRepeating();
 	Q_INVOKABLE void stopRepeating();
@@ -55,6 +64,7 @@ private:
 	bool scheduledRepeating;
 
 	PLogger& logger;
+	Horde3DManager& mgr;
 
 	static QHash<H3DNode, Entity*> entities;
 	static QList<Entity*> scheduledOnceEntities;

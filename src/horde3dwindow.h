@@ -6,6 +6,7 @@
 
 #include <Horde3D.h>
 
+#include "horde3dmanager.h"
 #include "horde3ditemanim.h"
 
 
@@ -19,19 +20,17 @@ class Horde3DWindow : public QQuickWindow
 {
 	Q_OBJECT
 
-	Q_PROPERTY(Entity* camera READ camera)
+	Q_PROPERTY(Entity* camera READ camera NOTIFY cameraChanged)
 	Q_PROPERTY(Entity* camDolly READ camDolly)
-	Q_PROPERTY(Entity* avatar READ avatar)
 	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
 
 public:
 	Horde3DWindow(QWindow* parent = 0);
 	~Horde3DWindow();
 
-	Entity* camera() const { return _cameraEnt; }
-	Entity* camDolly() const { return _camDollyEnt; }
-	Entity* avatar() const { return _avatarEnt; }
-	float fps() const { return lastFPS; }
+	Entity* camera() const;
+	Entity* camDolly() const;
+	float fps() const;
 
 	void saveQtState();
 	void restoreQtState();
@@ -39,7 +38,7 @@ public:
 	void saveH3DState();
 
 signals:
-	void initFinished();
+	void cameraChanged(const Entity* camera);
 	void fpsChanged(const float& newFPS);
 
 protected slots:
@@ -56,7 +55,6 @@ private:
 
 	void init();
 
-	void printHordeMessages();
 	void renderHorde();
 
 	// Qt's OpenGL context
@@ -69,20 +67,12 @@ private:
 	float lastFPS;
 	float _shipRot;
 
-	int _samples;
 	QSize _size;
 
-	H3DNode _avatar;
-	Entity* _avatarEnt;
+	Entity* _camDolly;
+	Entity* _camera;
 
-	H3DNode _scene;
-	Entity* _sceneEnt;
-
-	H3DNode _camDolly;
-	Entity* _camDollyEnt;
-
-	H3DNode _camera;
-	Entity* _cameraEnt;
+	Horde3DManager& _mgr;
 
 	bool _initialized;
 	bool _dirtyView;

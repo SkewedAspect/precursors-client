@@ -1,3 +1,5 @@
+#include <Horde3DUtils.h>
+
 #include "entity.h"
 
 
@@ -7,13 +9,15 @@ QList<Entity*> Entity::scheduledRepeatingEntities;
 
 
 Entity::Entity() :
-    QObject(), logger(PLogManager::getLogger("entity")), scheduledOnce(false), scheduledRepeating(false)
+    QObject(), _node(0), scheduledOnce(false), scheduledRepeating(false),
+	logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
 {
 	throw new std::exception;
 } // end Entity
 
 Entity::Entity(H3DNode node, QObject *parent) :
-    QObject(parent), _node(node), logger(PLogManager::getLogger("entity"))
+    QObject(parent), _node(node), scheduledOnce(false), scheduledRepeating(false),
+	logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
 {
 	float x, y, z;
 
@@ -24,6 +28,7 @@ Entity::Entity(H3DNode node, QObject *parent) :
 
 	_pos = QVector3D(x, y, z);
 } // end Entity
+
 
 qreal Entity::heading() const
 {
@@ -39,6 +44,7 @@ qreal Entity::roll() const
 {
 	return _roll;
 } // end roll
+
 
 void Entity::setHeading(qreal heading)
 {
@@ -58,6 +64,7 @@ void Entity::setRoll(qreal roll)
 	scheduleOnce();
 } // end setRoll
 
+
 void Entity::changeHeading(qreal dY)
 {
 	_heading += dY;
@@ -75,6 +82,58 @@ void Entity::changeRoll(qreal dR)
 	_roll += dR;
 	scheduleOnce();
 } // end changeRoll
+
+
+Entity* Entity::newGroup(QString groupName)
+{
+	H3DNode groupNode = h3dAddGroupNode(_node, groupName.toUtf8().constData());
+	return Entity::getEntity(groupNode);
+} // end newGroup
+
+Entity* Entity::newCamera(QString cameraName, QString pipelineName)
+{
+	H3DRes pipeline = mgr.loadPipeline(pipelineName);
+
+	H3DNode camera = h3dAddCameraNode(_node, cameraName.toUtf8().constData(), pipeline);
+	h3dSetNodeParamF(camera, H3DCamera::FarPlaneF, 0, 100000);
+
+	//FIXME: Get rid of this! (and replace it with getters/setters for pos, x, y, and z)
+	h3dSetNodeTransform(camera,
+			0, 0, 100,
+			0, 0, 0,
+			1, 1, 1
+			);
+
+	return Entity::getEntity(camera);
+} // end newCamera
+
+Entity* Entity::loadModel(QString scenePath, int flags)
+{
+	// Right now, there's no difference between this and a scene.
+	return loadScene(scenePath, flags);
+} // end loadModel
+
+Entity* Entity::loadScene(QString scenePath, int flags)
+{
+	return loadEntityFromRes(H3DResTypes::SceneGraph, scenePath, flags);
+} // end loadScene
+
+Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flags)
+{
+	H3DRes res = h3dAddResource(type, path.toUtf8().constData(), flags);
+
+	if(!h3dIsResLoaded(res))
+	{
+		if(!h3dutLoadResourcesFromDisk(mgr.contentDirs().toUtf8().constData()))
+		{
+			return NULL;
+		} // end if
+	} // end if
+
+	H3DNode newNode = h3dAddNodes(_node, res);
+	return Entity::getEntity(newNode);
+} // end loadEntityFromRes
+
 
 void Entity::scheduleOnce()
 {

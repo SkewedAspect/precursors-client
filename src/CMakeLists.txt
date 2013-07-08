@@ -4,6 +4,7 @@ set(CLIENT_HEADERS
 	entity.h
 	horde3ditem.h
 	horde3ditemanim.h
+	horde3dmanager.h
 	horde3dwindow.h
 	math3d.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
@@ -14,6 +15,7 @@ set(CLIENT_SOURCES
 	entity.cpp
 	horde3ditem.cpp
 	horde3ditemanim.cpp
+	horde3dmanager.cpp
 	horde3dwindow.cpp
 	math3d.cpp
 	)

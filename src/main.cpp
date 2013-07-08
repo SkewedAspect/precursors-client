@@ -11,6 +11,7 @@
 
 #include "entity.h"
 #include "horde3ditem.h"
+#include "horde3dmanager.h"
 #include "horde3dwindow.h"
 
 
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
 	PChannels& networking = PChannels::instance();
 	PreUtil& utils = PreUtil::instance();
 	PLogManager& logMan = PLogManager::instance();
+	Horde3DManager& horde3d = Horde3DManager::instance();
 
 	// Register application fonts
 	QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
@@ -50,11 +52,12 @@ int main(int argc, char **argv)
 	// Setup QML
 	QQmlApplicationEngine engine;
 
-	// Put our settings on the root context
+	// Put our singletons on the root context
 	engine.rootContext()->setContextProperty("settings", &settings);
 	engine.rootContext()->setContextProperty("logMan", &logMan);
 	engine.rootContext()->setContextProperty("networking", &networking);
 	engine.rootContext()->setContextProperty("utils", &utils);
+	engine.rootContext()->setContextProperty("horde3d", &horde3d);
 
 	// load our main qml file
 	engine.load("resources/qml/launcher.qml");

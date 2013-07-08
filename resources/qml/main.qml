@@ -85,8 +85,8 @@ Horde3DWindow {
 				}
 				else
 				{
-					mainWindow.avatar.heading += headingVel;
-					mainWindow.avatar.pitch += pitchVel;
+					horde3d.avatar.heading += headingVel;
+					horde3d.avatar.pitch += pitchVel;
 				}
 			}
 		}
@@ -165,8 +165,8 @@ Horde3DWindow {
 				{
 					mainWindow.camDolly.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
 					mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
-					//mainWindow.avatar.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
-					//mainWindow.avatar.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
+					//horde3d.avatar.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
+					//horde3d.avatar.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
 				} // end if
 
 				updateRotation.lastX = mouse.x;
@@ -182,7 +182,7 @@ Horde3DWindow {
 			}
 			/*
 			onClicked: {
-				animateRotation.target = mainWindow.avatar;
+				animateRotation.target = horde3d.avatar;
 				animateRotation.start();
 			}
 			*/
