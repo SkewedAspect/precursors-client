@@ -52,5 +52,9 @@ export PATH="$QT_INSTALL_BINS:$PATH"
 export LD_LIBRARY_PATH="$QT_INSTALL_LIBS:$LD_LIBRARY_PATH"
 export PKG_CONFIG_PATH="$QT_INSTALL_LIBS/pkgconfig:$PKG_CONFIG_PATH"
 
-#cmake . -DCMAKE_MODULE_PATH:PATH="$QT_INSTALL_LIBS/cmake" $(for module in Core Gui Network OpenGL Qml Quick Widgets; do echo "-DQt5${module}_DIR:PATH=$QT_INSTALL_LIBS/cmake/Qt5Core"; done) "$@"
-cmake . -DCMAKE_MODULE_PATH:PATH="$QT_INSTALL_LIBS/cmake" "$@"
+mkdir -p build
+cd build
+
+cmake .. -DCMAKE_MODULE_PATH:PATH="$QT_INSTALL_LIBS/cmake" "$@"
+
+make -j 8

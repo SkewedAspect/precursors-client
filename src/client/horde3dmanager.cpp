@@ -112,7 +112,10 @@ void Horde3DManager::init()
     H3DRes avatar = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
     H3DRes scene = h3dAddResource(H3DResTypes::SceneGraph, "scenes/asteroids/asteroids.scene.xml", 0);
 
-    h3dutLoadResourcesFromDisk("content");
+    if(!loadNewResources())
+	{
+		_logger.fatal("Failed to load default avatar or scene!");
+	} // end if
 
     _avatar = root()->loadModel("models/ares/ares.scene.xml");
     _scene = root()->loadScene("scenes/asteroids/asteroids.scene.xml");
@@ -143,6 +146,18 @@ void Horde3DManager::printHordeMessages()
     } // end while
 } // end printHordeMessages
 
+bool Horde3DManager::loadNewResources()
+{
+	_logger.debug(QString("Loading new resources from: %1").arg(contentDirs()));
+	if(!h3dutLoadResourcesFromDisk(contentDirs().toUtf8().constData()))
+	{
+		_logger.error("Failed to load new resources:");
+		printHordeMessages();
+		return false;
+	} // end if
+	return true;
+} // end loadNewResources
+
 H3DRes Horde3DManager::loadPipeline(QString pipelineName)
 {
     QString isDefault;
@@ -153,7 +168,7 @@ H3DRes Horde3DManager::loadPipeline(QString pipelineName)
     } // end if
 
     H3DRes pipeline = h3dAddResource(H3DResTypes::Pipeline, pipelineName.toUtf8().constData(), 0);
-    if(!h3dutLoadResourcesFromDisk("content"))
+    if(!loadNewResources())
     {
         _logger.error(QString("Couldn't load%1 rendering pipeline %2!").arg(isDefault, pipelineName));
         return 0;

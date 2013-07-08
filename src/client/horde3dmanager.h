@@ -11,11 +11,14 @@
 
 
 #define CFG_CONTENT_DIRS "horde3d.contentDirs"
-#define DEFAULT_CONTENT_DIRS "content"
+#define DEFAULT_CONTENT_DIRS "resources"
+
 #define CFG_ANISOTROPY "horde3d.anisotropy"
 #define DEFAULT_ANISOTROPY 8
+
 #define CFG_AA_SAMPLES "horde3d.antiAliasingSamples"
 #define DEFAULT_AA_SAMPLES 0
+
 #define CFG_DEFAULT_PIPELINE "horde3d.defaultPipeline"
 #define DEFAULT_DEFAULT_PIPELINE "pipelines/forward.pipeline.xml"
 
@@ -63,6 +66,7 @@ public:
     void update();
     void printHordeMessages();
 
+	bool loadNewResources();
     H3DRes loadPipeline(QString pipelineName);
 
 signals:

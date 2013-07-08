@@ -63,8 +63,8 @@ private:
     bool scheduledOnce;
     bool scheduledRepeating;
 
-    PLogger& logger;
-    Horde3DManager& mgr;
+    PLogger& _logger;
+    Horde3DManager& _mgr;
 
     static QHash<H3DNode, Entity*> entities;
     static QList<Entity*> scheduledOnceEntities;

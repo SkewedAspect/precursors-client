@@ -18,7 +18,8 @@ set_target_properties(PSettings PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
-)
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+	)
 
 # Tell CMake what to link with
 target_link_libraries(PSettings
