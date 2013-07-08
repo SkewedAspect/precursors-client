@@ -10,167 +10,167 @@ QList<Entity*> Entity::scheduledRepeatingEntities;
 
 Entity::Entity() :
     QObject(), _node(0), scheduledOnce(false), scheduledRepeating(false),
-	logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
+    logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
 {
-	throw new std::exception;
+    throw new std::exception;
 } // end Entity
 
 Entity::Entity(H3DNode node, QObject *parent) :
     QObject(parent), _node(node), scheduledOnce(false), scheduledRepeating(false),
-	logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
+    logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
 {
-	float x, y, z;
+    float x, y, z;
 
-	h3dGetNodeTransform(node,
-			&x, &y, &z,
-			&_pitch, &_heading, &_roll,
-			NULL, NULL, NULL);
+    h3dGetNodeTransform(node,
+            &x, &y, &z,
+            &_pitch, &_heading, &_roll,
+            NULL, NULL, NULL);
 
-	_pos = QVector3D(x, y, z);
+    _pos = QVector3D(x, y, z);
 } // end Entity
 
 
 qreal Entity::heading() const
 {
-	return _heading;
+    return _heading;
 } // end heading
 
 qreal Entity::pitch() const
 {
-	return _pitch;
+    return _pitch;
 } // end pitch
 
 qreal Entity::roll() const
 {
-	return _roll;
+    return _roll;
 } // end roll
 
 
 void Entity::setHeading(qreal heading)
 {
-	_heading = heading;
-	scheduleOnce();
+    _heading = heading;
+    scheduleOnce();
 } // end setHeading
 
 void Entity::setPitch(qreal pitch)
 {
-	_pitch = pitch;
-	scheduleOnce();
+    _pitch = pitch;
+    scheduleOnce();
 } // end setPitch
 
 void Entity::setRoll(qreal roll)
 {
-	_roll = roll;
-	scheduleOnce();
+    _roll = roll;
+    scheduleOnce();
 } // end setRoll
 
 
 void Entity::changeHeading(qreal dY)
 {
-	_heading += dY;
-	scheduleOnce();
+    _heading += dY;
+    scheduleOnce();
 } // end changeHeading
 
 void Entity::changePitch(qreal dP)
 {
-	_pitch += dP;
-	scheduleOnce();
+    _pitch += dP;
+    scheduleOnce();
 } // end changePitch
 
 void Entity::changeRoll(qreal dR)
 {
-	_roll += dR;
-	scheduleOnce();
+    _roll += dR;
+    scheduleOnce();
 } // end changeRoll
 
 
 Entity* Entity::newGroup(QString groupName)
 {
-	H3DNode groupNode = h3dAddGroupNode(_node, groupName.toUtf8().constData());
-	return Entity::getEntity(groupNode);
+    H3DNode groupNode = h3dAddGroupNode(_node, groupName.toUtf8().constData());
+    return Entity::getEntity(groupNode);
 } // end newGroup
 
 Entity* Entity::newCamera(QString cameraName, QString pipelineName)
 {
-	H3DRes pipeline = mgr.loadPipeline(pipelineName);
+    H3DRes pipeline = mgr.loadPipeline(pipelineName);
 
-	H3DNode camera = h3dAddCameraNode(_node, cameraName.toUtf8().constData(), pipeline);
-	h3dSetNodeParamF(camera, H3DCamera::FarPlaneF, 0, 100000);
+    H3DNode camera = h3dAddCameraNode(_node, cameraName.toUtf8().constData(), pipeline);
+    h3dSetNodeParamF(camera, H3DCamera::FarPlaneF, 0, 100000);
 
-	//FIXME: Get rid of this! (and replace it with getters/setters for pos, x, y, and z)
-	h3dSetNodeTransform(camera,
-			0, 0, 100,
-			0, 0, 0,
-			1, 1, 1
-			);
+    //FIXME: Get rid of this! (and replace it with getters/setters for pos, x, y, and z)
+    h3dSetNodeTransform(camera,
+            0, 0, 100,
+            0, 0, 0,
+            1, 1, 1
+            );
 
-	return Entity::getEntity(camera);
+    return Entity::getEntity(camera);
 } // end newCamera
 
 Entity* Entity::loadModel(QString scenePath, int flags)
 {
-	// Right now, there's no difference between this and a scene.
-	return loadScene(scenePath, flags);
+    // Right now, there's no difference between this and a scene.
+    return loadScene(scenePath, flags);
 } // end loadModel
 
 Entity* Entity::loadScene(QString scenePath, int flags)
 {
-	return loadEntityFromRes(H3DResTypes::SceneGraph, scenePath, flags);
+    return loadEntityFromRes(H3DResTypes::SceneGraph, scenePath, flags);
 } // end loadScene
 
 Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flags)
 {
-	H3DRes res = h3dAddResource(type, path.toUtf8().constData(), flags);
+    H3DRes res = h3dAddResource(type, path.toUtf8().constData(), flags);
 
-	if(!h3dIsResLoaded(res))
-	{
-		if(!h3dutLoadResourcesFromDisk(mgr.contentDirs().toUtf8().constData()))
-		{
-			return NULL;
-		} // end if
-	} // end if
+    if(!h3dIsResLoaded(res))
+    {
+        if(!h3dutLoadResourcesFromDisk(mgr.contentDirs().toUtf8().constData()))
+        {
+            return NULL;
+        } // end if
+    } // end if
 
-	H3DNode newNode = h3dAddNodes(_node, res);
-	return Entity::getEntity(newNode);
+    H3DNode newNode = h3dAddNodes(_node, res);
+    return Entity::getEntity(newNode);
 } // end loadEntityFromRes
 
 
 void Entity::scheduleOnce()
 {
-	if(!scheduledOnce && !scheduledRepeating)
-	{
-		scheduledOnceEntities.append(this);
-	} // end if
+    if(!scheduledOnce && !scheduledRepeating)
+    {
+        scheduledOnceEntities.append(this);
+    } // end if
 
-	scheduledOnce = true;
+    scheduledOnce = true;
 } // end scheduleOnce
 
 void Entity::scheduleRepeating()
 {
-	if(!scheduledRepeating)
-	{
-		scheduledRepeatingEntities.append(this);
+    if(!scheduledRepeating)
+    {
+        scheduledRepeatingEntities.append(this);
 
-		scheduledRepeating = true;
-	} // end if
+        scheduledRepeating = true;
+    } // end if
 } // end scheduleRepeating
 
 void Entity::stopRepeating()
 {
-	scheduledRepeatingEntities.removeAll(this);
+    scheduledRepeatingEntities.removeAll(this);
 } // end scheduleRepeating
 
 void Entity::apply()
 {
-	h3dSetNodeTransform(_node,
-			_pos.x(), _pos.y(), _pos.z(),
-			_pitch, _heading, _roll,
-			1, 1, 1);
+    h3dSetNodeTransform(_node,
+            _pos.x(), _pos.y(), _pos.z(),
+            _pitch, _heading, _roll,
+            1, 1, 1);
 
-	if(scheduledOnce)
-	{
-		scheduledOnce = false;
-	} // end if
+    if(scheduledOnce)
+    {
+        scheduledOnce = false;
+    } // end if
 } // end apply
 
 
@@ -178,23 +178,23 @@ void Entity::apply()
 
 void Entity::runScheduled()
 {
-	while(!scheduledOnceEntities.isEmpty())
-	{
-		scheduledOnceEntities.takeFirst()->apply();
-	} // end while
+    while(!scheduledOnceEntities.isEmpty())
+    {
+        scheduledOnceEntities.takeFirst()->apply();
+    } // end while
 
-	for(int i = 0; i < scheduledRepeatingEntities.size(); i++)
-	{
-		scheduledRepeatingEntities.at(i)->apply();
-	} // end for
+    for(int i = 0; i < scheduledRepeatingEntities.size(); i++)
+    {
+        scheduledRepeatingEntities.at(i)->apply();
+    } // end for
 } // end runScheduled
 
 Entity* Entity::getEntity(H3DNode node)
 {
-	if(!entities.contains(node))
-	{
-		entities[node] = new Entity(node);
-	} // end if
+    if(!entities.contains(node))
+    {
+        entities[node] = new Entity(node);
+    } // end if
 
-	return entities[node];
+    return entities[node];
 } // end getEntity

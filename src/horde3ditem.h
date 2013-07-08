@@ -39,29 +39,29 @@ public:
     bool restoreH3DState();
 
 signals:
-	void initFinished();
+    void initFinished();
 
 protected slots:
-	void onInitFinished();
-	void onBeforeRendering();
+    void onInitFinished();
+    void onBeforeRendering();
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data);
 
-	virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
+    virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
 
     virtual void timerEvent(QTimerEvent* event);
 
 private:
-	void printHordeMessages();
-	void renderHorde();
+    void printHordeMessages();
+    void renderHorde();
 
     int m_timerID;
 
     QObject* m_cameraQObject;
 
     QSGSimpleTextureNode* m_node;
-	QOpenGLFramebufferObject* m_fbo;
+    QOpenGLFramebufferObject* m_fbo;
 
     QSGTexture* m_texture;
 
@@ -73,12 +73,12 @@ private:
     int m_samples;
     bool m_AAEnabled;
     QSize m_size;
-	float m_animTime;
+    float m_animTime;
 
-	Horde3DItemAnimation m_animation;
-	H3DNode m_knight;
-	H3DNode m_ares;
-	H3DNode m_camera;
+    Horde3DItemAnimation m_animation;
+    H3DNode m_knight;
+    H3DNode m_ares;
+    H3DNode m_camera;
 
     CameraNodeObject* m_cameraObject;
 

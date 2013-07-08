@@ -8,7 +8,7 @@
 class PChannelsRequest : public QObject
 {
     Q_OBJECT
-	Q_PROPERTY(QVariantMap replyMessage READ getReply)
+    Q_PROPERTY(QVariantMap replyMessage READ getReply)
 public:
     explicit PChannelsRequest();
     explicit PChannelsRequest(PChannels* parent, QString channel, QVariant message, PChannels::ChannelMode mode);
@@ -25,7 +25,7 @@ public:
     QVariant requestMessage;
     QVariantMap replyMessage;
 
-	QVariantMap getReply() const { return replyMessage; };
+    QVariantMap getReply() const { return replyMessage; };
 
 signals:
     void confirmed();

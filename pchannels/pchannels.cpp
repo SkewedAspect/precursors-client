@@ -18,17 +18,17 @@
  * @param parent The parent QObject.
  */
 PChannels::PChannels(QObject *parent) :
-	QObject(parent),
-	logger(PLogManager::getLogger("networking"))
+    QObject(parent),
+    logger(PLogManager::getLogger("networking"))
 {
-	// Setup our AES class
-	this->cipher = new AES();
+    // Setup our AES class
+    this->cipher = new AES();
 
-	// Setup SSL Netstring handler
+    // Setup SSL Netstring handler
     sslNetstring = new QNetString();
     connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
-	// Setup TCP Netstring handler
+    // Setup TCP Netstring handler
     tcpNetstring = new QNetString();
     connect(tcpNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
 
@@ -39,8 +39,8 @@ PChannels::PChannels(QObject *parent) :
     connect(this->sslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(sslError(QAbstractSocket::SocketError)));
     connect(this->sslSocket, SIGNAL(disconnected()), this, SLOT(sslDisconnected()));
 
-	// Ignore expected SSL errors
-	//TODO: This should only be for debugging, not for release!
+    // Ignore expected SSL errors
+    //TODO: This should only be for debugging, not for release!
     connect(this->sslSocket, SIGNAL(sslErrors(QList<QSslError>)), this->sslSocket, SLOT(ignoreSslErrors()));
 
     // Create a new TCP socket, and conect it's signals.
@@ -63,8 +63,8 @@ PChannels::PChannels(QObject *parent) :
  */
 PChannels& PChannels::instance()
 {
-	static PChannels _instance;
-	return _instance;
+    static PChannels _instance;
+    return _instance;
 } // end instance
 
 /**
@@ -125,18 +125,18 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
     {
         case CM_SECURE:
         {
-			QByteArray data = QNetString::encode(jsonData);
+            QByteArray data = QNetString::encode(jsonData);
             sslSocket->write(data);
             break;
         } // end CM_SECURE
 
         case CM_UNRELIABLE:
         {
-			QByteArray ciphertext = jsonData;
-			if(encrypted)
-			{
-				ciphertext = cipher->encrypt(jsonData);
-			} // end if
+            QByteArray ciphertext = jsonData;
+            if(encrypted)
+            {
+                ciphertext = cipher->encrypt(jsonData);
+            } // end if
 
             udpSocket->writeDatagram(ciphertext, this->serverAddress, this->udpPort);
             break;
@@ -144,22 +144,22 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 
         case CM_RELIABLE:
         {
-			QByteArray ciphertext = jsonData;
-			if(encrypted)
-			{
-				ciphertext = cipher->encrypt(jsonData);
-			} // end if
+            QByteArray ciphertext = jsonData;
+            if(encrypted)
+            {
+                ciphertext = cipher->encrypt(jsonData);
+            } // end if
 
-			QByteArray data = QNetString::encode(ciphertext);
+            QByteArray data = QNetString::encode(ciphertext);
 
             tcpSocket->write(data);
             break;
         } // end CM_RELIABLE
 
         default:
-		{
-			logger.critical(QString("Send with unknown mode: %1, $2, %3").arg(envelope.toString()).arg(mode).arg(encrypted));
-		} // end default
+        {
+            logger.critical(QString("Send with unknown mode: %1, $2, %3").arg(envelope.toString()).arg(mode).arg(encrypted));
+        } // end default
     }
 } // end send
 
@@ -182,7 +182,7 @@ void PChannels::sendEvent(QString channel, QVariant message, ChannelMode mode, b
 void PChannels::sendRequest(PChannelsRequest* request, bool encrypted)
 {
     QVariantMap envelope = wrapMessage(request->channel, "request", request->requestMessage);
-	envelope["id"] = request->id;
+    envelope["id"] = request->id;
     send(envelope, request->mode, encrypted);
 } // end sendRequest
 
@@ -382,25 +382,25 @@ void PChannels::handleUDPResponse(bool confirmed)
 
 void PChannels::handleIncommingMessage(QByteArray data)
 {
-	QByteArray plainText = data;
+    QByteArray plainText = data;
 
-	if(qobject_cast<QNetString*>(QObject::sender()) == this->tcpNetstring)
-	{
-		plainText = cipher->decrypt(data);
-	} // end if
+    if(qobject_cast<QNetString*>(QObject::sender()) == this->tcpNetstring)
+    {
+        plainText = cipher->decrypt(data);
+    } // end if
 
-	QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
+    QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
 
     if(envelope["type"] == "response")
     {
         handleReply(envelope);
-		return;
+        return;
     } // end if
 
     if(envelope["type"] == "event")
     {
         handleEvent(envelope);
-		return;
+        return;
     } // end if
 
     logger.warning(QString("Received incoming message with unknown type: \"%1\".").arg(envelope["type"].toString()));
@@ -427,8 +427,8 @@ void PChannels::udpDataReady()
 
             udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
-			// Decrypt AES
-			QByteArray plainText = cipher->decrypt(datagram);
+            // Decrypt AES
+            QByteArray plainText = cipher->decrypt(datagram);
 
             // Now, parse as JSON, and emit.
             emit incommingMessage(QJsonDocument::fromJson(plainText).toVariant().toMap());
@@ -438,31 +438,31 @@ void PChannels::udpDataReady()
 
 void PChannels::sslError(QAbstractSocket::SocketError error)
 {
-	logger.error(QString("SSL Error: \"%1\".").arg(sslSocket->errorString()));
+    logger.error(QString("SSL Error: \"%1\".").arg(sslSocket->errorString()));
 } // end sslDebug
 
 void PChannels::tcpError(QAbstractSocket::SocketError error)
 {
-	logger.error(QString("TCP Error: \"%1\".").arg(tcpSocket->errorString()));
+    logger.error(QString("TCP Error: \"%1\".").arg(tcpSocket->errorString()));
 } // end sslDebug
 void PChannels::udpError(QAbstractSocket::SocketError error)
 {
-	logger.error(QString("UDP Error: \"%1\".").arg(udpSocket->errorString()));
+    logger.error(QString("UDP Error: \"%1\".").arg(udpSocket->errorString()));
 } // end sslError
 
 void PChannels::sslDisconnected()
 {
-	disconnect();
+    disconnect();
 } // end sslDisconnected
 
 void PChannels::tcpDisconnected()
 {
-	disconnect();
+    disconnect();
 } // end sslDisconnected
 
 void PChannels::udpDisconnected()
 {
-	disconnect();
+    disconnect();
 } // end sslDisconnected
 
 /**********************************************************************************************************************/

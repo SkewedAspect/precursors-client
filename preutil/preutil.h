@@ -13,13 +13,13 @@ class PREUTILSHARED_EXPORT PreUtil : public QObject
 public:
     explicit PreUtil();
 
-	static PreUtil& instance();
+    static PreUtil& instance();
 
-	Q_INVOKABLE QString getClientVersion();
-	Q_INVOKABLE QList<QVariant> getClientVersionAsList();
+    Q_INVOKABLE QString getClientVersion();
+    Q_INVOKABLE QList<QVariant> getClientVersionAsList();
 
 private:
-	PLogger& logger;
+    PLogger& logger;
 };
 
 #endif // PREUTIL_H

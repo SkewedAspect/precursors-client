@@ -14,7 +14,7 @@
 #include <QtQuick/QSGSimpleTextureNode>
 
 #ifdef __APPLE__
-	// Because Apple loves being a special snowflake?
+    // Because Apple loves being a special snowflake?
 #	include <OpenGL/gl.h>
 #else
 #	include <GL/gl.h>
@@ -25,251 +25,251 @@ static const bool USE_SEPARATE_CONTEXT = false;
 
 
 Horde3DWindow::Horde3DWindow(QWindow* parent) :
-		QQuickWindow(parent),
-		_initialized(false),
-		_dirtyView(false),
-		_shipRot(0.0f),
-		_qtContext(NULL),
-		_h3dContext(NULL),
-		_camDolly(NULL),
-		_camera(NULL),
-		_mgr(Horde3DManager::instance())
+        QQuickWindow(parent),
+        _initialized(false),
+        _dirtyView(false),
+        _shipRot(0.0f),
+        _qtContext(NULL),
+        _h3dContext(NULL),
+        _camDolly(NULL),
+        _camera(NULL),
+        _mgr(Horde3DManager::instance())
 {
-	lastFrameStart.start();
+    lastFrameStart.start();
 
-	connect(this, SIGNAL(beforeRendering()), this, SLOT(onBeforeRendering()), Qt::DirectConnection);
-	connect(&_mgr, SIGNAL(initFinished()), this, SLOT(onInitFinished()), Qt::QueuedConnection);
+    connect(this, SIGNAL(beforeRendering()), this, SLOT(onBeforeRendering()), Qt::DirectConnection);
+    connect(&_mgr, SIGNAL(initFinished()), this, SLOT(onInitFinished()), Qt::QueuedConnection);
 } // end Horde3DWindow
 
 Horde3DWindow::~Horde3DWindow()
 {
-	if(_h3dContext)
-	{
-		_h3dContext->deleteLater();
-		_h3dContext = NULL;
-	} // end if
+    if(_h3dContext)
+    {
+        _h3dContext->deleteLater();
+        _h3dContext = NULL;
+    } // end if
 } // end ~Horde3DWindow
 
 
 Entity* Horde3DWindow::camera() const
 {
-	return _camera;
+    return _camera;
 } // end camera
 
 Entity* Horde3DWindow::camDolly() const
 {
-	return _camDolly;
+    return _camDolly;
 } // end camDolly
 
 float Horde3DWindow::fps() const
 {
-	return lastFPS;
+    return lastFPS;
 } // end fps
 
 
 void Horde3DWindow::renderHorde()
 {
-	_mgr.update();
+    _mgr.update();
 
-	if(_camera)
-	{
-		if(!USE_SEPARATE_CONTEXT || (_qtContext && _h3dContext))
-		{
-			restoreH3DState();
+    if(_camera)
+    {
+        if(!USE_SEPARATE_CONTEXT || (_qtContext && _h3dContext))
+        {
+            restoreH3DState();
 
-			h3dRender(_camera->node());
-			h3dFinalizeFrame();
+            h3dRender(_camera->node());
+            h3dFinalizeFrame();
 
-			saveH3DState();
-		} // end if
-	} // end if
+            saveH3DState();
+        } // end if
+    } // end if
 } // end renderHorde
 
 void Horde3DWindow::resizeEvent(QResizeEvent* event)
 {
-	qDebug() << "Horde3DWindow::resizeEvent(" << event->oldSize() << "->" << event->size() << "); devicePixelRatio:" << screen()->devicePixelRatio();
+    qDebug() << "Horde3DWindow::resizeEvent(" << event->oldSize() << "->" << event->size() << "); devicePixelRatio:" << screen()->devicePixelRatio();
 
-	if(event->size() != event->oldSize())
-	{
-		_size = event->size() * screen()->devicePixelRatio();
-		_dirtyView = true;
-	} // end if
+    if(event->size() != event->oldSize())
+    {
+        _size = event->size() * screen()->devicePixelRatio();
+        _dirtyView = true;
+    } // end if
 
-	QQuickWindow::resizeEvent(event);
+    QQuickWindow::resizeEvent(event);
 } // end geometryChanged
 
 void Horde3DWindow::saveQtState()
 {
-	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glMatrixMode(GL_TEXTURE);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
 
-	glShadeModel(GL_FLAT);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_STENCIL_TEST);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glShadeModel(GL_FLAT);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_STENCIL_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 } // end saveQtState
 
 void Horde3DWindow::restoreQtState()
 {
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	glPopAttrib();
-	glPopClientAttrib();
+    glMatrixMode(GL_TEXTURE);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glPopAttrib();
+    glPopClientAttrib();
 } // end restoreQtState
 
 void Horde3DWindow::restoreH3DState()
 {
-	if(USE_SEPARATE_CONTEXT)
-	{
-		_qtContext->doneCurrent();
-		_h3dContext->makeCurrent(this);
-	} // end if
+    if(USE_SEPARATE_CONTEXT)
+    {
+        _qtContext->doneCurrent();
+        _h3dContext->makeCurrent(this);
+    } // end if
 
-	QOpenGLFunctions glFunctions(QOpenGLContext::currentContext());
-	glFunctions.glUseProgram(0);
+    QOpenGLFunctions glFunctions(QOpenGLContext::currentContext());
+    glFunctions.glUseProgram(0);
 
-	if(renderTarget())
-	{
-		renderTarget()->bind();
-	} // end if
+    if(renderTarget())
+    {
+        renderTarget()->bind();
+    } // end if
 } // end restoreH3DState
 
 void Horde3DWindow::saveH3DState()
 {
-	if(renderTarget())
-	{
-		renderTarget()->release();
-	} // end if
+    if(renderTarget())
+    {
+        renderTarget()->release();
+    } // end if
 
-	if(USE_SEPARATE_CONTEXT)
-	{
-		_h3dContext->doneCurrent();
-		_qtContext->makeCurrent(this);
-	} // end if
+    if(USE_SEPARATE_CONTEXT)
+    {
+        _h3dContext->doneCurrent();
+        _qtContext->makeCurrent(this);
+    } // end if
 } // end saveH3DState
 
 void Horde3DWindow::updateView()
 {
-	if(_initialized)
-	{
-		qDebug() << "Horde3DWindow::updateView()";
+    if(_initialized)
+    {
+        qDebug() << "Horde3DWindow::updateView()";
 
-		int deviceWidth = _size.width();
-		int deviceHeight = _size.height();
+        int deviceWidth = _size.width();
+        int deviceHeight = _size.height();
 
-		// Resize viewport
-		h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportXI, 0);
-		h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportYI, 0);
-		h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportWidthI, deviceWidth);
-		h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportHeightI, deviceHeight);
+        // Resize viewport
+        h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportXI, 0);
+        h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportYI, 0);
+        h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportWidthI, deviceWidth);
+        h3dSetNodeParamI(_camera->node(), H3DCamera::ViewportHeightI, deviceHeight);
 
-		// Set virtual camera parameters
-		float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
-		h3dSetupCameraView(_camera->node(), 45.0f, aspectRatio, 0.1f, 1000.0f);
-		//_camDolly->scheduleOnce();
-		_camera->scheduleOnce();
+        // Set virtual camera parameters
+        float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
+        h3dSetupCameraView(_camera->node(), 45.0f, aspectRatio, 0.1f, 1000.0f);
+        //_camDolly->scheduleOnce();
+        _camera->scheduleOnce();
 
-		H3DRes cameraPipeRes = h3dGetNodeParamI(_camera->node(), H3DCamera::PipeResI);
-		h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
+        H3DRes cameraPipeRes = h3dGetNodeParamI(_camera->node(), H3DCamera::PipeResI);
+        h3dResizePipelineBuffers(cameraPipeRes, deviceWidth, deviceHeight);
 
-		_dirtyView = false;
-	} // end if
+        _dirtyView = false;
+    } // end if
 } // end updateView
 
 void Horde3DWindow::timerEvent(QTimerEvent* event)
 {
-	Q_UNUSED(event);
+    Q_UNUSED(event);
 
-	update();
+    update();
 } // end timerEvent
 
 void Horde3DWindow::onBeforeRendering()
 {
-	float frameTime = lastFrameStart.elapsed();
-	lastFrameStart.restart();
+    float frameTime = lastFrameStart.elapsed();
+    lastFrameStart.restart();
 
-	if(frameTime > 0.0000000000000000001f)
-	{
-		lastFrameTime = frameTime;
-		lastFPS = 1000.0 / lastFrameTime;
-		emit fpsChanged(lastFPS);
-	} // end if
+    if(frameTime > 0.0000000000000000001f)
+    {
+        lastFrameTime = frameTime;
+        lastFPS = 1000.0 / lastFrameTime;
+        emit fpsChanged(lastFPS);
+    } // end if
 
-	saveQtState();
+    saveQtState();
 
-	if(!_initialized)
-	{
-		init();
-	} // end if
+    if(!_initialized)
+    {
+        init();
+    } // end if
 
-	if(_dirtyView)
-	{
-		updateView();
-	} // end if
+    if(_dirtyView)
+    {
+        updateView();
+    } // end if
 
-	if(USE_SEPARATE_CONTEXT)
-	{
-		if(_h3dContext && (_h3dContext->format() != _qtContext->format()))
-		{
-			_h3dContext->deleteLater();
-			_h3dContext = NULL;
-		} // end if
+    if(USE_SEPARATE_CONTEXT)
+    {
+        if(_h3dContext && (_h3dContext->format() != _qtContext->format()))
+        {
+            _h3dContext->deleteLater();
+            _h3dContext = NULL;
+        } // end if
 
-		if(!_h3dContext)
-		{
-			qDebug() << "Creating new OpenGL context.";
-			// Create a new shared OpenGL context to be used exclusively by Horde3D
-			_h3dContext = new QOpenGLContext();
-			_h3dContext->setFormat(requestedFormat());
-			_h3dContext->setShareContext(_qtContext);
-			_h3dContext->create();
-		} // end if
-	} // end if
+        if(!_h3dContext)
+        {
+            qDebug() << "Creating new OpenGL context.";
+            // Create a new shared OpenGL context to be used exclusively by Horde3D
+            _h3dContext = new QOpenGLContext();
+            _h3dContext->setFormat(requestedFormat());
+            _h3dContext->setShareContext(_qtContext);
+            _h3dContext->create();
+        } // end if
+    } // end if
 
-	renderHorde();
+    renderHorde();
 
-	restoreQtState();
+    restoreQtState();
 } // end onBeforeRendering
 
 void Horde3DWindow::onInitFinished()
 {
-	startTimer(16);
+    startTimer(16);
 } // end onInitFinished
 
 void Horde3DWindow::init()
 {
-	qDebug() << "Horde3DWindow::init()";
+    qDebug() << "Horde3DWindow::init()";
 
-	_mgr.init();
+    _mgr.init();
 
-	_qtContext = openglContext();
-	_mgr.setAntiAliasingSamples(_qtContext->format().samples());
+    _qtContext = openglContext();
+    _mgr.setAntiAliasingSamples(_qtContext->format().samples());
 
-	_camDolly = _mgr.root()->newGroup("camera dolly");
-	_camera = _camDolly->newCamera("cam");
-	emit cameraChanged(_camera);
+    _camDolly = _mgr.root()->newGroup("camera dolly");
+    _camera = _camDolly->newCamera("cam");
+    emit cameraChanged(_camera);
 
-	setClearBeforeRendering(false);
+    setClearBeforeRendering(false);
 
-	_mgr.printHordeMessages();
-	qDebug() << "--------- Initialization Finished ---------";
+    _mgr.printHordeMessages();
+    qDebug() << "--------- Initialization Finished ---------";
 
-	_size = size() * screen()->devicePixelRatio();
-	_dirtyView = true;
+    _size = size() * screen()->devicePixelRatio();
+    _dirtyView = true;
 
-	_initialized = true;
+    _initialized = true;
 } // end init

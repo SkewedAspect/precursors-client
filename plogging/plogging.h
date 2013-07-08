@@ -10,12 +10,12 @@ class PLOGGINGSHARED_EXPORT PLogger : public QObject
 {
     Q_OBJECT
 public:
-	QString name;
+    QString name;
 
     explicit PLogger(QString name = "app");
 
     Q_INVOKABLE void debug(QString message);
-	Q_INVOKABLE void debug(QString message, QVariantList args);
+    Q_INVOKABLE void debug(QString message, QVariantList args);
 
     Q_INVOKABLE void info(QString message);
     Q_INVOKABLE void info(QString message, QVariantList args);
@@ -42,8 +42,8 @@ public:
     Q_INVOKABLE void fatal(QString message, QVariantList args);
 
 private:
-	QString buildString(QString level, QString message);
-	void log(QString level, QString message);
+    QString buildString(QString level, QString message);
+    void log(QString level, QString message);
 };
 
 class PLOGGINGSHARED_EXPORT PLogManager : public QObject
@@ -52,13 +52,13 @@ class PLOGGINGSHARED_EXPORT PLogManager : public QObject
 public:
     explicit PLogManager(QObject* parent = 0);
 
-	static PLogManager& instance();
+    static PLogManager& instance();
 
-	Q_INVOKABLE PLogger* logger(QString name = "app");
-	static PLogger& getLogger(QString name = "app");
+    Q_INVOKABLE PLogger* logger(QString name = "app");
+    static PLogger& getLogger(QString name = "app");
 
 private:
-	QMap<QString, PLogger*> _loggers;
+    QMap<QString, PLogger*> _loggers;
 };
 
 #endif // PLOGGING_H

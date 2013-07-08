@@ -9,17 +9,17 @@ class AES : public QObject
 {
     Q_OBJECT
 public:
-	QByteArray key;
-	QByteArray iv;
+    QByteArray key;
+    QByteArray iv;
 
     explicit AES(QByteArray salt = 0);
 
-	QByteArray encrypt(QByteArray plaintext);
-	QByteArray decrypt(QByteArray ciphertext);
+    QByteArray encrypt(QByteArray plaintext);
+    QByteArray decrypt(QByteArray ciphertext);
 
 private:
-	EVP_CIPHER_CTX encCtx;
-	EVP_CIPHER_CTX decCtx;
+    EVP_CIPHER_CTX encCtx;
+    EVP_CIPHER_CTX decCtx;
 };
 
 #endif // AES_H

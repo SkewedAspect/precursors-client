@@ -18,64 +18,64 @@ class Entity;
 
 class Horde3DWindow : public QQuickWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	Q_PROPERTY(Entity* camera READ camera NOTIFY cameraChanged)
-	Q_PROPERTY(Entity* camDolly READ camDolly)
-	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
+    Q_PROPERTY(Entity* camera READ camera NOTIFY cameraChanged)
+    Q_PROPERTY(Entity* camDolly READ camDolly)
+    Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
 
 public:
-	Horde3DWindow(QWindow* parent = 0);
-	~Horde3DWindow();
+    Horde3DWindow(QWindow* parent = 0);
+    ~Horde3DWindow();
 
-	Entity* camera() const;
-	Entity* camDolly() const;
-	float fps() const;
+    Entity* camera() const;
+    Entity* camDolly() const;
+    float fps() const;
 
-	void saveQtState();
-	void restoreQtState();
-	void restoreH3DState();
-	void saveH3DState();
+    void saveQtState();
+    void restoreQtState();
+    void restoreH3DState();
+    void saveH3DState();
 
 signals:
-	void cameraChanged(const Entity* camera);
-	void fpsChanged(const float& newFPS);
+    void cameraChanged(const Entity* camera);
+    void fpsChanged(const float& newFPS);
 
 protected slots:
-	void onInitFinished();
-	void onBeforeRendering();
+    void onInitFinished();
+    void onBeforeRendering();
 
 protected:
-	virtual void resizeEvent(QResizeEvent* event);
+    virtual void resizeEvent(QResizeEvent* event);
 
-	virtual void timerEvent(QTimerEvent* event);
+    virtual void timerEvent(QTimerEvent* event);
 
 private:
-	void updateView();
+    void updateView();
 
-	void init();
+    void init();
 
-	void renderHorde();
+    void renderHorde();
 
-	// Qt's OpenGL context
-	QOpenGLContext* _qtContext;
-	// The context to be used by Horde3D
-	QOpenGLContext* _h3dContext;
+    // Qt's OpenGL context
+    QOpenGLContext* _qtContext;
+    // The context to be used by Horde3D
+    QOpenGLContext* _h3dContext;
 
-	QTime lastFrameStart;
-	float lastFrameTime;
-	float lastFPS;
-	float _shipRot;
+    QTime lastFrameStart;
+    float lastFrameTime;
+    float lastFPS;
+    float _shipRot;
 
-	QSize _size;
+    QSize _size;
 
-	Entity* _camDolly;
-	Entity* _camera;
+    Entity* _camDolly;
+    Entity* _camera;
 
-	Horde3DManager& _mgr;
+    Horde3DManager& _mgr;
 
-	bool _initialized;
-	bool _dirtyView;
+    bool _initialized;
+    bool _dirtyView;
 }; // end Horde3DWindow
 
 #endif // HORDE3DWINDOW_H

@@ -3,24 +3,24 @@
 
 
 Horde3DItemAnimation::Horde3DItemAnimation(Horde3DItem* parent) :
-	QAbstractAnimation(parent), m_item(parent)
+    QAbstractAnimation(parent), m_item(parent)
 {
-	// Do nothing.
+    // Do nothing.
 }
 
 Horde3DItemAnimation::~Horde3DItemAnimation()
 {
-	// Do nothing.
+    // Do nothing.
 }
 
 int Horde3DItemAnimation::duration() const
 {
-	// Duration is undefined (infinite).
-	return -1;
+    // Duration is undefined (infinite).
+    return -1;
 }
 
 void Horde3DItemAnimation::updateCurrentTime(int currentTime)
 {
-	// Schedule redraw.
-	m_item->update();
+    // Schedule redraw.
+    m_item->update();
 }

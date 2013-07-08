@@ -19,8 +19,8 @@ class QNetString;
 class PCHANNELSSHARED_EXPORT PChannels : public QObject
 {
     Q_OBJECT
-	Q_ENUMS(ChannelMode)
-	Q_ENUMS(ErrorType)
+    Q_ENUMS(ChannelMode)
+    Q_ENUMS(ErrorType)
 public:
     enum ChannelMode
     {
@@ -39,7 +39,7 @@ public:
 
     explicit PChannels(QObject *parent = 0);
 
-	static PChannels& instance();
+    static PChannels& instance();
 
     Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
     void disconnect();
@@ -69,7 +69,7 @@ private:
     quint32 idCounter;
     QHash<quint32, PChannelsRequest*> requests;
 
-	AES* cipher;
+    AES* cipher;
 
     QSslSocket* sslSocket;
     QTcpSocket* tcpSocket;
@@ -83,7 +83,7 @@ private:
 
     QString sessionCookie;
 
-	PLogger& logger;
+    PLogger& logger;
 
 signals:
     void error(ErrorType errorType, QString errorMessage);

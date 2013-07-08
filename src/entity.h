@@ -32,22 +32,22 @@ public:
     void setPitch(qreal p);
     void setRoll(qreal r);
 
-	Q_INVOKABLE void changeHeading(qreal dY);
-	Q_INVOKABLE void changePitch(qreal dP);
-	Q_INVOKABLE void changeRoll(qreal dR);
+    Q_INVOKABLE void changeHeading(qreal dY);
+    Q_INVOKABLE void changePitch(qreal dP);
+    Q_INVOKABLE void changeRoll(qreal dR);
 
-	Q_INVOKABLE Entity* newCamera(QString cameraName, QString pipelineName = QString());
-	Q_INVOKABLE Entity* newGroup(QString groupName);
-	Q_INVOKABLE Entity* loadModel(QString scenePath, int flags = 0);
-	Q_INVOKABLE Entity* loadScene(QString scenePath, int flags = 0);
-	Q_INVOKABLE Entity* loadEntityFromRes(H3DResTypes::List type, QString path, int flags = 0);
+    Q_INVOKABLE Entity* newCamera(QString cameraName, QString pipelineName = QString());
+    Q_INVOKABLE Entity* newGroup(QString groupName);
+    Q_INVOKABLE Entity* loadModel(QString scenePath, int flags = 0);
+    Q_INVOKABLE Entity* loadScene(QString scenePath, int flags = 0);
+    Q_INVOKABLE Entity* loadEntityFromRes(H3DResTypes::List type, QString path, int flags = 0);
 
-	Q_INVOKABLE void scheduleOnce();
-	Q_INVOKABLE void scheduleRepeating();
-	Q_INVOKABLE void stopRepeating();
+    Q_INVOKABLE void scheduleOnce();
+    Q_INVOKABLE void scheduleRepeating();
+    Q_INVOKABLE void stopRepeating();
 
-	Q_INVOKABLE static Entity* getEntity(H3DNode node);
-	Q_INVOKABLE static void runScheduled();
+    Q_INVOKABLE static Entity* getEntity(H3DNode node);
+    Q_INVOKABLE static void runScheduled();
 
     void apply();
 
@@ -57,18 +57,18 @@ protected:
 private:
     H3DNode _node;
 
-	QVector3D _pos;
-	float _heading, _pitch, _roll;
+    QVector3D _pos;
+    float _heading, _pitch, _roll;
 
-	bool scheduledOnce;
-	bool scheduledRepeating;
+    bool scheduledOnce;
+    bool scheduledRepeating;
 
-	PLogger& logger;
-	Horde3DManager& mgr;
+    PLogger& logger;
+    Horde3DManager& mgr;
 
-	static QHash<H3DNode, Entity*> entities;
-	static QList<Entity*> scheduledOnceEntities;
-	static QList<Entity*> scheduledRepeatingEntities;
+    static QHash<H3DNode, Entity*> entities;
+    static QList<Entity*> scheduledOnceEntities;
+    static QList<Entity*> scheduledRepeatingEntities;
 }; // end Entity
 
 #endif // ENTITY_H
