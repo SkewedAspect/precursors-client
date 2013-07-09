@@ -1,48 +1,37 @@
-FIND_PACKAGE(OpenSSL)
-
 # List project files
-set(PCHANNELS_HEADERS
-	pchannels.h
-	pchannels_global.h
-	pchannelsrequest.h
-	qnetstring.h
-	aes.h
+set(PSETTINGS_HEADERS
+	psettings.h
+	psettings_global.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
-set(PCHANNELS_SOURCES
-	pchannels.cpp
-	pchannelsrequest.cpp
-	qnetstring.cpp
-	aes.cpp
+set(PSETTINGS_SOURCES
+	psettings.cpp
 	)
 
-add_library(PChannels SHARED
-	${PCHANNELS_HEADERS}
-	${PCHANNELS_SOURCES}
+add_library(PSettings SHARED
+	${PSETTINGS_HEADERS}
+	${PSETTINGS_SOURCES}
 	)
 
-set_target_properties(PChannels PROPERTIES COMPILE_FLAGS -fPIC)
-set_target_properties(PChannels PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(PSettings PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(PSettings PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
-	${OPENSSL_INCLUDE_DIR}
-)
-
-# Tell CMake what to link with
-target_link_libraries(PChannels
-	Qt5::Core
-	Qt5::Network
-	${OPENSSL_LIBRARIES}
-
-	PLogging
-	PreUtil
+	${CMAKE_CURRENT_SOURCE_DIR}/..
 	)
 
+# Tell CMake what to link with
+target_link_libraries(PSettings
+	Qt5::Core
+	Qt5::Network
+
+	PLogging
+	)
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
-	add_custom_command(TARGET PChannels POST_BUILD
+	add_custom_command(TARGET PSettings POST_BUILD
 		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
 		)
 endif(WIN32 AND NOT MINGW)
@@ -54,11 +43,12 @@ endif(MINGW OR UNIX)
 
 
 if(WIN32)
-	install(TARGETS PChannels
+	install(TARGETS PSettings
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 elseif(UNIX)
-	install(TARGETS PChannels
+	install(TARGETS PSettings
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 endif()
+

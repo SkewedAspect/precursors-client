@@ -1,27 +1,28 @@
 # List project files
-set(PSETTINGS_HEADERS
-	psettings.h
-	psettings_global.h
+set(PREUTIL_HEADERS
+	preutil.h
+	preutil_global.h
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
-set(PSETTINGS_SOURCES
-	psettings.cpp
+set(PREUTIL_SOURCES
+	preutil.cpp
 	)
 
-add_library(PSettings SHARED
-	${PSETTINGS_HEADERS}
-	${PSETTINGS_SOURCES}
+add_library(PreUtil SHARED
+	${PREUTIL_HEADERS}
+	${PREUTIL_SOURCES}
 	)
 
-set_target_properties(PSettings PROPERTIES COMPILE_FLAGS -fPIC)
-set_target_properties(PSettings PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(PreUtil PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(PreUtil PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
-)
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+	)
 
 # Tell CMake what to link with
-target_link_libraries(PSettings
+target_link_libraries(PreUtil
 	Qt5::Core
 	Qt5::Network
 
@@ -30,7 +31,7 @@ target_link_libraries(PSettings
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
-	add_custom_command(TARGET PSettings POST_BUILD
+	add_custom_command(TARGET PreUtil POST_BUILD
 		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
 		)
 endif(WIN32 AND NOT MINGW)
@@ -42,11 +43,11 @@ endif(MINGW OR UNIX)
 
 
 if(WIN32)
-	install(TARGETS PSettings
+	install(TARGETS PreUtil
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 elseif(UNIX)
-	install(TARGETS PSettings
+	install(TARGETS PreUtil
 		LIBRARY DESTINATION bin
 		CONFIGURATIONS All)
 endif()

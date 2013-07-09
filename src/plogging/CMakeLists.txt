@@ -18,7 +18,7 @@ set_target_properties(PLogging PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
-)
+	)
 
 # Tell CMake what to link with
 target_link_libraries(PLogging

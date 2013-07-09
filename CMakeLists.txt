@@ -59,13 +59,13 @@ if(WIN32 AND NOT MINGW)
 endif(WIN32 AND NOT MINGW)
 
 configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-   	${CMAKE_CURRENT_BINARY_DIR}/config.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in
+   	${CMAKE_CURRENT_BINARY_DIR}/src/config.h
 	)
 
 
-ADD_SUBDIRECTORY(plogging plogging)
-ADD_SUBDIRECTORY(preutil preutil)
-ADD_SUBDIRECTORY(psettings psettings)
-ADD_SUBDIRECTORY(pchannels pchannels)
-ADD_SUBDIRECTORY(src src)
+ADD_SUBDIRECTORY(src/plogging src/plogging)
+ADD_SUBDIRECTORY(src/preutil src/preutil)
+ADD_SUBDIRECTORY(src/psettings src/psettings)
+ADD_SUBDIRECTORY(src/pchannels src/pchannels)
+ADD_SUBDIRECTORY(src/client src/client)

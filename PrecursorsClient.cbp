@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="PrecursorsClient" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\Cellar\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Core\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Gui\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Qml\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Network\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Quick\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5OpenGL\;CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Widgets\;CMake Files\cmake\;CMake Files\cmake\Modules\;CMake Files\plogging\;CMake Files\preutil\;CMake Files\psettings\;CMake Files\pchannels\;CMake Files\src\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="install">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 install" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="install/local">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 install/local" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="list_install_components">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 list_install_components" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PLogging">
+         <Option output="/Users/morgul/Development/precursors-client-qml/plogging/libPLogging.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/plogging" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/plogging" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/plogging/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 PLogging" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PLogging/fast">
+         <Option output="/Users/morgul/Development/precursors-client-qml/plogging/libPLogging.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/plogging" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/plogging" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/plogging/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 PLogging/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PLogging_automoc">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/plogging" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 PLogging_automoc" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/plogging/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PreUtil">
+         <Option output="/Users/morgul/Development/precursors-client-qml/preutil/libPreUtil.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/preutil" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/preutil" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/preutil/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 PreUtil" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PreUtil/fast">
+         <Option output="/Users/morgul/Development/precursors-client-qml/preutil/libPreUtil.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/preutil" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/preutil" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/preutil/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 PreUtil/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PreUtil_automoc">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/preutil" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 PreUtil_automoc" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/preutil/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PSettings">
+         <Option output="/Users/morgul/Development/precursors-client-qml/psettings/libPSettings.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/psettings" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/psettings" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/psettings/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 PSettings" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PSettings/fast">
+         <Option output="/Users/morgul/Development/precursors-client-qml/psettings/libPSettings.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/psettings" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/psettings" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/psettings/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 PSettings/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PSettings_automoc">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/psettings" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 PSettings_automoc" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/psettings/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PChannels">
+         <Option output="/Users/morgul/Development/precursors-client-qml/pchannels/libPChannels.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/pchannels" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/pchannels" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/pchannels/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 PChannels" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PChannels/fast">
+         <Option output="/Users/morgul/Development/precursors-client-qml/pchannels/libPChannels.dylib" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/pchannels" />
+         <Option object_output="./" />
+         <Option type="3" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/pchannels" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/pchannels/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 PChannels/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PChannels_automoc">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/pchannels" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 PChannels_automoc" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/pchannels/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PrecursorsClient">
+         <Option output="/Users/morgul/Development/precursors-client-qml/dist/bin/PrecursorsClient" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/dist/bin" />
+         <Option object_output="./" />
+         <Option type="0" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_GUI_LIB" />
+            <Add option="-DQT_QML_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add option="-DQT_QUICK_LIB" />
+            <Add option="-DQT_OPENGL_LIB" />
+            <Add option="-DQT_WIDGETS_LIB" />
+            <Add directory="//System/Library/Frameworks/OpenGL.framework/Headers" />
+            <Add directory="/System/Library/Frameworks/OpenGL.framework" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/deps/Horde3D.framework/Headers" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/deps/Horde3DUtils.framework/Headers" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/src" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/src/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtGui" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtOpenGL" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtQml" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtQuick" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtWidgets" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 PrecursorsClient" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PrecursorsClient/fast">
+         <Option output="/Users/morgul/Development/precursors-client-qml/dist/bin/PrecursorsClient" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/dist/bin" />
+         <Option object_output="./" />
+         <Option type="0" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_CORE_LIB" />
+            <Add option="-DQT_GUI_LIB" />
+            <Add option="-DQT_QML_LIB" />
+            <Add option="-DQT_NETWORK_LIB" />
+            <Add option="-DQT_QUICK_LIB" />
+            <Add option="-DQT_OPENGL_LIB" />
+            <Add option="-DQT_WIDGETS_LIB" />
+            <Add directory="//System/Library/Frameworks/OpenGL.framework/Headers" />
+            <Add directory="/System/Library/Frameworks/OpenGL.framework" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/deps/Horde3D.framework/Headers" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/deps/Horde3DUtils.framework/Headers" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/src" />
+            <Add directory="/Users/morgul/Development/precursors-client-qml/src/.." />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtCore" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtGui" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtNetwork" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtOpenGL" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtQml" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtQuick" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/include/QtWidgets" />
+            <Add directory="/usr/local/Cellar/qt5/5.1.0/clang_64/mkspecs/macx-clang" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 PrecursorsClient/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="PrecursorsClient_automoc">
+         <Option working_dir="/Users/morgul/Development/precursors-client-qml/src" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 PrecursorsClient_automoc" />
+            <CompileFile command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/Users/morgul/Development/precursors-client-qml/src/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/aes.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/pchannels.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/pchannelsrequest.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/qnetstring.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/plogging/plogging.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/preutil/preutil.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/psettings/psettings.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/cameranodeobject.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/entity.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3ditem.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3ditemanim.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3dmanager.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3dwindow.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/main.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/math3d.cpp">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/config.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/aes.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/pchannels.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/pchannels_global.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/pchannelsrequest.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/qnetstring.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/plogging/plogging.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/plogging/plogging_global.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/preutil/preutil.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/preutil/preutil_global.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/psettings/psettings.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/psettings/psettings_global.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/cameranodeobject.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/entity.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3ditem.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3ditemanim.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3dmanager.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/horde3dwindow.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/math3d.h">
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/config.h.in">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Core\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Core\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Core\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Core\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Gui\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Gui\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Gui\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Qml/Qt5QmlConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Qml\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Qml/Qt5QmlConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Qml\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Network\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Network\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Quick/Qt5QuickConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Quick\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Quick/Qt5QuickConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Quick\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5OpenGL/Qt5OpenGLConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5OpenGL\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5OpenGL/Qt5OpenGLConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5OpenGL\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Widgets\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Widgets\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Widgets\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/../../../../usr/local/Cellar/qt5/5.1.0/clang_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\local\Cellar\qt5\5.1.0\clang_64\lib\cmake\Qt5Widgets\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/cmake/Modules/FindHorde3D.cmake">
+          <Option virtualFolder="CMake Files\cmake\Modules\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/plogging/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\plogging\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/preutil/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\preutil\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/psettings/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\psettings\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/pchannels/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\pchannels\" />
+      </Unit>
+      <Unit filename="/Users/morgul/Development/precursors-client-qml/src/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\src\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

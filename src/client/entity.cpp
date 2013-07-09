@@ -10,14 +10,14 @@ QList<Entity*> Entity::scheduledRepeatingEntities;
 
 Entity::Entity() :
     QObject(), _node(0), scheduledOnce(false), scheduledRepeating(false),
-    logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
+    _logger(PLogManager::getLogger("entity")), _mgr(Horde3DManager::instance())
 {
     throw new std::exception;
 } // end Entity
 
 Entity::Entity(H3DNode node, QObject *parent) :
     QObject(parent), _node(node), scheduledOnce(false), scheduledRepeating(false),
-    logger(PLogManager::getLogger("entity")), mgr(Horde3DManager::instance())
+    _logger(PLogManager::getLogger("entity")), _mgr(Horde3DManager::instance())
 {
     float x, y, z;
 
@@ -87,14 +87,28 @@ void Entity::changeRoll(qreal dR)
 Entity* Entity::newGroup(QString groupName)
 {
     H3DNode groupNode = h3dAddGroupNode(_node, groupName.toUtf8().constData());
+	if(groupNode == 0)
+	{
+		_logger.error(QString("Failed to create group %1!").arg(groupName));
+	} // end if
+
     return Entity::getEntity(groupNode);
 } // end newGroup
 
 Entity* Entity::newCamera(QString cameraName, QString pipelineName)
 {
-    H3DRes pipeline = mgr.loadPipeline(pipelineName);
+    H3DRes pipeline = _mgr.loadPipeline(pipelineName);
+	if(pipeline == 0)
+	{
+		_logger.error(QString("Failed to load pipeline %1!").arg(pipelineName));
+	} // end if
 
     H3DNode camera = h3dAddCameraNode(_node, cameraName.toUtf8().constData(), pipeline);
+	if(camera == 0)
+	{
+		_logger.error(QString("Failed to create camera %1!").arg(cameraName));
+	} // end if
+
     h3dSetNodeParamF(camera, H3DCamera::FarPlaneF, 0, 100000);
 
     //FIXME: Get rid of this! (and replace it with getters/setters for pos, x, y, and z)
@@ -121,16 +135,27 @@ Entity* Entity::loadScene(QString scenePath, int flags)
 Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flags)
 {
     H3DRes res = h3dAddResource(type, path.toUtf8().constData(), flags);
+	if(res == 0)
+	{
+		_logger.error(QString("Failed to create resource handle for %1!").arg(path));
+	} // end if
 
     if(!h3dIsResLoaded(res))
     {
-        if(!h3dutLoadResourcesFromDisk(mgr.contentDirs().toUtf8().constData()))
+		_logger.debug(QString("Loading resources from: %1").arg(_mgr.contentDirs()));
+		if(!_mgr.loadNewResources())
         {
+			_logger.error(QString("Failed to load resource %1!").arg(path));
             return NULL;
         } // end if
     } // end if
 
     H3DNode newNode = h3dAddNodes(_node, res);
+	if(newNode == 0)
+	{
+		_logger.error(QString("Failed to create entity node for resource %1!").arg(path));
+	} // end if
+
     return Entity::getEntity(newNode);
 } // end loadEntityFromRes
 
