@@ -143,7 +143,7 @@ Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flag
     if(!h3dIsResLoaded(res))
     {
 		_logger.debug(QString("Loading resources from: %1").arg(_mgr.contentDirs()));
-		if(!loadNewResources())
+		if(!_mgr.loadNewResources())
         {
 			_logger.error(QString("Failed to load resource %1!").arg(path));
             return NULL;
