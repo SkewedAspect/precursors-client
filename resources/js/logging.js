@@ -1,3 +1,12 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// Logging wrapper module.
+//
+// This module wraps the C++ logging class, allowing Javascript/QML to use a more familiar syntax, instead of building a
+// list to pass the arguments in.
+//
+// @module logging.js
+// ---------------------------------------------------------------------------------------------------------------------
+
 function Logger(name)
 {
     this.logger = logMan.logger(name);
@@ -85,3 +94,5 @@ Logger.prototype.fatal = function()
 
     this.logger.fatal(message, args);
 } // end fatal
+
+// ---------------------------------------------------------------------------------------------------------------------
