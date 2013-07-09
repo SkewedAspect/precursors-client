@@ -23,10 +23,12 @@ syntax: glob
 **CMakeFiles/**
 **Makefile
 CMakeCache.txt
+CMakeLists.txt.*
 
 # qt artifacts
 **moc_**
 **_automoc**
+**.cbp
 
 # generated project files
 config.h
