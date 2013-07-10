@@ -235,7 +235,7 @@ void PChannels::handleReply(QVariantMap envelope)
 // Handle an incomming event.
 void PChannels::handleEvent(QVariantMap envelope)
 {
-	emit incommingMessage(envelope["contents"].toMap());
+	emit incommingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
 } // end handleEvent
 
 // Connect the TCP and UDP transports to the server.
@@ -430,8 +430,10 @@ void PChannels::udpDataReady()
             // Decrypt AES
             QByteArray plainText = cipher->decrypt(datagram);
 
+			QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
+
             // Now, parse as JSON, and emit.
-            emit incommingMessage(QJsonDocument::fromJson(plainText).toVariant().toMap());
+            emit incommingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
     } // end while
 } // end udpDataReady
 
