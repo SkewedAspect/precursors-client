@@ -9,7 +9,7 @@ import Precursors.Networking 1.0
 import Horde3D 1.0
 
 import "../js/logging.js" as Logging
-import "../js/entity_manager.js" as EntityManagerModule
+import "../js/game.js" as GameModule
 
 Horde3DWindow {
     id: mainWindow
@@ -18,7 +18,7 @@ Horde3DWindow {
     color: "black"
 
     property var logger: new Logging.Logger("mainWindow")
-    property var entMan: new EntityManagerModule.EntityManager()
+    property var game: new GameModule.Game()
 
     property var headingSpeed: 1
     property var pitchSpeed: 1
@@ -41,11 +41,18 @@ Horde3DWindow {
         {
             var characters = charReq.replyMessage.characters;
 
+
             charList.clear();
             characters.forEach(function(character)
             {
+				// We have to copy the `id` key, due to shadowing in the ListView.
+				character['charID'] = character['id'];
+
                 charList.append(character);
-            }); // end forEach
+			}); // end forEach
+
+			// Finally, we need to set the initial value of the "currently selected" id.
+			charListView.currentItemID = characters[0]['id'];
         } // end onCharListReply
     } // end onConnected
 
@@ -222,7 +229,8 @@ Horde3DWindow {
                     height: group.height
 
                     onClicked: {
-                        wrapper.ListView.view.currentIndex = index;
+						wrapper.ListView.view.currentIndex = index;
+						wrapper.ListView.view.currentItemID = charID;
                     }
 
                     GroupBox {
@@ -253,10 +261,13 @@ Horde3DWindow {
                 anchors.fill: parent
                 anchors.margins: margin
 
-                ListView {
+				ListView {
+					id: charListView
                     clip: true
                     height: 80
-                    Layout.fillWidth: true
+					Layout.fillWidth: true
+
+					property var currentItemID
 
                     model: ListModel { id: charList }
                     delegate: characterItem
@@ -266,6 +277,22 @@ Horde3DWindow {
                 Button {
                     Layout.fillWidth: true
                     text: "Select Character"
+					onClicked: {
+						// Log in to the currently selected character.
+						var charReq = networking.buildRequest("control",
+								{ type: "selectCharacter", character: charListView.currentItemID },
+								PChannels.CM_SECURE);
+						charReq.reply.connect(onCharSelReply);
+						charReq.send();
+
+						function onCharSelReply(confirmed)
+						{
+							if(confirmed)
+							{
+								charWindow.visible = false;
+							} // end if
+						} // end onCharSelReply
+					}
                 }
             }
         }

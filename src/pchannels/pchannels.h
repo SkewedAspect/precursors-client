@@ -89,7 +89,7 @@ signals:
     void error(ErrorType errorType, QString errorMessage);
     void connected();
     void disconnected(QString);
-    void incommingMessage(QVariantMap message);
+    void incommingMessage(QString channel, QVariantMap message);
 
 private slots:
     void sslConnected();

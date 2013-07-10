@@ -34,3 +34,6 @@ CMakeLists.txt.*
 config.h
 build/**
 **.dylib
+
+# Any dependency files
+deps/**

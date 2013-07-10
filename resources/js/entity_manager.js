@@ -4,7 +4,9 @@
 // @module entity_manager.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-var logger = logMan.logger("entity_manager");
+.import "../js/logging.js" as Logging
+
+var logger = new Logging.Logger("entity_manager");
 
 function EntityManager()
 {
@@ -17,9 +19,14 @@ EntityManager.prototype.connectSignals = function()
     networking.incommingMessage.connect(this.handleIncomingEvent);
 } // end connectSignals
 
-EntityManager.prototype.handleIncomingEvent = function(event)
+EntityManager.prototype.handleIncomingEvent = function(channel, event)
 {
-    logger.debug("Incoming Event: %1", JSON.stringify(event));
+    logger.debug("Incoming Event: %1::%2", channel, JSON.stringify(event));
+
+	if(channel == "entity")
+	{
+		logger.debug("Incoming Entity Event: %1", JSON.stringify(event));
+	} // end if
 } // end handleIncomingEvent
 
 // ---------------------------------------------------------------------------------------------------------------------
