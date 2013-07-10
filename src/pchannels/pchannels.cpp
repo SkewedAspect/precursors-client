@@ -242,7 +242,7 @@ void PChannels::handleEvent(QVariantMap envelope)
 void PChannels::connectTransports()
 {
     tcpSocket->connectToHost(this->serverAddress, this->tcpPort);
-    udpSocket->bind(this->serverAddress, this->udpPort);
+    udpSocket->bind(this->udpPort);
 
     // Send the UDP login message
     QVariantMap msg;
@@ -372,6 +372,7 @@ void PChannels::handleUDPResponse(bool confirmed)
     }
     else
     {
+		logger.debug("UDP RESPONSE CONFIRMED!");
         this->_udpConnected = true;
         if(this->_tcpConnected)
         {
