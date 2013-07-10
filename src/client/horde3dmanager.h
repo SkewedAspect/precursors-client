@@ -11,7 +11,7 @@
 
 
 #define CFG_CONTENT_DIRS "horde3d.contentDirs"
-#define DEFAULT_CONTENT_DIRS "resources"
+#define DEFAULT_CONTENT_DIRS "resources/content"
 
 #define CFG_ANISOTROPY "horde3d.anisotropy"
 #define DEFAULT_ANISOTROPY 8
