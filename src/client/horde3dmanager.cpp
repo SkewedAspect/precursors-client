@@ -109,9 +109,6 @@ void Horde3DManager::init()
 
     setAnisotropy(anisotropy());
 
-    H3DRes avatar = h3dAddResource(H3DResTypes::SceneGraph, "models/ares/ares.scene.xml", 0);
-    H3DRes scene = h3dAddResource(H3DResTypes::SceneGraph, "scenes/asteroids/asteroids.scene.xml", 0);
-
     if(!loadNewResources())
 	{
 		_logger.fatal("Failed to load default avatar or scene!");

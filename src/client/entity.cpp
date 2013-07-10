@@ -84,6 +84,20 @@ void Entity::changeRoll(qreal dR)
 } // end changeRoll
 
 
+QList<Entity*> Entity::find(QString childName)
+{
+	int numFound = h3dFindNodes(_node, childName.toUtf8().constData(), H3DNodeTypes::Undefined);
+
+	QList<Entity*> found;
+	for(int idx = 0; idx < numFound; idx++)
+	{
+		found.append(Entity::getEntity(h3dGetNodeFindResult(idx)));
+	} // end for
+
+	return found;
+} // end find
+
+
 Entity* Entity::newGroup(QString groupName)
 {
     H3DNode groupNode = h3dAddGroupNode(_node, groupName.toUtf8().constData());
@@ -121,15 +135,23 @@ Entity* Entity::newCamera(QString cameraName, QString pipelineName)
     return Entity::getEntity(camera);
 } // end newCamera
 
-Entity* Entity::loadModel(QString scenePath, int flags)
+Entity* Entity::loadModel(QString modelPath, int flags)
 {
-    // Right now, there's no difference between this and a scene.
-    return loadScene(scenePath, flags);
+    return loadEntityFromRes(H3DResTypes::SceneGraph, modelPath, flags);
 } // end loadModel
 
 Entity* Entity::loadScene(QString scenePath, int flags)
 {
-    return loadEntityFromRes(H3DResTypes::SceneGraph, scenePath, flags);
+    Entity* scene = loadModel(scenePath, flags);
+
+	// Apply NoCastShadow to all skyboxes.
+	QList<Entity*> skyboxes = scene->find("skybox");
+	while(!skyboxes.isEmpty())
+	{
+		h3dSetNodeFlags(skyboxes.takeFirst()->node(), H3DNodeFlags::NoCastShadow, true);
+	} // end while
+
+	return scene;
 } // end loadScene
 
 Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flags)

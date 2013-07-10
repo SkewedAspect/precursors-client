@@ -1,6 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <QtCore/QList>
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtGui/QVector3D>
@@ -35,6 +36,8 @@ public:
     Q_INVOKABLE void changeHeading(qreal dY);
     Q_INVOKABLE void changePitch(qreal dP);
     Q_INVOKABLE void changeRoll(qreal dR);
+
+	Q_INVOKABLE QList<Entity*> find(QString childName);
 
     Q_INVOKABLE Entity* newCamera(QString cameraName, QString pipelineName = QString());
     Q_INVOKABLE Entity* newGroup(QString groupName);
