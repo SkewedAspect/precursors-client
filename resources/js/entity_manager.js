@@ -4,7 +4,9 @@
 // @module entity_manager.js
 // ---------------------------------------------------------------------------------------------------------------------
 
-var logger = logMan.logger("entity_manager");
+.import "../js/logging.js" as Logging
+
+var logger = new Logging.Logger("entity_manager");
 
 function EntityManager()
 {
