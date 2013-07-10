@@ -23,11 +23,16 @@ include_directories(
 
 # Tell CMake what to link with
 target_link_libraries(PSettings
-	Qt5::Core
-	Qt5::Network
+	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
+	#Qt5::Core
 
 	PLogging
 	)
+
+qt5_use_modules(PSettings
+	Core
+	)
+
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)

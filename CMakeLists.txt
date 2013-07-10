@@ -1,5 +1,6 @@
 # Set minimum cmake version
-cmake_minimum_required(VERSION 2.8.11)
+#cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.10)
 
 # Name our project
 project(PrecursorsClient)
@@ -34,9 +35,10 @@ include_directories(
 # Find the Qt modules
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
-find_package(Qt5OpenGL REQUIRED)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)

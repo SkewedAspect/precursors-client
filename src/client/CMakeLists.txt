@@ -39,11 +39,12 @@ set_target_properties(PrecursorsClient PROPERTIES DEBUG_POSTFIX _d)
 target_link_libraries(PrecursorsClient
 	${Horde3D_LIBRARIES}
 
-	Qt5::Core
-	Qt5::Gui
-	Qt5::Qml
-	Qt5::Quick
-	Qt5::OpenGL
+	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
+	#Qt5::Core
+	#Qt5::Gui
+	#Qt5::Qml
+	#Qt5::Quick
+	#Qt5::OpenGL
 
 	${OPENGL_gl_LIBRARY}
 
@@ -53,6 +54,14 @@ target_link_libraries(PrecursorsClient
 	PreUtil
 	PChannels
 	PSettings
+	)
+
+qt5_use_modules(PrecursorsClient
+	Core
+	Gui
+	Qml
+	Quick
+	OpenGL
 	)
 
 
