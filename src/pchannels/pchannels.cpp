@@ -235,7 +235,7 @@ void PChannels::handleReply(QVariantMap envelope)
 // Handle an incomming event.
 void PChannels::handleEvent(QVariantMap envelope)
 {
-    emit incommingMessage(envelope["content"].toMap());
+	emit incommingMessage(envelope["contents"].toMap());
 } // end handleEvent
 
 // Connect the TCP and UDP transports to the server.
