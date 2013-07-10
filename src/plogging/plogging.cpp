@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QTime>
 
+#include "ansi.h"
 #include "plogging.h"
 
 /**********************************************************************************************************************/
@@ -56,7 +57,7 @@ PLogger::PLogger(QString name) :
 
 void PLogger::debug(QString message)
 {
-    log("DEBUG", message);
+    log("DEBUG   ", message);
 } // end debug
 
 void PLogger::debug(QString message, QVariantList args)
@@ -71,7 +72,7 @@ void PLogger::debug(QString message, QVariantList args)
 
 void PLogger::info(QString message)
 {
-    log("INFO", message);
+    log("INFO    ", message);
 } // end info
 
 void PLogger::info(QString message, QVariantList args)
@@ -86,7 +87,7 @@ void PLogger::info(QString message, QVariantList args)
 
 void PLogger::notice(QString message)
 {
-    log("NOTICE", message);
+    log("NOTICE  ", message);
 } // end notice
 
 void PLogger::notice(QString message, QVariantList args)
@@ -111,7 +112,7 @@ void PLogger::notify(QString message, QVariantList args)
 
 void PLogger::warning(QString message)
 {
-    log("WARNING", message);
+    log("WARNING ", message);
 } // end warning
 
 void PLogger::warning(QString message, QVariantList args)
@@ -136,7 +137,7 @@ void PLogger::warn(QString message, QVariantList args)
 
 void PLogger::error(QString message)
 {
-    log("ERROR", message);
+    log("ERROR   ", message);
 } // end error
 
 void PLogger::error(QString message, QVariantList args)
@@ -166,7 +167,7 @@ void PLogger::critical(QString message, QVariantList args)
 
 void PLogger::fatal(QString message)
 {
-    log("FATAL", message);
+    log("FATAL   ", message);
     exit(EXIT_FAILURE);
 } // end fatal
 
@@ -184,9 +185,57 @@ void PLogger::fatal(QString message, QVariantList args)
 
 QString PLogger::buildString(QString level, QString message)
 {
+	// Color the logger's name
+	QString name = ANSI_COLOR_CYAN + this->name + ANSI_COLOR_RESET;
+
     // Formats the log message into the format we want to use.
-    return QString("%1 [%2] %3: %4").arg(QTime::currentTime().toString("h:mm:ss")).arg(level).arg(this->name).arg(message);
+    return QString(
+			QString("%1 ")
+			+ ANSI_COLOR_GREY
+			+ QString("[")
+			+ ANSI_COLOR_RESET
+			+ QString("%2")
+			+ ANSI_COLOR_GREY
+			+ QString("] %3")
+			+ ANSI_COLOR_GREY
+			+ QString(":")
+			+ ANSI_COLOR_RESET
+			+ QString("  %4")
+		)
+		.arg(QTime::currentTime().toString("h:mm:ss"))
+		.arg(colorLevel(level)).arg(name)
+		.arg(message);
 } // end buildString
+
+QString PLogger::colorLevel(QString level)
+{
+	if(level.trimmed().toUpper() == "INFO")
+	{
+		level = ANSI_COLOR_GREEN + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "NOTICE")
+	{
+		level = ANSI_COLOR_CYAN + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "WARNING")
+	{
+		level = ANSI_COLOR_YELLOW + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "ERROR")
+	{
+		level = ANSI_COLOR_RED + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "CRITICAL")
+	{
+		level = ANSI_COLOR_MAGENTA + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "FATAL")
+	{
+		level = ANSI_COLOR_MAGENTA + level + ANSI_COLOR_RESET;
+	} // end if
+
+	return level;
+} // end colorLevel
 
 void PLogger::log(QString level, QString message)
 {

@@ -43,6 +43,7 @@ public:
 
 private:
     QString buildString(QString level, QString message);
+	QString colorLevel(QString level);
     void log(QString level, QString message);
 };
 
