@@ -20,15 +20,15 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
 	)
 
+qt5_use_modules(PLogging
+	Core
+	)
+
 # Tell CMake what to link with
 #TODO: Commented until macports updates to CMake 2.8.11 or newer.
 #target_link_libraries(PLogging
 #	Qt5::Core
 #	)
-
-qt5_use_modules(PLogging
-	Core
-	)
 
 
 # post-build copy for win32

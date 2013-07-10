@@ -30,6 +30,11 @@ include_directories(
 	${OPENSSL_INCLUDE_DIR}
 	)
 
+qt5_use_modules(PChannels
+	Core
+	Network
+	)
+
 # Tell CMake what to link with
 target_link_libraries(PChannels
 	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
@@ -40,11 +45,6 @@ target_link_libraries(PChannels
 
 	PLogging
 	PreUtil
-	)
-
-qt5_use_modules(PChannels
-	Core
-	Network
 	)
 
 

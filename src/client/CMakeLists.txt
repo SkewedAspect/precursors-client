@@ -35,6 +35,14 @@ add_executable(PrecursorsClient WIN32
 set_target_properties(PrecursorsClient PROPERTIES COMPILE_FLAGS -fPIC)
 set_target_properties(PrecursorsClient PROPERTIES DEBUG_POSTFIX _d)
 
+qt5_use_modules(PrecursorsClient
+	Core
+	Gui
+	Qml
+	Quick
+	OpenGL
+	)
+
 # Tell CMake what to link with
 target_link_libraries(PrecursorsClient
 	${Horde3D_LIBRARIES}
@@ -54,14 +62,6 @@ target_link_libraries(PrecursorsClient
 	PreUtil
 	PChannels
 	PSettings
-	)
-
-qt5_use_modules(PrecursorsClient
-	Core
-	Gui
-	Qml
-	Quick
-	OpenGL
 	)
 
 

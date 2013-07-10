@@ -21,16 +21,16 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/..
 	)
 
+qt5_use_modules(PreUtil
+	Core
+	)
+
 # Tell CMake what to link with
 target_link_libraries(PreUtil
 	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
 	#Qt5::Core
 
 	PLogging
-	)
-
-qt5_use_modules(PreUtil
-	Core
 	)
 
 
