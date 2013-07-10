@@ -196,7 +196,9 @@ QString PLogger::buildString(QString level, QString message)
 			+ ANSI_COLOR_RESET
 			+ QString("%2")
 			+ ANSI_COLOR_GREY
-			+ QString("] %3")
+			+ QString("]")
+			+ ANSI_COLOR_RESET
+		    + QString(" %3")
 			+ ANSI_COLOR_GREY
 			+ QString(":")
 			+ ANSI_COLOR_RESET
@@ -209,29 +211,33 @@ QString PLogger::buildString(QString level, QString message)
 
 QString PLogger::colorLevel(QString level)
 {
-	if(level.trimmed().toUpper() == "INFO")
+	if(level.trimmed().toUpper() == "DEBUG")
 	{
-		level = ANSI_COLOR_GREEN + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_WHITE_BOLD + level + ANSI_COLOR_RESET;
+	}
+	else if(level.trimmed().toUpper() == "INFO")
+	{
+		level = ANSI_COLOR_GREEN_BOLD + level + ANSI_COLOR_RESET;
 	}
 	else if(level.trimmed().toUpper() == "NOTICE")
 	{
-		level = ANSI_COLOR_CYAN + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_CYAN_BOLD + level + ANSI_COLOR_RESET;
 	}
 	else if(level.trimmed().toUpper() == "WARNING")
 	{
-		level = ANSI_COLOR_YELLOW + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_YELLOW_BOLD + level + ANSI_COLOR_RESET;
 	}
 	else if(level.trimmed().toUpper() == "ERROR")
 	{
-		level = ANSI_COLOR_RED + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_RED_BOLD + level + ANSI_COLOR_RESET;
 	}
 	else if(level.trimmed().toUpper() == "CRITICAL")
 	{
-		level = ANSI_COLOR_MAGENTA + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_MAGENTA_BOLD + level + ANSI_COLOR_RESET;
 	}
 	else if(level.trimmed().toUpper() == "FATAL")
 	{
-		level = ANSI_COLOR_MAGENTA + level + ANSI_COLOR_RESET;
+		level = ANSI_COLOR_MAGENTA_BOLD + level + ANSI_COLOR_RESET;
 	} // end if
 
 	return level;
