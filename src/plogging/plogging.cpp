@@ -189,23 +189,16 @@ QString PLogger::buildString(QString level, QString message)
 	QString name = ANSI_COLOR_CYAN + this->name + ANSI_COLOR_RESET;
 
     // Formats the log message into the format we want to use.
-    return QString(
-			QString("%1 ")
-			+ ANSI_COLOR_GREY
-			+ QString("[")
-			+ ANSI_COLOR_RESET
-			+ QString("%2")
-			+ ANSI_COLOR_GREY
-			+ QString("]")
-			+ ANSI_COLOR_RESET
-		    + QString(" %3")
-			+ ANSI_COLOR_GREY
-			+ QString(":")
-			+ ANSI_COLOR_RESET
-			+ QString("  %4")
-		)
+    return QString("%1 %2[%3%4%5]%6 %7%8:%9  %10")
 		.arg(QTime::currentTime().toString("h:mm:ss"))
-		.arg(colorLevel(level)).arg(name)
+		.arg(ANSI_COLOR_GREY)
+		.arg(ANSI_COLOR_RESET)
+		.arg(colorLevel(level))
+		.arg(ANSI_COLOR_GREY)
+		.arg(ANSI_COLOR_RESET)
+		.arg(name)
+		.arg(ANSI_COLOR_GREY)
+		.arg(ANSI_COLOR_RESET)
 		.arg(message);
 } // end buildString
 
