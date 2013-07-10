@@ -9,7 +9,7 @@ import Precursors.Networking 1.0
 import Horde3D 1.0
 
 import "../js/logging.js" as Logging
-import "../js/entity_manager.js" as EntityManagerModule
+import "../js/game.js" as GameModule
 
 Horde3DWindow {
     id: mainWindow
@@ -18,7 +18,7 @@ Horde3DWindow {
     color: "black"
 
     property var logger: new Logging.Logger("mainWindow")
-    property var entMan: new EntityManagerModule.EntityManager()
+    property var game: new GameModule.Game()
 
     property var headingSpeed: 1
     property var pitchSpeed: 1
