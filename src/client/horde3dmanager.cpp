@@ -1,7 +1,5 @@
 #include <Horde3DUtils.h>
 
-#include <QtCore/QDebug>
-
 #include "config.h"
 #include "entity.h"
 #include "horde3dmanager.h"
@@ -144,7 +142,6 @@ void Horde3DManager::printHordeMessages()
 
     while((message = h3dGetMessage(&msgLevel, &msgTime)) && strlen(message) > 0)
     {
-        qDebug() << QString("%1 message from Horde3D at %2: %3").arg(msgLevel).arg(msgTime).arg(message);
         _logger.debug(QString("%1 message from Horde3D at %2: %3").arg(msgLevel).arg(msgTime).arg(message));
     } // end while
 } // end printHordeMessages

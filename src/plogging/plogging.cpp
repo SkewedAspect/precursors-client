@@ -1,13 +1,10 @@
-#include <cstdio>
-
+#include <iostream>
 
 #include <QDir>
 #include <QJsonDocument>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QTime>
-
-#include <QDebug>
 
 #include "plogging.h"
 
@@ -194,16 +191,13 @@ QString PLogger::buildString(QString level, QString message)
 void PLogger::log(QString level, QString message)
 {
     message = buildString(level, message);
-    const char* cMessage = message.toLatin1().constData();
 
     if(level == "ERROR" || level == "CRITICAL" || level == "FATAL")
     {
-
-        fprintf(stderr, "%s\n", cMessage);
-    }
-    else
-    {
-        fprintf(stdout, "%s\n", cMessage);
+		std::cerr << message.toUtf8().constData() << std::endl;
+	}
+	else
+	{
+		std::cout << message.toUtf8().constData() << std::endl;
     } // end if
 } // end buildLogMessage
-
