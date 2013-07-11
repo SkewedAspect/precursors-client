@@ -242,7 +242,7 @@ void PChannels::handleEvent(QVariantMap envelope)
 void PChannels::connectTransports()
 {
     tcpSocket->connectToHost(this->serverAddress, this->tcpPort);
-    udpSocket->bind(this->udpPort);
+    udpSocket->bind(QHostAddress::Any);
 
     // Send the UDP login message
     QVariantMap msg;
