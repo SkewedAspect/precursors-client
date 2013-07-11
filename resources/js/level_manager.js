@@ -5,6 +5,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 .import "../js/logging.js" as Logging
+.import Precursors 1.0 as Precursors
 
 var logger = new Logging.Logger("level_manager");
 
@@ -28,20 +29,22 @@ function handleIncomingEvent(channel, event)
 {
 	if(channel == "level")
 	{
+		var level = event.level;
+
 		if(event.type == "setZone")
 		{
-			logger.debug("Incoming setZone: %1", JSON.stringify(event.level));
+			logger.debug("Incoming setZone: %1", JSON.stringify(level));
 
 			//XXX: HACK! This is here because the server sends us a hard-coded value for the level. This is the correct level
 			// for the python client, but not for us.
-			if(event.level == "zones/test/TestArea.json")
+			if(level == "zones/test/TestArea.json")
 			{
 				logger.warning("Got old test level; loading current test zone instead.");
-				event.level = "resources/scenes/asteroids/asteroids.scene.xml";
+				level = "scenes/asteroids/asteroids.scene.xml";
 			} // end if
 
-			// TODO: load the level?
-			logger.debug("Would load level \'%1\' here!", event.level);
+			horde3d.root.loadScene(level);
+			logger.debug("Loaded \'%1\'.", level);
 		} // end if
 	} // end if
 } // end handleIncomingEvent
