@@ -38,7 +38,7 @@ function updateEntity(event)
 function loadEntity(event)
 {
 	//TODO: this should actually update the entity.
-	logger.warning("updateEntity not implemented!");
+	logger.warning("loadEntity not implemented!");
 
 	//TODO: This should actually save the real entity object.
 	localEntities[event.id] = {};
@@ -86,11 +86,13 @@ function handleIncomingEvent(channel, event)
 
 						if(confirmed)
 						{
+							logger.debug("Full update for entity \'%1\' confirmed!", entityID);
+
 							// Massage the message into looking like an event.
 							reply.type = "full";
 
 							// Process it like a normal event
-							handleIncomingEvent(reply);
+							handleIncomingEvent(channel, reply);
 
 							// Remove it from the ignored entities list
 							ignoredEntities.removeAll(entityID);
@@ -113,6 +115,8 @@ function handleIncomingEvent(channel, event)
 			case "inhabit":
 			case "full":
 			{
+				logger.notify("Incoming full/inhabit update for entity \'%1\'", entityID);
+
 				if(localEntities.contains(entityID))
 				{
 					logger.debug("Updating known entity id \'%1\' with a full update.", entityID);
