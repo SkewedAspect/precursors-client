@@ -13,7 +13,7 @@ QNetString::QNetString(QObject *parent) :
 
 QByteArray QNetString::encode(QByteArray data)
 {
-    return QString("%1:%2,").arg(data.length()).arg(data.constData()).toUtf8();
+	return QByteArray::number(data.length(), 10).append(':').append(data).append(',');
 } // end encode
 
 /**********************************************************************************************************************/
