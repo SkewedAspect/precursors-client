@@ -372,7 +372,6 @@ void PChannels::handleUDPResponse(bool confirmed)
     }
     else
     {
-		logger.debug("UDP RESPONSE CONFIRMED!");
         this->_udpConnected = true;
         if(this->_tcpConnected)
         {
