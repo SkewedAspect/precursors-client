@@ -8,18 +8,23 @@
 
 var logger = new Logging.Logger("level_manager");
 
-function LevelManager()
-{
-    this.connectSignals();
-    logger.debug("LevelManager initialized.")
-} // end LevelManager
+// ---------------------------------------------------------------------------------------------------------------------
+// Initialization
+// ---------------------------------------------------------------------------------------------------------------------
 
-LevelManager.prototype.connectSignals = function()
+connectSignals();
+logger.debug("LevelManager initialized.")
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------------------------------------------------
+
+function connectSignals()
 {
     networking.incommingMessage.connect(this.handleIncomingEvent);
 } // end connectSignals
 
-LevelManager.prototype.handleIncomingEvent = function(channel, event)
+function handleIncomingEvent(channel, event)
 {
 	if(channel == "level")
 	{

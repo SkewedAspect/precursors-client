@@ -30,8 +30,6 @@ ApplicationWindow {
 
     Component.onCompleted: {
 
-        logger.debug("The cow says: %1. Dave says: %2", "Hello World", 23);
-
         // Make the window show itself.
         launcherWindow.show();
 

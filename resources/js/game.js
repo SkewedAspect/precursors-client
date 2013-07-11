@@ -8,16 +8,21 @@
 .import "../js/entity_manager.js" as EntityManager
 .import "../js/level_manager.js" as LevelManager
 
+// This modifies the prototypes of Array and Object to be like QList and QMap
+.import "../js/vendor/qtjs/qt.js" as QtJS
+
 var logger = new Logging.Logger("game");
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Initialization
+// ---------------------------------------------------------------------------------------------------------------------
 
-function Game()
-{
-	logger.info("Starting the game...");
+logger.info("Starting the game...");
 
-	this.entityMan = new EntityManager.EntityManager();
-	this.levelMan = new LevelManager.LevelManager();
-} // end Game
+// ---------------------------------------------------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------------------------------------------------
+
+// TODO: API goes here.
 
 // ---------------------------------------------------------------------------------------------------------------------
