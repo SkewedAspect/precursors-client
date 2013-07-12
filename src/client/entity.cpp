@@ -199,7 +199,9 @@ Entity* Entity::loadScene(QString scenePath, int flags)
 	QList<Entity*> skyboxes = scene->find("skybox");
 	while(!skyboxes.isEmpty())
 	{
-		h3dSetNodeFlags(skyboxes.takeFirst()->node(), H3DNodeFlags::NoCastShadow, true);
+		Entity* skybox = skyboxes.takeFirst();
+		h3dSetNodeFlags(skybox->node(), H3DNodeFlags::NoCastShadow | H3DNodeFlags::NoRayQuery, true);
+		_mgr.addSkybox(skybox);
 	} // end while
 
 	return scene;
