@@ -19,6 +19,7 @@ class Entity : public QObject
     Q_PROPERTY(qreal heading READ heading WRITE setHeading)
     Q_PROPERTY(qreal pitch READ pitch WRITE setPitch)
     Q_PROPERTY(qreal roll READ roll WRITE setRoll)
+	Q_PROPERTY(QVariantMap state MEMBER _state NOTIFY stateChanged)
 
 public:
     Entity();
@@ -32,6 +33,12 @@ public:
     void setHeading(qreal y);
     void setPitch(qreal p);
     void setRoll(qreal r);
+
+    Q_INVOKABLE void setPos(qreal x, qreal y, qreal z);
+
+	Q_INVOKABLE void setState(QString key, QVariant value);
+	Q_INVOKABLE void updateState(QVariantMap delta);
+	Q_INVOKABLE QVariant getState(QString key, QVariant defaultValue);
 
     Q_INVOKABLE void changeHeading(qreal dY);
     Q_INVOKABLE void changePitch(qreal dP);
@@ -54,11 +61,16 @@ public:
 
     void apply();
 
+signals:
+	void stateChanged();
+
 protected:
     explicit Entity(H3DNode node, QObject *parent = 0);
 
 private:
     H3DNode _node;
+
+	QVariantMap _state;
 
     QVector3D _pos;
     float _heading, _pitch, _roll;

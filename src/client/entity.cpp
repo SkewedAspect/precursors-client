@@ -45,6 +45,35 @@ qreal Entity::roll() const
     return _roll;
 } // end roll
 
+void Entity::setPos(qreal x, qreal y, qreal z)
+{
+	this->_pos.setX(x);
+	this->_pos.setY(y);
+	this->_pos.setZ(z);
+} // end setPos
+
+void Entity::setState(QString key, QVariant value)
+{
+	this->_state[key] = value;
+
+	emit stateChanged();
+} // end setState
+
+void Entity::updateState(QVariantMap delta)
+{
+	for( QMap<QString, QVariant>::iterator it = delta.begin(); it != delta.end(); )
+	{
+		this->_state.insert(it.key(), it.value());
+		it++;
+    } // end for
+
+	emit stateChanged();
+} // end updateState
+
+QVariant Entity::getState(QString key, QVariant defaultValue)
+{
+	return this->_state.value(key, defaultValue);
+} // end getState
 
 void Entity::setHeading(qreal heading)
 {

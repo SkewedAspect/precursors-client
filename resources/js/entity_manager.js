@@ -29,21 +29,69 @@ function connectSignals()
     networking.incommingMessage.connect(handleIncomingEvent);
 } // end connectSignals
 
-function updateEntity(event)
+function updateEntity(event, entity)
 {
-	//TODO: this should actually update the entity.
-	logger.warning("updateEntity not implemented!");
+	var entityID = event.id;
+	var entity = entity || localEntities[entityID];
+
+	//logger.debug("Update: %1", JSON.stringify(event));
+
+	//TODO: Set the behavior.
+	logger.debug("Should load behavior: \'%1\'", event.behavior);
+
+	//-----------------------------------------------------------------------------------------------------------------
+	//TODO: This code needs to go someplace else, and be turned into something a bit more general.
+	//-----------------------------------------------------------------------------------------------------------------
+
+	if(event.state.modelDef)
+	{
+		var modelPath = event.state.modelDef.model;
+
+		//XXX: HACK! This is here because the server sends us a hard-coded value for the model. This is the correct model
+		// for the python client, but not for us.
+		if(modelPath == "Ships/ares")
+		{
+			logger.warning("Got old model; loading current model instead.");
+			modelPath = "models/ares/ares.scene.xml";
+		} // end if
+
+		// Load model
+		entity.loadModel(modelPath);
+
+		logger.debug("Loaded model: \'%1\'.", modelPath);
+	} // end state.modelDef
+
+	//TODO: We should be handling this in the entity code.
+	if(event.state.position)
+	{
+		var position = event.state.position;
+		entity.setPos(position[0], position[1], position[2]);
+	} // end if
+
+	//TODO: We should be handling this in the entity code.
+	if(event.state.orientation)
+	{
+		var orientation = event.state.orientation;
+
+		entity.heading = orientation[0];
+		entity.pitch = orientation[1];
+		entity.roll = orientation[2];
+	} // end if
+
+	//-----------------------------------------------------------------------------------------------------------------
+
+	// Update the state with
+	entity.updateState(event.state);
 } // end updateEntity
 
 function loadEntity(event)
 {
-	//TODO: this should actually update the entity.
-	logger.warning("loadEntity not implemented!");
+	var entity = horde3d.root.newGroup(event.id)
+	localEntities[event.id] = entity;
 
-	//TODO: This should actually save the real entity object.
-	localEntities[event.id] = {};
+	// Now we call update Enity to actually handle updating things.
+	updateEntity(event, entity);
 } // end updateEntity
-
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Event handling
