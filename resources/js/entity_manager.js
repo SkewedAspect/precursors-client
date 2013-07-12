@@ -73,9 +73,9 @@ function updateEntity(event, entity)
 	{
 		var orientation = event.state.orientation;
 
-		entity.heading = orientation[0];
-		entity.pitch = orientation[1];
-		entity.roll = orientation[2];
+		entity.heading = orientation[0] * (180/Math.PI);
+		entity.pitch = orientation[1] * (180/Math.PI);
+		entity.roll = orientation[2] * (180/Math.PI);
 	} // end if
 
 	//-----------------------------------------------------------------------------------------------------------------
@@ -185,6 +185,15 @@ function handleIncomingEvent(channel, event)
 					inhabitedID = entityID;
 
 					//TODO: Handle reparenting the camera here.
+					logger.critical("We should reparent the camera here!");
+
+					var entity = localEntities[entityID];
+
+					// Move camDolly so we can see it.
+					mainWindow.camDolly.setPos(entity.pos.x, entity.pos.y, entity.pos.z)
+
+					// Set our avatar.
+					horde3d.avatar = entity;
 				} // end if
 
 				break;

@@ -50,6 +50,8 @@ void Entity::setPos(qreal x, qreal y, qreal z)
 	this->_pos.setX(x);
 	this->_pos.setY(y);
 	this->_pos.setZ(z);
+
+	emit posChanged();
 } // end setPos
 
 void Entity::setState(QString key, QVariant value)

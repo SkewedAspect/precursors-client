@@ -19,6 +19,7 @@ class Entity : public QObject
     Q_PROPERTY(qreal heading READ heading WRITE setHeading)
     Q_PROPERTY(qreal pitch READ pitch WRITE setPitch)
     Q_PROPERTY(qreal roll READ roll WRITE setRoll)
+	Q_PROPERTY(QVector3D pos MEMBER _pos NOTIFY posChanged)
 	Q_PROPERTY(QVariantMap state MEMBER _state NOTIFY stateChanged)
 
 public:
@@ -63,6 +64,7 @@ public:
 
 signals:
 	void stateChanged();
+	void posChanged();
 
 protected:
     explicit Entity(H3DNode node, QObject *parent = 0);
