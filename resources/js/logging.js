@@ -7,6 +7,8 @@
 // @module logging.js
 // ---------------------------------------------------------------------------------------------------------------------
 
+Qt.include("./vendor/lodash.js");
+
 function Logger(name)
 {
     this.logger = logMan.logger(name);
@@ -23,76 +25,49 @@ Logger.prototype = {
     }
 } // end prototype
 
-Logger.prototype.debug = function()
+Logger.prototype.debug = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.debug(message, args);
+    this.logger.debug(message, _.rest(arguments));
 } // end debug
 
-Logger.prototype.info = function()
+Logger.prototype.info = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.info(message, args);
+    this.logger.info(message, _.rest(arguments));
 } // end info
 
-Logger.prototype.notice = function()
+Logger.prototype.notice = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.notice(message, args);
+    this.logger.notice(message, _.rest(arguments));
 } // end notice
 
-Logger.prototype.notify = function()
+Logger.prototype.notify = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.notify(message, args);
+    this.logger.notify(message, _.rest(arguments));
 } // end notify
 
-Logger.prototype.warning = function()
+Logger.prototype.warning = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.warning(message, args);
+    this.logger.warning(message, _.rest(arguments));
 } // end warning
 
-Logger.prototype.warn = function()
+Logger.prototype.warn = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.warn(message, args);
+    this.logger.warn(message, _.rest(arguments));
 } // end warn
 
-Logger.prototype.error = function()
+Logger.prototype.error = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.error(message, args);
+    this.logger.error(message, _.rest(arguments));
 } // end error
 
-Logger.prototype.critical = function()
+Logger.prototype.critical = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.critical(message, args);
+    this.logger.critical(message, _.rest(arguments));
 } // end critical
 
-Logger.prototype.fatal = function()
+Logger.prototype.fatal = function(message)
 {
-    var message = arguments[0];
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    this.logger.fatal(message, args);
+    this.logger.fatal(message, _.rest(arguments));
 } // end fatal
 
 // ---------------------------------------------------------------------------------------------------------------------
