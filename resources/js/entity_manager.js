@@ -1,17 +1,17 @@
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Module for handling network messages and update entities.
 //
 // @module entity_manager.js
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 .import Precursors.Networking 1.0 as Networking
 .import "../js/logging.js" as Logging
 
 var logger = new Logging.Logger("entity_manager");
 
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Initialization
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 var localEntities = {};
 var ignoredEntities = [];
@@ -20,13 +20,13 @@ var inhabitedID;
 connectSignals();
 logger.debug("EntityManager initialized.")
 
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Public API
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 function connectSignals()
 {
-    networking.incomingMessage.connect(handleIncomingEvent);
+	networking.incomingMessage.connect(handleIncomingEvent);
 } // end connectSignals
 
 function updateEntity(event, entity)
@@ -47,8 +47,8 @@ function updateEntity(event, entity)
 	{
 		var modelPath = event.state.modelDef.model;
 
-		//XXX: HACK! This is here because the server sends us a hard-coded value for the model. This is the correct model
-		// for the python client, but not for us.
+		//XXX: HACK! This is here because the server sends us a hard-coded value for the model. This is the correct
+		// model for the python client, but not for us.
 		if(modelPath == "Ships/ares")
 		{
 			logger.warning("Got old model; loading current model instead.");
@@ -93,9 +93,9 @@ function loadEntity(event)
 	updateEntity(event, entity);
 } // end updateEntity
 
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Event handling
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 function handleIncomingEvent(channel, event)
 {
@@ -124,7 +124,8 @@ function handleIncomingEvent(channel, event)
 					ignoredEntities.push(entityID);
 
 					// Send a request for the full update for this entity
-					var fullUpReq = networking.buildRequest("entity", { type: "full", id: entityID }, Networking.PChannels.CM_RELIABLE);
+					var fullUpReq = networking.buildRequest("entity",
+							{ type: "full", id: entityID }, Networking.PChannels.CM_RELIABLE);
 					fullUpReq.reply.connect(handleFullUpdateReply);
 					fullUpReq.send();
 
@@ -222,4 +223,4 @@ function handleIncomingEvent(channel, event)
 	} // end if
 } // end handleIncomingEvent
 
-// ---------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
