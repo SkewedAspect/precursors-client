@@ -377,7 +377,7 @@ void Entity::apply()
 } // end apply
 
 
-QString Entity::toString()
+QString Entity::toString() const
 {
 	QString entityPath = h3dGetNodeParamStr(_node, H3DNodeParams::NameStr);
 

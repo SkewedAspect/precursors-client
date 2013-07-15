@@ -92,7 +92,7 @@ protected:
 
 signals:
 	void avatarChanged(const Entity* avatar);
-	void sceneChanged(const Entity* scene);
+	void sceneChanged(const Entity* scene, QString sceneID);
 	void skyboxesChanged(const QMultiHash<QString, Entity*> skyboxes);
 	void anisotropyChanged(int textureAnisotropy);
 	void antiAliasingSamplesChanged(int samples);
@@ -115,6 +115,7 @@ private:
 	int _loadTimer;
 
 	PLogger& _logger;
+	PLogger& _hordeLogger;
 	PSettingsManager& _settings;
 }; // end Horde3DManager
 

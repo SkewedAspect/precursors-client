@@ -88,7 +88,7 @@ public:
 
 	void apply();
 
-	Q_INVOKABLE QString toString();
+	Q_INVOKABLE QString toString() const;
 
 signals:
 	void flagsChanged(Flags flags);

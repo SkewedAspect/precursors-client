@@ -5,13 +5,17 @@
 #include "horde3dmanager.h"
 
 
+QStringList hordeMessageLevels = QStringList() << "UNKNOWN" << "ERROR" << "WARNING" << "INFO" << "DEBUG";
+
+
 Horde3DManager::Horde3DManager(QObject* parent) :
 		QObject(parent),
 		_initialized(false),
 		_avatar(NULL),
 		_scene(NULL),
 		_loadTimer(0),
-		_logger(PLogManager::getLogger("horde3d")),
+		_logger(PLogManager::getLogger("horde3dmanager")),
+		_hordeLogger(PLogManager::getLogger("horde3d")),
 		_settings(PSettingsManager::instance())
 {
 	connect(this, SIGNAL(resourceLoaded(H3DRes)), this, SLOT(onResourceLoaded(H3DRes)), Qt::DirectConnection);
@@ -83,7 +87,7 @@ void Horde3DManager::setAvatar(Entity* avatar)
 void Horde3DManager::setScene(Entity* scene)
 {
 	_scene = scene;
-	emit sceneChanged(_scene);
+	emit sceneChanged(_scene, QString());
 } // end setScene
 
 void Horde3DManager::setAnisotropy(int textureAnisotropy)
@@ -171,20 +175,23 @@ bool Horde3DManager::switchScene(QString sceneID, bool keep)
 		return false;
 	} // end if
 
-	if(_scene == _loadedScenes[sceneID])
+	Entity* oldScene = _scene;
+
+	_scene = _loadedScenes[sceneID];
+
+	emit sceneChanged(_scene, sceneID);
+
+	if(_scene == oldScene)
 	{
 		_logger.warn("Ignoring switch to already-current scene.");
 		return true;
 	} // end if
 
-	Entity* oldScene = _scene;
-	_scene = _loadedScenes[sceneID];
-
 	if(!keep && oldScene)
 	{
 		if(oldScene->contains(_avatar))
 		{
-			_avatar->setParent(root());
+			_avatar->setParent(_scene);
 		} // end if
 
 		oldScene->remove();
@@ -253,6 +260,7 @@ void Horde3DManager::renderScene(Entity* camera, QString sceneID)
 void Horde3DManager::addSkybox(QString sceneID, Entity* skybox)
 {
 	_skyboxes.insertMulti(sceneID, skybox);
+	emit skyboxesChanged(_skyboxes);
 } // end addSkybox
 
 
@@ -292,7 +300,11 @@ void Horde3DManager::printHordeMessages()
 
 	while((message = h3dGetMessage(&msgLevel, &msgTime)) && strlen(message) > 0)
 	{
-		_logger.debug(QString("%1 message from Horde3D at %2: %3").arg(msgLevel).arg(msgTime).arg(message));
+		_hordeLogger.log(hordeMessageLevels.value(msgLevel, "UNKNOWN"),
+				QString("at %2: %3")
+					.arg(msgTime)
+					.arg(message)
+				);
 	} // end while
 } // end printHordeMessages
 
@@ -374,15 +386,26 @@ void Horde3DManager::onResourceLoaded(H3DRes resource)
 		}
 		else
 		{
+			_loadedScenes[sceneID] = Entity::getEntity(sceneNode);
+
+			// Apply NoCastShadow to all skyboxes.
+			QList<Entity*> skyboxes = _loadedScenes[sceneID]->find("skybox");
+			while(!skyboxes.isEmpty())
+			{
+				Entity* skybox = skyboxes.takeFirst();
+				h3dSetNodeFlags(skybox->node(), H3DNodeFlags::NoCastShadow | H3DNodeFlags::NoRayQuery, true);
+				addSkybox(sceneID, skybox);
+			} // end while
+
 			_logger.debug(QString("Loaded scene \"%1\".").arg(sceneID));
 
-			_loadedScenes[sceneID] = Entity::getEntity(sceneNode);
 			emit sceneLoaded(sceneID, _loadedScenes[sceneID]);
 
 			if(!_scene)
 			{
 				_logger.info(QString("No current scene yet; setting loaded scene \"%1\" as current.").arg(sceneID));
-				_scene = _loadedScenes[sceneID];
+
+				switchScene(sceneID);
 			} // end if
 		} // end if
 	} // end if

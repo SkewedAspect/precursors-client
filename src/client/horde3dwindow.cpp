@@ -33,14 +33,20 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		_h3dContext(NULL),
 		_camDolly(NULL),
 		_camera(NULL),
-		_logger(PLogManager::getLogger("horde3d")),
+		_skybox(NULL),
+		_logger(PLogManager::getLogger("horde3dwindow")),
 		_settings(PSettingsManager::instance()),
 		_mgr(Horde3DManager::instance())
 {
 	lastFrameStart.start();
 
 	connect(this, SIGNAL(beforeRendering()), this, SLOT(onBeforeRendering()), Qt::DirectConnection);
+
 	connect(&_mgr, SIGNAL(initFinished()), this, SLOT(onInitFinished()), Qt::QueuedConnection);
+	connect(&_mgr, SIGNAL(sceneChanged(const Entity*, QString)),
+			this, SLOT(onSceneChanged(const Entity*, QString)),
+			Qt::QueuedConnection
+			);
 } // end Horde3DWindow
 
 Horde3DWindow::~Horde3DWindow()
@@ -99,6 +105,34 @@ void Horde3DWindow::renderHorde()
 		} // end if
 	} // end if
 } // end renderHorde
+
+void Horde3DWindow::onSceneChanged(const Entity* scene, QString sceneID)
+{
+	_logger.debug(QString("Handling onSceneChanged(%1, \"%2\")...").arg(scene->toString()).arg(sceneID));
+
+	if(_skybox)
+	{
+		_logger.debug(QString("Reparenting old skybox %1 back to its scene...").arg(_skybox->toString()));
+
+		Entity* skyboxParent = _mgr.root();
+		if(_mgr.skyboxes().contains(_sceneID, _skybox))
+		{
+			skyboxParent = _mgr.getScene(_sceneID);
+		} // end if
+
+		_skybox->setParent(skyboxParent);
+		_skybox = NULL;
+	} // end if
+
+	_sceneID = sceneID;
+
+	if(_mgr.skyboxes().contains(sceneID))
+	{
+		_logger.debug(QString("Setting up skybox for scene \"%1\"...").arg(sceneID));
+		_skybox = _mgr.skyboxes().value(sceneID);
+		_skybox->setParent(_camera);
+	} // end if
+} // end onSceneChanged
 
 void Horde3DWindow::resizeEvent(QResizeEvent* event)
 {
