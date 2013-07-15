@@ -66,6 +66,8 @@ configure_file(
 	)
 
 
+ADD_SUBDIRECTORY(deps/ois-ogre deps/ois-ogre)
+
 ADD_SUBDIRECTORY(src/plogging src/plogging)
 ADD_SUBDIRECTORY(src/preutil src/preutil)
 ADD_SUBDIRECTORY(src/psettings src/psettings)
