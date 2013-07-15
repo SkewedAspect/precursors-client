@@ -43,6 +43,11 @@ function handleIncomingEvent(channel, event)
 				level = "scenes/asteroids/asteroids.scene.xml";
 			} // end if
 
+			if(horde3d.scene)
+			{
+				horde3d.scene.remove();
+			} // end if
+
 			horde3d.root.loadScene(level);
 			logger.debug("Loaded \'%1\'.", level);
 		} // end if
