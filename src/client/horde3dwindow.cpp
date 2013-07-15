@@ -33,6 +33,8 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
         _h3dContext(NULL),
         _camDolly(NULL),
         _camera(NULL),
+		_logger(PLogManager::getLogger("horde3d")),
+		_settings(PSettingsManager::instance()),
         _mgr(Horde3DManager::instance())
 {
     lastFrameStart.start();
@@ -65,6 +67,20 @@ float Horde3DWindow::fps() const
 {
     return lastFPS;
 } // end fps
+
+float Horde3DWindow::maxViewDistance() const
+{
+	return _settings.get(CFG_VIEW_DIST, DEFAULT_VIEW_DIST).toFloat();
+} // end maxViewDistance
+
+
+void Horde3DWindow::setMaxViewDistance(float maxViewDist)
+{
+	h3dSetNodeParamF(camera()->node(), H3DCamera::FarPlaneF, 0, maxViewDist);
+
+	_settings.set(CFG_VIEW_DIST, maxViewDist);
+	emit maxViewDistanceChanged(maxViewDist);
+} // end setMaxViewDistance
 
 
 void Horde3DWindow::renderHorde()
@@ -179,7 +195,7 @@ void Horde3DWindow::updateView()
 
         // Set virtual camera parameters
         float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
-        h3dSetupCameraView(_camera->node(), 45.0f, aspectRatio, 0.1f, 1000.0f);
+        h3dSetupCameraView(_camera->node(), 45.0f, aspectRatio, 0.01f, maxViewDistance());
         //_camDolly->scheduleOnce();
         _camera->scheduleOnce();
 

@@ -174,8 +174,6 @@ Entity* Entity::newCamera(QString cameraName, QString pipelineName)
 		_logger.error(QString("Failed to create camera %1!").arg(cameraName));
 	} // end if
 
-	h3dSetNodeParamF(camera, H3DCamera::FarPlaneF, 0, 100000);
-
 	//FIXME: Get rid of this! (and replace it with getters/setters for pos, x, y, and z)
 	h3dSetNodeTransform(camera,
 			0, 0, 100,
