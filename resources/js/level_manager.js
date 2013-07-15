@@ -22,7 +22,7 @@ logger.debug("LevelManager initialized.")
 
 function connectSignals()
 {
-    networking.incommingMessage.connect(this.handleIncomingEvent);
+    networking.incomingMessage.connect(this.handleIncomingEvent);
 } // end connectSignals
 
 function handleIncomingEvent(channel, event)

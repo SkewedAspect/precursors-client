@@ -7,7 +7,7 @@
 /**
  * @brief A class to make working with request messages easier.
  * This class gives the calling code a single signal it needs to listen for, instead of listening for all replies and
- * seeing if the incomming message matters. It also contains both the reply and the original request message for reference.
+ * seeing if the incoming message matters. It also contains both the reply and the original request message for reference.
  * @param parent A pointer to our PChannels instance.
  * @param channel The channel to send the request on.
  * @param message The body of the request.

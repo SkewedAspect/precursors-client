@@ -26,11 +26,11 @@ PChannels::PChannels(QObject *parent) :
 
     // Setup SSL Netstring handler
     sslNetstring = new QNetString();
-    connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
+    connect(sslNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncomingMessage(QByteArray)));
 
     // Setup TCP Netstring handler
     tcpNetstring = new QNetString();
-    connect(tcpNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncommingMessage(QByteArray)));
+    connect(tcpNetstring, SIGNAL(dataReady(QByteArray)), this, SLOT(handleIncomingMessage(QByteArray)));
 
     // Create a new SSL socket, and conect it's signals.
     this->sslSocket = new QSslSocket(this);
@@ -232,10 +232,10 @@ void PChannels::handleReply(QVariantMap envelope)
     request->deleteLater();
 } // end handleReply
 
-// Handle an incomming event.
+// Handle an incoming event.
 void PChannels::handleEvent(QVariantMap envelope)
 {
-	emit incommingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
+	emit incomingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
 } // end handleEvent
 
 // Connect the TCP and UDP transports to the server.
@@ -380,7 +380,7 @@ void PChannels::handleUDPResponse(bool confirmed)
     } // end if
 } // end handleUDPResponse
 
-void PChannels::handleIncommingMessage(QByteArray data)
+void PChannels::handleIncomingMessage(QByteArray data)
 {
     QByteArray plainText = data;
 
@@ -404,7 +404,7 @@ void PChannels::handleIncommingMessage(QByteArray data)
     } // end if
 
     logger.warning(QString("Received incoming message with unknown type: \"%1\".").arg(envelope["type"].toString()));
-} // end handleIncommingMessage
+} // end handleIncomingMessage
 
 void PChannels::sslDataReady()
 {
@@ -433,7 +433,7 @@ void PChannels::udpDataReady()
 			QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
 
             // Now, parse as JSON, and emit.
-            emit incommingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
+            emit incomingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
     } // end while
 } // end udpDataReady
 

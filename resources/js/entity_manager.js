@@ -26,7 +26,7 @@ logger.debug("EntityManager initialized.")
 
 function connectSignals()
 {
-    networking.incommingMessage.connect(handleIncomingEvent);
+    networking.incomingMessage.connect(handleIncomingEvent);
 } // end connectSignals
 
 function updateEntity(event, entity)

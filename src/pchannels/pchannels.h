@@ -89,7 +89,7 @@ signals:
     void error(ErrorType errorType, QString errorMessage);
     void connected();
     void disconnected(QString);
-    void incommingMessage(QString channel, QVariantMap message);
+    void incomingMessage(QString channel, QVariantMap message);
 
 private slots:
     void sslConnected();
@@ -110,7 +110,7 @@ private slots:
     void tcpDisconnected();
     void udpDisconnected();
 
-    void handleIncommingMessage(QByteArray data);
+    void handleIncomingMessage(QByteArray data);
 };
 
 #endif // PCHANNELS_H
