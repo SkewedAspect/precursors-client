@@ -9,6 +9,8 @@
 
 var logger = new Logging.Logger("level_manager");
 
+var lastRequestedSceneID;
+
 // --------------------------------------------------------------------------------------------------------------------
 // Initialization
 // --------------------------------------------------------------------------------------------------------------------
@@ -23,6 +25,7 @@ logger.debug("LevelManager initialized.")
 function connectSignals()
 {
 	networking.incomingMessage.connect(this.handleIncomingEvent);
+	horde3d.sceneLoaded.connect(this.onSceneLoaded);
 } // end connectSignals
 
 function handleIncomingEvent(channel, event)
@@ -42,17 +45,33 @@ function handleIncomingEvent(channel, event)
 				logger.warning("Got old test level; loading current test zone instead.");
 				level = "scenes/asteroids/asteroids.scene.xml";
 			} // end if
+			lastRequestedSceneID = level;
 
-			var oldScene = horde3d.scene;
-			horde3d.scene = horde3d.root.loadScene(level);
-			logger.debug("Loaded \'%1\'.", level);
-
-			if(oldScene)
+			if(horde3d.isSceneLoaded(lastRequestedSceneID))
 			{
-				oldScene.remove();
+				logger.debug("Scene \'%1\' already loaded; switching scenes.", lastRequestedSceneID);
+				horde3d.switchScene(lastRequestedSceneID, true);
+			}
+			else
+			{
+				logger.debug("Loading scene \'%1\'...", lastRequestedSceneID);
+				horde3d.loadScene(lastRequestedSceneID);
 			} // end if
 		} // end if
 	} // end if
 } // end handleIncomingEvent
+
+function onSceneLoaded(sceneID, scene)
+{
+	if(sceneID === lastRequestedSceneID)
+	{
+		logger.debug("Loaded scene \'%1\'; switching scenes.", sceneID);
+		horde3d.switchScene(lastRequestedSceneID);
+	}
+	else
+	{
+		logger.debug("Loaded scene \'%1\', which is not the desired scene; ignoring.", sceneID);
+	} // end if
+} // end onSceneLoaded
 
 // --------------------------------------------------------------------------------------------------------------------
