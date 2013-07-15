@@ -148,6 +148,23 @@ QList<Entity*> Entity::find(QString childName)
 	return found;
 } // end find
 
+QList<Entity*> Entity::findChildEntities()
+{
+	QList<Entity*> found;
+
+	int numFound = h3dFindNodes(_node, "", H3DNodeTypes::Undefined);
+	for(int idx = 0; idx < numFound; idx++)
+	{
+		Entity* child = Entity::getEntity(h3dGetNodeFindResult(idx), false);
+		if(child)
+		{
+			found.append(child);
+		} // end if
+	} // end for
+
+	return found;
+} // end find
+
 
 Entity* Entity::newGroup(QString groupName)
 {
@@ -233,6 +250,20 @@ Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flag
 } // end loadEntityFromRes
 
 
+void Entity::remove()
+{
+	QList<Entity*> found = findChildEntities();
+
+	while(!found.isEmpty())
+	{
+		found.takeFirst()->remove();
+	} // end while
+
+	h3dRemoveNode(_node);
+	deleteLater();
+} // end remove
+
+
 void Entity::scheduleOnce()
 {
 	if(!scheduledOnce && !scheduledRepeating)
@@ -293,11 +324,23 @@ void Entity::runScheduled()
 	} // end for
 } // end runScheduled
 
-Entity* Entity::getEntity(H3DNode node)
+bool Entity::hasEntity(H3DNode node)
+{
+	return entities.contains(node);
+} // end hasEntity
+
+Entity* Entity::getEntity(H3DNode node, bool createIfMissing)
 {
 	if(!entities.contains(node))
 	{
-		entities[node] = new Entity(node);
+		if(createIfMissing)
+		{
+			entities[node] = new Entity(node);
+		}
+		else
+		{
+			return NULL;
+		} // end if
 	} // end if
 
 	return entities[node];

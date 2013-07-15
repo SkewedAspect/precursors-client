@@ -47,6 +47,7 @@ public:
 	Q_INVOKABLE QVariant getState(QString key, QVariant defaultValue);
 
 	Q_INVOKABLE QList<Entity*> find(QString childName);
+	Q_INVOKABLE QList<Entity*> findChildEntities();
 
 	Q_INVOKABLE Entity* newCamera(QString cameraName, QString pipelineName = QString());
 	Q_INVOKABLE Entity* newGroup(QString groupName);
@@ -54,12 +55,15 @@ public:
 	Q_INVOKABLE Entity* loadScene(QString scenePath, int flags = 0);
 	Q_INVOKABLE Entity* loadEntityFromRes(H3DResTypes::List type, QString path, int flags = 0);
 
+	Q_INVOKABLE void remove();
+
 	Q_INVOKABLE void scheduleOnce();
 	Q_INVOKABLE void scheduleRepeating();
 	Q_INVOKABLE void stopRepeating();
 
-	Q_INVOKABLE static Entity* getEntity(H3DNode node);
 	Q_INVOKABLE static void runScheduled();
+	Q_INVOKABLE static Entity* getEntity(H3DNode node, bool createIfMissing = true);
+	Q_INVOKABLE static bool hasEntity(H3DNode node);
 
 	void apply();
 
