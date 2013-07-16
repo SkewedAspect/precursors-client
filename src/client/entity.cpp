@@ -1,8 +1,12 @@
+#include <cmath>
+
 #include <Horde3DUtils.h>
 
 #include "entity.h"
 #include "math3d.h"
 
+
+const qreal radiansPerDegree = 180 / M_PI;
 
 QHash<H3DNode, Entity*> Entity::entities;
 QList<Entity*> Entity::scheduledOnceEntities;
@@ -107,6 +111,9 @@ void Entity::setOrientation(QQuaternion orientation)
 	_transformChanged = true;
 
 	quatToHPR(orientation, &_heading, &_pitch, &_roll);
+	_heading *= radiansPerDegree;
+	_pitch *= radiansPerDegree;
+	_roll *= radiansPerDegree;
 
 	emit orientationChanged();
 	emit headingChanged(_heading);
