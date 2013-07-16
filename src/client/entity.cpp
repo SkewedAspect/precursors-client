@@ -1,6 +1,7 @@
 #include <Horde3DUtils.h>
 
 #include "entity.h"
+#include "math3d.h"
 
 
 QHash<H3DNode, Entity*> Entity::entities;
@@ -36,6 +37,11 @@ Entity::Flags Entity::flags() const
 {
 	return (Entity::Flags) h3dGetNodeFlags(_node);
 } // end flags
+
+QQuaternion Entity::orientation() const
+{
+	return eulerToQuat(_heading, _pitch, _roll);
+} // end orientation
 
 qreal Entity::heading() const
 {
@@ -96,27 +102,53 @@ void Entity::setFlags(Flags flags)
 	emit flagsChanged(flags);
 } // end setFlags
 
+void Entity::setOrientation(QQuaternion orientation)
+{
+	_transformChanged = true;
+
+	quatToHPR(orientation, &_heading, &_pitch, &_roll);
+
+	emit orientationChanged();
+	emit headingChanged(_heading);
+	emit pitchChanged(_pitch);
+	emit rollChanged(_roll);
+
+	scheduleOnce();
+} // end setOrientation
+
 void Entity::setHeading(qreal heading)
 {
 	_transformChanged = true;
+
 	_heading = heading;
+
+	emit orientationChanged();
 	emit headingChanged(heading);
+
 	scheduleOnce();
 } // end setHeading
 
 void Entity::setPitch(qreal pitch)
 {
 	_transformChanged = true;
+
 	_pitch = pitch;
+
+	emit orientationChanged();
 	emit pitchChanged(pitch);
+
 	scheduleOnce();
 } // end setPitch
 
 void Entity::setRoll(qreal roll)
 {
 	_transformChanged = true;
+
 	_roll = roll;
+
+	emit orientationChanged();
 	emit rollChanged(roll);
+
 	scheduleOnce();
 } // end setRoll
 

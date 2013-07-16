@@ -5,6 +5,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtGui/QVector3D>
+#include <QtGui/QQuaternion>
 
 #include <Horde3D.h>
 
@@ -18,6 +19,7 @@ class Entity : public QObject
 	Q_OBJECT
 
 	Q_PROPERTY(Flags flags READ flags WRITE setFlags NOTIFY flagsChanged)
+	Q_PROPERTY(QQuaternion orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 	Q_PROPERTY(qreal heading READ heading WRITE setHeading NOTIFY headingChanged)
 	Q_PROPERTY(qreal pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
 	Q_PROPERTY(qreal roll READ roll WRITE setRoll NOTIFY rollChanged)
@@ -41,6 +43,7 @@ public:
 	H3DNode node() const { return _node; }
 
 	Flags flags() const;
+	QQuaternion orientation() const;
 	qreal heading() const;
 	qreal pitch() const;
 	qreal roll() const;
@@ -48,6 +51,7 @@ public:
 	Entity* parent() const;
 
 	void setFlags(Flags flags);
+	void setOrientation(QQuaternion orientation);
 	void setHeading(qreal heading);
 	void setPitch(qreal pitch);
 	void setRoll(qreal roll);
@@ -92,6 +96,7 @@ public:
 
 signals:
 	void flagsChanged(Flags flags);
+	void orientationChanged();
 	void headingChanged(qreal heading);
 	void pitchChanged(qreal pitch);
 	void rollChanged(qreal roll);
