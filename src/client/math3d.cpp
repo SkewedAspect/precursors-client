@@ -17,6 +17,54 @@ QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll)
             );
 } // end eulerToQuat
 
+void quatToHPR(QQuaternion quat, float* heading, float* pitch, float* roll)
+{
+    qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
+    *pitch = asin(2 * halfSinePitch);
+
+    if(halfSinePitch == 0.5) // north pole
+    {
+        *heading =  2 * atan2(quat.x(), quat.scalar());
+		*roll = 0;
+    }
+    else if(halfSinePitch == -0.5) // south pole
+    {
+        *heading =  -2 * atan2(quat.x(), quat.scalar());
+		*roll = 0;
+    }
+    else
+    {
+        *heading =  atan2(2 * (quat.y() * quat.scalar() - quat.x() * quat.z()),
+                1 - 2 * (pow(quat.y(), 2) + pow(quat.z(), 2)));
+		*roll = atan2(2 * (quat.x() * quat.scalar() - quat.y() * quat.z()),
+                1 - 2 * (pow(quat.x(), 2) + pow(quat.z(), 2)));
+    } // end if
+} // end quatToRoll
+
+void quatToHPR(QQuaternion quat, qreal* heading, qreal* pitch, qreal* roll)
+{
+    qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
+    *pitch = asin(2 * halfSinePitch);
+
+    if(halfSinePitch == 0.5) // north pole
+    {
+        *heading =  2 * atan2(quat.x(), quat.scalar());
+		*roll = 0;
+    }
+    else if(halfSinePitch == -0.5) // south pole
+    {
+        *heading =  -2 * atan2(quat.x(), quat.scalar());
+		*roll = 0;
+    }
+    else
+    {
+        *heading =  atan2(2 * (quat.y() * quat.scalar() - quat.x() * quat.z()),
+                1 - 2 * (pow(quat.y(), 2) + pow(quat.z(), 2)));
+		*roll = atan2(2 * (quat.x() * quat.scalar() - quat.y() * quat.z()),
+                1 - 2 * (pow(quat.x(), 2) + pow(quat.z(), 2)));
+    } // end if
+} // end quatToRoll
+
 qreal quatToHeading(QQuaternion quat)
 {
     qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
