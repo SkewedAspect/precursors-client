@@ -54,6 +54,9 @@ signals:
 		void onInitFinished();
 	void onBeforeRendering();
 
+public slots:
+	void onSceneChanged(const Entity* scene, QString sceneID);
+
 protected:
 	virtual void resizeEvent(QResizeEvent* event);
 
@@ -80,6 +83,8 @@ private:
 
 	Entity* _camDolly;
 	Entity* _camera;
+	Entity* _skybox;
+	QString _sceneID;
 
 	bool _initialized;
 	bool _dirtyView;

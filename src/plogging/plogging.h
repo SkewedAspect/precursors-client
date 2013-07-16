@@ -41,10 +41,11 @@ public:
     Q_INVOKABLE void fatal(QString message);
     Q_INVOKABLE void fatal(QString message, QVariantList args);
 
+    void log(QString level, QString message);
+
 private:
     QString buildString(QString level, QString message);
 	QString colorLevel(QString level);
-    void log(QString level, QString message);
 };
 
 class PLOGGINGSHARED_EXPORT PLogManager : public QObject

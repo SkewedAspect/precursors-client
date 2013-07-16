@@ -10,6 +10,7 @@ QList<Entity*> Entity::scheduledRepeatingEntities;
 
 Entity::Entity() :
 	QObject(), _node(0), scheduledOnce(false), scheduledRepeating(false),
+	_parentChanged(false), _transformChanged(false), _awaitingRemove(false),
 	_logger(PLogManager::getLogger("entity")), _mgr(Horde3DManager::instance())
 {
 	throw new std::exception;
@@ -17,6 +18,7 @@ Entity::Entity() :
 
 Entity::Entity(H3DNode node, QObject *parent) :
 	QObject(parent), _node(node), scheduledOnce(false), scheduledRepeating(false),
+	_parentChanged(false), _transformChanged(false), _awaitingRemove(false),
 	_logger(PLogManager::getLogger("entity")), _mgr(Horde3DManager::instance())
 {
 	float x, y, z;
@@ -29,6 +31,11 @@ Entity::Entity(H3DNode node, QObject *parent) :
 	_pos = QVector3D(x, y, z);
 } // end Entity
 
+
+Entity::Flags Entity::flags() const
+{
+	return (Entity::Flags) h3dGetNodeFlags(_node);
+} // end flags
 
 qreal Entity::heading() const
 {
@@ -83,8 +90,15 @@ QVariant Entity::getState(QString key, QVariant defaultValue)
 	return _state.value(key, defaultValue);
 } // end getState
 
+void Entity::setFlags(Flags flags)
+{
+	h3dSetNodeFlags(_node, flags, false);
+	emit flagsChanged(flags);
+} // end setFlags
+
 void Entity::setHeading(qreal heading)
 {
+	_transformChanged = true;
 	_heading = heading;
 	emit headingChanged(heading);
 	scheduleOnce();
@@ -92,6 +106,7 @@ void Entity::setHeading(qreal heading)
 
 void Entity::setPitch(qreal pitch)
 {
+	_transformChanged = true;
 	_pitch = pitch;
 	emit pitchChanged(pitch);
 	scheduleOnce();
@@ -99,6 +114,7 @@ void Entity::setPitch(qreal pitch)
 
 void Entity::setRoll(qreal roll)
 {
+	_transformChanged = true;
 	_roll = roll;
 	emit rollChanged(roll);
 	scheduleOnce();
@@ -106,6 +122,7 @@ void Entity::setRoll(qreal roll)
 
 void Entity::setPos(QVector3D pos)
 {
+	_transformChanged = true;
 	_pos = pos;
 	emit posChanged(pos);
 	scheduleOnce();
@@ -113,26 +130,22 @@ void Entity::setPos(QVector3D pos)
 
 void Entity::setParent(Entity* parent)
 {
-	if(parent == NULL)
+	if(_parent != parent)
 	{
-		if(!h3dSetNodeParent(_node, _mgr.root()->node()))
-		{
-			_logger.error(QString("Failed to unset %1's parent!").arg(toString()));
-			return;
-		} // end if
-	}
-	else
-	{
-		if(!h3dSetNodeParent(_node, parent->node()))
-		{
-			_logger.error(QString("Failed to set %1's parent to %2!").arg(toString()).arg(parent->toString()));
-			return;
-		} // end if
+		_parentChanged = true;
+		_parent = parent;
+		emit parentChanged(parent);
+		scheduleOnce();
 	} // end if
-
-	_parent = parent;
-	emit parentChanged(parent);
 } // end setRoll
+
+void Entity::setFlagsRecursive(Flags flags)
+{
+	h3dSetNodeFlags(_node, flags, true);
+	//FIXME: Theoretically, this also modifies the flags for all child nodes; descendant entities should fire their
+	// flagsChanged signal here!
+	emit flagsChanged(flags);
+} // end setFlagsRecursive
 
 
 QList<Entity*> Entity::find(QString childName)
@@ -163,7 +176,27 @@ QList<Entity*> Entity::findChildEntities()
 	} // end for
 
 	return found;
-} // end find
+} // end findChildEntities
+
+bool Entity::contains(Entity* other)
+{
+	return Entity::contains(_node, other->node());
+} // end contains
+
+bool Entity::contains(H3DNode other)
+{
+	return Entity::contains(_node, other);
+} // end contains
+
+bool Entity::isDescendantOf(Entity* other)
+{
+	return Entity::contains(other->node(), _node);
+} // end isDescendantOf
+
+bool Entity::isDescendantOf(H3DNode other)
+{
+	return Entity::contains(other, _node);
+} // end contains
 
 
 Entity* Entity::newGroup(QString groupName)
@@ -216,7 +249,7 @@ Entity* Entity::loadScene(QString scenePath, int flags)
 	{
 		Entity* skybox = skyboxes.takeFirst();
 		h3dSetNodeFlags(skybox->node(), H3DNodeFlags::NoCastShadow | H3DNodeFlags::NoRayQuery, true);
-		_mgr.addSkybox(skybox);
+		_mgr.addSkybox(scenePath, skybox);
 	} // end while
 
 	return scene;
@@ -252,15 +285,8 @@ Entity* Entity::loadEntityFromRes(H3DResTypes::List type, QString path, int flag
 
 void Entity::remove()
 {
-	QList<Entity*> found = findChildEntities();
-
-	while(!found.isEmpty())
-	{
-		found.takeFirst()->remove();
-	} // end while
-
-	h3dRemoveNode(_node);
-	deleteLater();
+	_awaitingRemove = true;
+	scheduleOnce();
 } // end remove
 
 
@@ -291,10 +317,58 @@ void Entity::stopRepeating()
 
 void Entity::apply()
 {
-	h3dSetNodeTransform(_node,
-			_pos.x(), _pos.y(), _pos.z(),
-			_pitch, _heading, _roll,
-			1, 1, 1);
+	if(_awaitingRemove)
+	{
+		_logger.debug(QString("%1: Removing...").arg(toString()));
+		_awaitingRemove = false;
+
+		QList<Entity*> found = findChildEntities();
+
+		while(!found.isEmpty())
+		{
+			found.takeFirst()->deleteLater();
+		} // end while
+
+		h3dRemoveNode(_node);
+		deleteLater();
+	}
+	else
+	{
+		if(_parentChanged)
+		{
+			_logger.debug(QString("%1: Applying new parent...").arg(toString()));
+			_parentChanged = false;
+
+			if(_parent == NULL)
+			{
+				if(!h3dSetNodeParent(_node, _mgr.root()->node()))
+				{
+					_logger.error(QString("Failed to unset %1's parent!").arg(toString()));
+				} // end if
+			}
+			else
+			{
+				if(!h3dSetNodeParent(_node, _parent->node()))
+				{
+					_logger.error(QString("Failed to set %1's parent to %2!")
+							.arg(toString())
+							.arg(_parent->toString())
+							);
+				} // end if
+			} // end if
+		} // end if
+
+		if(_transformChanged)
+		{
+			//_logger.debug(QString("%1: Applying new transform...").arg(toString()));
+			_transformChanged = false;
+
+			h3dSetNodeTransform(_node,
+					_pos.x(), _pos.y(), _pos.z(),
+					_pitch, _heading, _roll,
+					1, 1, 1);
+		} // end if
+	} // end if
 
 	if(scheduledOnce)
 	{
@@ -303,9 +377,20 @@ void Entity::apply()
 } // end apply
 
 
-QString Entity::toString()
+QString Entity::toString() const
 {
-	return QString("<Entity %1>").arg(int(_node));
+	QString entityPath = h3dGetNodeParamStr(_node, H3DNodeParams::NameStr);
+
+	H3DNode parentNode = h3dGetNodeParent(_node);
+	while(parentNode)
+	{
+		QString parentNodeName = h3dGetNodeParamStr(parentNode, H3DNodeParams::NameStr);
+		entityPath = parentNodeName + "/" + entityPath;
+
+		parentNode = h3dGetNodeParent(parentNode);
+	} // end while
+
+	return QString("<Entity %1: %2>").arg(int(_node)).arg(entityPath);
 } // end toString
 
 
@@ -345,3 +430,19 @@ Entity* Entity::getEntity(H3DNode node, bool createIfMissing)
 
 	return entities[node];
 } // end getEntity
+
+bool Entity::contains(H3DNode thisNode, H3DNode otherNode)
+{
+	H3DNode parentNode = h3dGetNodeParent(otherNode);
+	while(parentNode)
+	{
+		if(parentNode == thisNode)
+		{
+			return true;
+		} // end if
+
+		parentNode = h3dGetNodeParent(parentNode);
+	} // end while
+
+	return false;
+} // end isDescendantOf
