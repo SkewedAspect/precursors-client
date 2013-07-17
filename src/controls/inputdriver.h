@@ -2,6 +2,11 @@
 #define INPUTDRIVER_H
 
 #include <QObject>
+#include <QString>
+
+
+class InputDevice;
+
 
 /**
  * @brief Provides access to InputDevice instances for a given type of device attached to the system, and emits signals
@@ -10,6 +15,7 @@
 class InputDriver : public QObject
 {
     Q_OBJECT
+
 public:
     explicit InputDriver(QObject *parent = 0);
 

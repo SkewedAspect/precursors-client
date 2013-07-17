@@ -2,8 +2,10 @@
 #define INPUTSIGNAL_H
 
 #include <QObject>
+#include <QString>
 
-#include "inputdevice.h"
+#include "devices/inputdevice.h"
+
 
 /**
  * @brief Represents a button or axis on a given input device; tracks the current state of the button or axis, and emits
@@ -12,12 +14,14 @@
 class InputSignal : public QObject
 {
     Q_OBJECT
+
 public:
     explicit InputSignal(QObject *parent = 0);
 
     QString name;
     QString description;
     InputDevice* device;
+
 signals:
 
 public slots:

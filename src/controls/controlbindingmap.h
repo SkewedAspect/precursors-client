@@ -1,9 +1,13 @@
 #ifndef CONTROLBINDINGMAP_H
 #define CONTROLBINDINGMAP_H
 
+#include <QList>
 #include <QObject>
+#include <QString>
 
-#include "controlbinding.h"
+
+class ControlBinding;
+
 
 /**
  * @brief Binding maps allow different sets of bindings to be stored and chosen via settings. For instance, a keyboard
@@ -17,6 +21,7 @@
 class ControlBindingMap : public QObject
 {
     Q_OBJECT
+
 public:
     explicit ControlBindingMap(QObject *parent = 0);
 
