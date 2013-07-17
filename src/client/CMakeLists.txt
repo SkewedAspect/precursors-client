@@ -7,7 +7,8 @@ set(CLIENT_HEADERS
 	horde3dmanager.h
 	horde3dwindow.h
 	math3d.h
-   	${CMAKE_CURRENT_BINARY_DIR}/../config.h
+	timestamp_sync.h
+	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
 set(CLIENT_SOURCES
 	main.cpp
@@ -18,6 +19,7 @@ set(CLIENT_SOURCES
 	horde3dmanager.cpp
 	horde3dwindow.cpp
 	math3d.cpp
+	timestamp_sync.cpp
 	)
 
 include_directories(
