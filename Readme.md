@@ -8,32 +8,23 @@ success, and make this the official client.
 
 ## Status
 
-Currently, we have working network communication, complete QML and Horde3D integration, and the Ares model ported over.
-We actually perform a log in, get our list of characters, and display them. After that, we don't do anything more. Visually,
-we see the ship, and can rotate it or the camera with the keyboard or mouse. That's is.
+Currently, we have working network communication, complete QML and Horde3D integration, and some of the models ported over.
+We actually perform a log in, get our list of character, display them, and log in. The client then can load scenes from the server, 
+and also load entities when told to. Visually, we see the ship, and can rotate it or the camera with the keyboard or mouse. That's is.
 
 Under the hood, we have the framework for a logging system, we have working settings, and we're wrapping Horde3D in a
 nice QObject wrapper.
 
 ### ToDo:
 
-* Send the selected character to the server.
-* Handle entity events from the server, creating/loading entities, and updating them. (aka: port EntityManager)
-* Handle level loading events from the server, loading the right scenes
-	* Finish converting the asteroid models
-	* Build the skybox
+* Finish converting the asteroid models
 * Design and build a system for handling input/controlling the player's avatar.
 	* We can already handle input, but it's in QML. At the very least, this needs to be in Javascript.
-* Split the Horde3D code out into it's own library.
+* Split the Horde3D code out into it's own library. [PARTIALLY COMPLETE]
 
-At this point, we'd have parity with the current client. Next up:
-
-* Finish new GUI theme
-* Implement 'Warp To' w/ gui.
-* Switch to new Sol system scene.
-* Implement Chat GUI.
-* ???
-* profit
+Once we get here, we'll have parity with the "old" client. I recommend following the 
+[issue list](https://bitbucket.org/skewedaspect/precursors-client-qml/issues?status=new&status=open) on BitBucket to 
+see what we're planning on tackling next.
 
 ### Still to be Tackled:
 
