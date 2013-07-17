@@ -7,8 +7,7 @@
 
 
 QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll);
-void quatToHPR(QQuaternion quat, float* heading, float* pitch, float* roll);
-void quatToHPR(QQuaternion quat, qreal* heading, qreal* pitch, qreal* roll);
+template<typename T> void quatToHPR(QQuaternion quat, T* heading, T* pitch, T* roll);
 qreal quatToHeading(QQuaternion quat);
 qreal quatToPitch(QQuaternion quat);
 qreal quatToRoll(QQuaternion quat);

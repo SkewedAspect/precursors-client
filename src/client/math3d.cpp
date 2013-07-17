@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 
 #include "math3d.h"
 
@@ -17,53 +18,43 @@ QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll)
             );
 } // end eulerToQuat
 
-void quatToHPR(QQuaternion quat, float* heading, float* pitch, float* roll)
+template<typename T> void quatToHPR(QQuaternion quat, T* heading, T* pitch, T* roll)
 {
-    qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
-    *pitch = asin(2 * halfSinePitch);
+	qreal scalarSquared = quat.scalar() * quat.scalar();
+	qreal xSquared = quat.x() * quat.x();
+	qreal ySquared = quat.y() * quat.y();
+	qreal zSquared = quat.z() * quat.z();
 
-    if(halfSinePitch == 0.5) // north pole
+	// If quaternion is normalised the unit is one, otherwise it is the correction factor
+	qreal unit = scalarSquared + xSquared + ySquared + zSquared;
+
+    qreal halfSinePitch = quat.x() * quat.z() - quat.y() * quat.scalar();
+
+	*pitch = asin(2 * halfSinePitch);
+
+    if(halfSinePitch + std::numeric_limits<double>::epsilon() >= 0.5 * unit) // north pole
     {
-        *heading =  2 * atan2(quat.x(), quat.scalar());
+        *heading = 2 * atan2(quat.y(), quat.scalar());
+
 		*roll = 0;
     }
-    else if(halfSinePitch == -0.5) // south pole
+    else if(halfSinePitch - std::numeric_limits<double>::epsilon() <= -0.5 * unit) // south pole
     {
-        *heading =  -2 * atan2(quat.x(), quat.scalar());
+        *heading = -2 * atan2(quat.y(), quat.scalar());
+
 		*roll = 0;
     }
     else
     {
-        *heading =  atan2(2 * (quat.y() * quat.scalar() - quat.x() * quat.z()),
-                1 - 2 * (pow(quat.y(), 2) + pow(quat.z(), 2)));
-		*roll = atan2(2 * (quat.x() * quat.scalar() - quat.y() * quat.z()),
-                1 - 2 * (pow(quat.x(), 2) + pow(quat.z(), 2)));
+		*heading = atan2(2 * (quat.x() * quat.scalar() + quat.y() * quat.z()), 1 - 2 * (zSquared + scalarSquared));
+
+		*roll = atan2(2 * (quat.x() * quat.y() + quat.z() * quat.scalar()), 1 - 2 * (ySquared + zSquared));
     } // end if
 } // end quatToRoll
 
-void quatToHPR(QQuaternion quat, qreal* heading, qreal* pitch, qreal* roll)
-{
-    qreal halfSinePitch = quat.x() * quat.y() + quat.z() * quat.scalar();
-    *pitch = asin(2 * halfSinePitch);
-
-    if(halfSinePitch == 0.5) // north pole
-    {
-        *heading =  2 * atan2(quat.x(), quat.scalar());
-		*roll = 0;
-    }
-    else if(halfSinePitch == -0.5) // south pole
-    {
-        *heading =  -2 * atan2(quat.x(), quat.scalar());
-		*roll = 0;
-    }
-    else
-    {
-        *heading =  atan2(2 * (quat.y() * quat.scalar() - quat.x() * quat.z()),
-                1 - 2 * (pow(quat.y(), 2) + pow(quat.z(), 2)));
-		*roll = atan2(2 * (quat.x() * quat.scalar() - quat.y() * quat.z()),
-                1 - 2 * (pow(quat.x(), 2) + pow(quat.z(), 2)));
-    } // end if
-} // end quatToRoll
+// Explicit template instantiations
+template void quatToHPR<float>(QQuaternion quat, float* heading, float* pitch, float* roll);
+template void quatToHPR<qreal>(QQuaternion quat, qreal* heading, qreal* pitch, qreal* roll);
 
 qreal quatToHeading(QQuaternion quat)
 {
