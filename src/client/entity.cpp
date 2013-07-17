@@ -1,5 +1,7 @@
 #include <cmath>
 
+#include <QtGui/QVector4D>
+
 #include <Horde3DUtils.h>
 
 #include "entity.h"
@@ -26,14 +28,19 @@ Entity::Entity(H3DNode node, QObject *parent) :
 	_parentChanged(false), _transformChanged(false), _awaitingRemove(false),
 	_logger(PLogManager::getLogger("entity")), _mgr(Horde3DManager::instance())
 {
-	float x, y, z;
+	const float* matData;
+	h3dGetNodeTransMats(node, &matData, NULL);
+	_trans = QMatrix4x4(matData);
 
+	float pitch, heading, roll;
 	h3dGetNodeTransform(node,
-			&x, &y, &z,
-			&_pitch, &_heading, &_roll,
-			NULL, NULL, NULL);
-
-	_pos = QVector3D(x, y, z);
+			NULL, NULL, NULL,
+			&pitch, &heading, &roll,
+			NULL, NULL, NULL
+			);
+	rotateHeading(heading);
+	rotatePitch(pitch);
+	rotateRoll(roll);
 } // end Entity
 
 
@@ -44,27 +51,12 @@ Entity::Flags Entity::flags() const
 
 QQuaternion Entity::orientation() const
 {
-	return eulerToQuat(_heading, _pitch, _roll);
+	return _orientation;
 } // end orientation
-
-qreal Entity::heading() const
-{
-	return _heading;
-} // end heading
-
-qreal Entity::pitch() const
-{
-	return _pitch;
-} // end pitch
-
-qreal Entity::roll() const
-{
-	return _roll;
-} // end roll
 
 QVector3D Entity::pos() const
 {
-	return _pos;
+	return _trans.row(3).toVector3D();
 } // end pos
 
 Entity* Entity::parent() const
@@ -72,10 +64,6 @@ Entity* Entity::parent() const
 	return _parent;
 } // end parent
 
-void Entity::setPos(qreal x, qreal y, qreal z)
-{
-	setPos(QVector3D(x, y, z));
-} // end setPos
 
 void Entity::setState(QString key, QVariant value)
 {
@@ -108,64 +96,20 @@ void Entity::setFlags(Flags flags)
 
 void Entity::setOrientation(QQuaternion orientation)
 {
-	_transformChanged = true;
+	// Reset transformation matrix, preserving position only.
+	QVector4D translation = _trans.column(3);
+	_trans.setToIdentity();
+	_trans.setColumn(3, translation);
 
-	quatToHPR(orientation, &_heading, &_pitch, &_roll);
-	_heading *= radiansPerDegree;
-	_pitch *= radiansPerDegree;
-	_roll *= radiansPerDegree;
-
-	emit orientationChanged();
-	emit headingChanged(_heading);
-	emit pitchChanged(_pitch);
-	emit rollChanged(_roll);
-
-	scheduleOnce();
+	// Rotate to the new orientation.
+	rotate(orientation);
+	_orientation = orientation;
 } // end setOrientation
-
-void Entity::setHeading(qreal heading)
-{
-	_transformChanged = true;
-
-	_heading = heading;
-
-	emit orientationChanged();
-	emit headingChanged(heading);
-
-	scheduleOnce();
-} // end setHeading
-
-void Entity::setPitch(qreal pitch)
-{
-	_transformChanged = true;
-
-	_pitch = pitch;
-
-	emit orientationChanged();
-	emit pitchChanged(pitch);
-
-	scheduleOnce();
-} // end setPitch
-
-void Entity::setRoll(qreal roll)
-{
-	_transformChanged = true;
-
-	_roll = roll;
-
-	emit orientationChanged();
-	emit rollChanged(roll);
-
-	scheduleOnce();
-} // end setRoll
 
 void Entity::setPos(QVector3D pos)
 {
-	_transformChanged = true;
-	_pos = pos;
-	emit posChanged(pos);
-	scheduleOnce();
-} // end setRoll
+	setPos(pos.x(), pos.y(), pos.z());
+} // end setPos
 
 void Entity::setParent(Entity* parent)
 {
@@ -176,7 +120,7 @@ void Entity::setParent(Entity* parent)
 		emit parentChanged(parent);
 		scheduleOnce();
 	} // end if
-} // end setRoll
+} // end setParent
 
 void Entity::setFlagsRecursive(Flags flags)
 {
@@ -185,6 +129,45 @@ void Entity::setFlagsRecursive(Flags flags)
 	// flagsChanged signal here!
 	emit flagsChanged(flags);
 } // end setFlagsRecursive
+
+
+void Entity::setPos(qreal x, qreal y, qreal z)
+{
+	_transformChanged = true;
+
+	_trans(0, 3) = x;
+	_trans(1, 3) = y;
+	_trans(2, 3) = z;
+
+	emit posChanged();
+	scheduleOnce();
+} // end setPos
+
+void Entity::rotate(QQuaternion orientation)
+{
+	_transformChanged = true;
+
+	_orientation *= orientation;
+	_trans.rotate(orientation);
+	emit orientationChanged();
+
+	scheduleOnce();
+} // end rotate
+
+void Entity::rotateHeading(qreal heading)
+{
+	rotate(QQuaternion::fromAxisAndAngle(0, 1, 0, heading));
+} // end rotateHeading
+
+void Entity::rotatePitch(qreal pitch)
+{
+	rotate(QQuaternion::fromAxisAndAngle(1, 0, 0, pitch));
+} // end rotatePitch
+
+void Entity::rotateRoll(qreal roll)
+{
+	rotate(QQuaternion::fromAxisAndAngle(0, 0, 1, roll));
+} // end rotateRoll
 
 
 QList<Entity*> Entity::find(QString childName)
@@ -402,10 +385,7 @@ void Entity::apply()
 			//_logger.debug(QString("%1: Applying new transform...").arg(toString()));
 			_transformChanged = false;
 
-			h3dSetNodeTransform(_node,
-					_pos.x(), _pos.y(), _pos.z(),
-					_pitch, _heading, _roll,
-					1, 1, 1);
+			h3dSetNodeTransMat(_node, _trans.data());
 		} // end if
 	} // end if
 
