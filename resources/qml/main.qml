@@ -93,8 +93,8 @@ Horde3DWindow {
                 }
                 else
                 {
-                    horde3d.avatar.heading += headingVel;
-                    horde3d.avatar.pitch += pitchVel;
+                    horde3d.avatar.rotateHeading(headingVel);
+                    horde3d.avatar.rotatePitch(pitchVel);
                 }
             }
         }
@@ -168,13 +168,13 @@ Horde3DWindow {
             }
 
             function updateRotation(mouse) {
-                var mouseSensitivity = settings.get('mouseSensitivity', 0.1);
+                var mouseSensitivity = -settings.get('mouseSensitivity', 0.1);
                 if(updateRotation.lastX !== undefined && updateRotation.lastY !== undefined)
                 {
-                    mainWindow.camDolly.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
-                    mainWindow.camDolly.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
-                    //horde3d.avatar.heading -= (mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity;
-                    //horde3d.avatar.pitch -= (mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity;
+                    mainWindow.camDolly.rotateHeading((mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity);
+                    mainWindow.camDolly.rotatePitch((mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity);
+                    //horde3d.avatar.rotateHeading((mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity);
+                    //horde3d.avatar.rotatePitch((mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity);
                 } // end if
 
                 updateRotation.lastX = mouse.x;
