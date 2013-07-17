@@ -8,11 +8,12 @@ class InputDriver : public QObject
     Q_OBJECT
 public:
     explicit InputDriver(QObject *parent = 0);
-    
+
+    QString name;
+
 signals:
-    
-public slots:
-    
+    void deviceAttached(InputDevice*);
+    void deviceDetached(InputDevice*);
 };
 
 #endif // INPUTDRIVER_H
