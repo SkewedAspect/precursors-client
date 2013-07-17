@@ -72,10 +72,7 @@ function updateEntity(event, entity)
 	if(event.state.orientation)
 	{
 		var orientation = event.state.orientation;
-
-		entity.heading = orientation[0] * (180/Math.PI);
-		entity.pitch = orientation[1] * (180/Math.PI);
-		entity.roll = orientation[2] * (180/Math.PI);
+		entity.orientation = Qt.quaternion(orientation[0], orientation[1], orientation[2], orientation[3]);
 	} // end if
 
 	//-----------------------------------------------------------------------------------------------------------------
