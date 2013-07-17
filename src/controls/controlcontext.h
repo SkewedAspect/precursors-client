@@ -3,6 +3,10 @@
 
 #include <QObject>
 
+/**
+ * @brief Represents a collection of ControlSlots that may be used in a given game state. For instance, there may be a
+ * "flightsim" context, a "thirdperson" context, and a "UI" context.
+ */
 class ControlContext : public QObject
 {
     Q_OBJECT

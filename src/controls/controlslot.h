@@ -5,6 +5,10 @@
 
 #include "controlbinding.h"
 
+/**
+ * @brief Represents an action that may be taken in response to input (DigitalControlSlot), or a quantity that can be
+ * varied according to input. (AnalogControlSlot) Client code should instantiate these in order to handle input.
+ */
 class ControlSlot : public QObject
 {
     Q_OBJECT

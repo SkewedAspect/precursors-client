@@ -7,6 +7,10 @@
 #include "inputdriver.h"
 #include "inputdevice.h"
 
+/**
+ * @brief Loads and initializes available InputDrivers and provides access to InputDevices detected by the loaded InputDrivers.
+ * Also provides an API to manage ControlContexts. and loading of rom configuration; providing an API to manage them.
+ */
 class ControlsManager : public QObject
 {
     Q_OBJECT

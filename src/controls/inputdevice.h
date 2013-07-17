@@ -5,6 +5,9 @@
 
 #include "inputdriver.h"
 
+/**
+ * @brief Represents an individual input device; defines InputSignals for each axis or button on the device.
+ */
 class InputDevice : public QObject
 {
     Q_OBJECT

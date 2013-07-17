@@ -5,6 +5,10 @@
 
 #include "inputdevice.h"
 
+/**
+ * @brief Represents a button or axis on a given input device; tracks the current state of the button or axis, and emits
+ * signals when the state changes.
+ */
 class InputSignal : public QObject
 {
     Q_OBJECT
