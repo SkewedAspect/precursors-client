@@ -310,6 +310,7 @@ void Horde3DWindow::init()
 
 	_camDolly = _mgr.root()->newGroup("camera dolly");
 	_camera = _camDolly->newCamera("cam");
+	_camera->setPos(0, 20, 100);
 	emit cameraChanged(_camera);
 
 	setClearBeforeRendering(false);
