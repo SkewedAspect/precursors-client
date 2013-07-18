@@ -3,9 +3,11 @@
 
 #include "inputsignal.h"
 
+
 class ButtonInputSignal : public InputSignal
 {
     Q_OBJECT
+
 public:
     explicit ButtonInputSignal(QObject *parent = 0);
 };

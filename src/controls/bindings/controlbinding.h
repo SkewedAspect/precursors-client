@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include "controlbindingmap.h"
-
 
 class ControlBindingMap;
 

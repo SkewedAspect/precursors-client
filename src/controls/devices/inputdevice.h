@@ -5,11 +5,10 @@
 #include <QObject>
 #include <QString>
 
-#include "inputdriver.h"
-
 
 class AxisInputSignal;
 class ButtonInputSignal;
+class InputDriver;
 class InputSignal;
 
 

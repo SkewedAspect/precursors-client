@@ -3,9 +3,11 @@
 
 #include "controlbinding.h"
 
+
 class AxisAnalogBinding : public ControlBinding
 {
     Q_OBJECT
+
 public:
     explicit AxisAnalogBinding(QObject *parent = 0);
 

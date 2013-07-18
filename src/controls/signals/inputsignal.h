@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QString>
 
-#include "devices/inputdevice.h"
+
+class InputDevice;
 
 
 /**
@@ -21,11 +22,6 @@ public:
     QString name;
     QString description;
     InputDevice* device;
-
-signals:
-
-public slots:
-
 };
 
 #endif // INPUTSIGNAL_H

@@ -3,9 +3,11 @@
 
 #include "inputdevice.h"
 
+
 class MouseDevice : public InputDevice
 {
     Q_OBJECT
+
 public:
     explicit MouseDevice(QObject *parent = 0);
 };

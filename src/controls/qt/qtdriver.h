@@ -3,9 +3,11 @@
 
 #include "inputdriver.h"
 
+
 class QtDriver : public InputDriver
 {
     Q_OBJECT
+
 public:
     explicit QtDriver(QObject *parent = 0);
 };

@@ -3,9 +3,11 @@
 
 #include "inputdriver.h"
 
+
 class OISDriver : public InputDriver
 {
     Q_OBJECT
+
 public:
     explicit OISDriver(QObject *parent = 0);
 };

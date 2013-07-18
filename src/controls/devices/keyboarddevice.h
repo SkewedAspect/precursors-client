@@ -3,9 +3,11 @@
 
 #include "inputdevice.h"
 
+
 class KeyboardDevice : public InputDevice
 {
     Q_OBJECT
+
 public:
     explicit KeyboardDevice(QObject *parent = 0);
 };

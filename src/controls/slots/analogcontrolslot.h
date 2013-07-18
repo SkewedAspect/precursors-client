@@ -3,9 +3,11 @@
 
 #include "controlslot.h"
 
+
 class AnalogControlSlot : public ControlSlot
 {
     Q_OBJECT
+
 public:
     explicit AnalogControlSlot(QObject *parent = 0);
 

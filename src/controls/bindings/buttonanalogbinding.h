@@ -3,9 +3,11 @@
 
 #include "controlbinding.h"
 
+
 class ButtonAnalogBinding : public ControlBinding
 {
     Q_OBJECT
+
 public:
     explicit ButtonAnalogBinding(QObject *parent = 0);
 

@@ -2,6 +2,8 @@
 #define CONTROLCONTEXT_H
 
 #include <QObject>
+#include <QString>
+
 
 /**
  * @brief Represents a collection of ControlSlots that may be used in a given game state. For instance, there may be a
@@ -10,6 +12,7 @@
 class ControlContext : public QObject
 {
     Q_OBJECT
+
 public:
     explicit ControlContext(QObject *parent = 0);
 
