@@ -28,6 +28,30 @@ AxisAnalogBinding::AxisAnalogBinding(QObject *parent) :
  */
 void AxisAnalogBinding::onSignalUpdated(float position)
 {
-    _instantaneousValue = position;
+    float value = position + _offset;
+    if(value > 0)
+    {
+        if(value < _deadzone)
+        {
+            value = 0;
+        }
+        else
+        {
+            value -= _deadzone;
+        } // end if
+    }
+    else
+    {
+        if(value > -_deadzone)
+        {
+            value = 0;
+        }
+        else
+        {
+            value += _deadzone;
+        } // end if
+    } // end if
+
+    _instantaneousValue = _sensitivity * value;
     emit stateChanged();
 } // onSignalUpdated
