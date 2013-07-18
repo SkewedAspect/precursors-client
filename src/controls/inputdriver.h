@@ -5,6 +5,9 @@
 #include <QString>
 
 
+class QWindow;
+
+class ControlsManager;
 class InputDevice;
 
 
@@ -16,14 +19,16 @@ class InputDriver : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit InputDriver(QObject *parent = 0);
+    Q_PROPERTY(QString name READ name);
 
-    QString name;
+public:
+    explicit InputDriver(ControlsManager* manager, QWindow* window);
+
+	virtual QString name() = 0;
 
 signals:
     void deviceAttached(InputDevice*);
     void deviceDetached(InputDevice*);
-};
+}; // end InputDriver
 
 #endif // INPUTDRIVER_H

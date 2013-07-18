@@ -72,6 +72,8 @@ set_target_properties(Controls PROPERTIES DEBUG_POSTFIX _d)
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/..
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+	${OIS_INCLUDE_DIR}
 	)
 
 qt5_use_modules(Controls
@@ -90,6 +92,9 @@ target_link_libraries(Controls
 	#Qt5::Core
 
 	OIS
+
+	PLogging
+	PSettings
 	)
 
 

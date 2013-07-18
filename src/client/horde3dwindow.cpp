@@ -2,6 +2,8 @@
 #include "horde3dwindow.h"
 #include "entity.h"
 
+#include "controls/ois/oisdriver.h"
+
 #include <Horde3DUtils.h>
 
 #include <QtCore/QPropertyAnimation>
@@ -47,6 +49,9 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 			this, SLOT(onSceneChanged(const Entity*, QString)),
 			Qt::QueuedConnection
 			);
+
+	OISDriver inputDriver(NULL, this);
+	_logger.debug(QString("Loaded input driver \"%1\".").arg(inputDriver.name()));
 } // end Horde3DWindow
 
 Horde3DWindow::~Horde3DWindow()

@@ -26,6 +26,10 @@ public:
 signals:
     void driversChanged();
     void devicesChanged();
+
+public slots:
+    void onDeviceAttached(InputDevice* device);
+    void onDeviceDetached(InputDevice* device);
 };
 
 #endif // CONTROLSMANAGER_H
