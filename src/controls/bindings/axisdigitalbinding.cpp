@@ -5,6 +5,10 @@
 /* Public API                                                                                                         */
 /**********************************************************************************************************************/
 
+/**
+ * @brief Default Constructor
+ * @param parent The parent QObject.
+ */
 AxisDigitalBinding::AxisDigitalBinding(QObject *parent) :
     ControlBinding(parent),
     _threshold(0),
@@ -25,6 +29,10 @@ bool AxisDigitalBinding::state()
 /* Slots                                                                                                              */
 /**********************************************************************************************************************/
 
+/**
+ * @brief Should get called whenever the connected InputSignal's value changes.
+ * @param position The position of the axis.
+ */
 void AxisDigitalBinding::onSignalUpdated(float position)
 {
     bool previousState = _state;
