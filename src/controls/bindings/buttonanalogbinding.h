@@ -4,6 +4,16 @@
 #include "controlbinding.h"
 
 
+/**
+ * @brief A binding between a button signal and an analog input slot.
+
+    This has 3 different modes, each with their own possible options:
+
+    - momentary: While the button is pressed (or not pressed, if `invert` is True), add the value given by
+        `momentaryValue` to the total for this slot.
+    - set to: When the button is pressed, this slot's accumulated value is set to the value given by `setValue`.
+    - rate of change: While the button is pressed, change the slot's accumulated value by `changeRate` every second.
+ */
 class ButtonAnalogBinding : public ControlBinding
 {
     Q_OBJECT
@@ -21,12 +31,15 @@ class ButtonAnalogBinding : public ControlBinding
     Q_PROPERTY(float value MEMBER _value)
 
 public:
+    /**
+     * @brief Represents the mode of the ButtonAnalogBinding instance.
+     */
     enum BindingMode
     {
-        BM_UNDEFINED,
-        BM_MOMENTARY,
-        BM_SETVALUE,
-        BM_CHANGERATE
+        BM_UNDEFINED,	/*!< Not mode has been set yet. This is the initial mode. */
+        BM_MOMENTARY,	/*!< Momentary mode. */
+        BM_SETVALUE,	/*!< Set To mode. */
+        BM_CHANGERATE	/*!< Change Rate mode. */
     };
 
     explicit ButtonAnalogBinding(QObject *parent = 0);

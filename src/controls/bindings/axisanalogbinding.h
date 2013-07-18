@@ -4,6 +4,9 @@
 #include "controlbinding.h"
 
 
+/**
+ * @brief A binding between an axis signal and an analog input slot.
+ */
 class AxisAnalogBinding : public ControlBinding
 {
     Q_OBJECT

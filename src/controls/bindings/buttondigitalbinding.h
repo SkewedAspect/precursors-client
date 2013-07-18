@@ -4,6 +4,9 @@
 #include "controlbinding.h"
 
 
+/**
+ * @brief A binding between a button signal and a digital input slot.
+ */
 class ButtonDigitalBinding : public ControlBinding
 {
     Q_OBJECT
