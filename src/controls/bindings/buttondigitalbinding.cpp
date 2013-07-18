@@ -15,6 +15,7 @@ ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
     _toggle(false),
     _state(false)
 {
+    // Annoyingly, `Q_PROPERTY` doesn't work with signals defined in the base class. So, we cheat.
     connect(this, SIGNAL(stateChanged()), parent, SIGNAL(stateChanged()));
 } // end ButtonDigitalBinding
 
