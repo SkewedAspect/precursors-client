@@ -10,6 +10,7 @@ ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
     _toggle(false),
     _state(false)
 {
+    connect(this, SIGNAL(stateChanged()), parent, SIGNAL(stateChanged()));
 } // end ButtonDigitalBinding
 
 bool ButtonDigitalBinding::state()
@@ -34,6 +35,7 @@ void ButtonDigitalBinding::onSignalUpdated(bool pressed, bool repeating)
     }
     else
     {
+        emit stateChanged();
         _state = (pressed != _invert);
     } // end if
 
