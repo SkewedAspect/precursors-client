@@ -1,9 +1,14 @@
 #include "buttondigitalbinding.h"
 
+
 /**********************************************************************************************************************/
 /* Public API                                                                                                         */
 /**********************************************************************************************************************/
 
+/**
+ * @brief Default Constructor
+ * @param parent The parent QObject.
+ */
 ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
     ControlBinding(parent),
     _invert(false),
@@ -13,6 +18,10 @@ ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
     connect(this, SIGNAL(stateChanged()), parent, SIGNAL(stateChanged()));
 } // end ButtonDigitalBinding
 
+/**
+ * @brief Returns the current state of this binding.
+ * @return True, if this binding is "on", and false if it is "off".
+ */
 bool ButtonDigitalBinding::state()
 {
     return this->_state;
@@ -22,6 +31,11 @@ bool ButtonDigitalBinding::state()
 /* Slots                                                                                                              */
 /**********************************************************************************************************************/
 
+/**
+ * @brief Should get called whenever the connected InputSignal's value changes.
+ * @param pressed True if the button is currently being pressed, false otherwise.
+ * @param repeating True if this slot is being called because of a key repeate event.
+ */
 void ButtonDigitalBinding::onSignalUpdated(bool pressed, bool repeating)
 {
     if(_toggle)
