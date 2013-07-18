@@ -12,9 +12,9 @@ ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
 {
 } // end ButtonDigitalBinding
 
-ButtonDigitalBinding::state()
+bool ButtonDigitalBinding::state()
 {
-    return _state;
+    return this->_state;
 } // end state
 
 /**********************************************************************************************************************/
@@ -28,6 +28,7 @@ void ButtonDigitalBinding::onSignalUpdated(bool pressed, bool repeating)
         // Only toggle if our last state was not pressed, and our current state is pressed.
         if(!_lastPressedState && pressed)
         {
+            emit stateChanged();
             _state = !_state;
         } // end if
     }

@@ -19,6 +19,7 @@ public:
 signals:
     void invertChanged();
     void toggleChanged();
+    void stateChanged();
 
 public slots:
     void onSignalUpdated(bool pressed, bool repeating);
