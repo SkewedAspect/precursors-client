@@ -8,8 +8,8 @@ class ButtonDigitalBinding : public ControlBinding
 {
     Q_OBJECT
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
-    Q_PROPERTY(bool invert MEMBER _invert NOTIFY invertChanged)
-    Q_PROPERTY(bool toggle MEMBER _toggle NOTIFY toggleChanged)
+    Q_PROPERTY(bool invert MEMBER _invert)
+    Q_PROPERTY(bool toggle MEMBER _toggle)
 
 public:
     explicit ButtonDigitalBinding(QObject *parent = 0);
@@ -17,8 +17,6 @@ public:
     bool state();
 
 signals:
-    void invertChanged();
-    void toggleChanged();
     void stateChanged();
 
 public slots:
