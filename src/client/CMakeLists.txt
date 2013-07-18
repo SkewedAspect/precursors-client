@@ -64,6 +64,7 @@ target_link_libraries(PrecursorsClient
 	PreUtil
 	PChannels
 	PSettings
+	Controls
 	)
 
 
