@@ -11,12 +11,19 @@
  */
 AxisAnalogBinding::AxisAnalogBinding(QObject *parent) :
 		ControlBinding(parent),
+		_value(0),
 		_sensitivity(0),
 		_offset(0),
-		_deadzone(0),
-		_instantaneousValue(0)
+		_deadZone(0)
 {
+    // Emit stateChanged whenever any of our state properties change.
+    connect(this, SIGNAL(valueChanged()), this, SIGNAL(stateChanged()));
 } // end AxisAnalogBinding
+
+float AxisAnalogBinding::value()
+{
+	return _value;
+} // end value
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -31,27 +38,32 @@ void AxisAnalogBinding::onSignalUpdated(float position)
     float value = position + _offset;
     if(value > 0)
     {
-        if(value < _deadzone)
+        if(value < _deadZone)
         {
             value = 0;
         }
         else
         {
-            value -= _deadzone;
+            value -= _deadZone;
         } // end if
     }
     else
     {
-        if(value > -_deadzone)
+        if(value > -_deadZone)
         {
             value = 0;
         }
         else
         {
-            value += _deadzone;
+            value += _deadZone;
         } // end if
     } // end if
 
-    _instantaneousValue = _sensitivity * value;
-    emit stateChanged();
+	value *= _sensitivity;
+
+    if(_value != value)
+	{
+		_value = value;
+		emit valueChanged();
+    } // end if
 } // onSignalUpdated

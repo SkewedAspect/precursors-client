@@ -11,23 +11,33 @@ class AxisAnalogBinding : public ControlBinding
 {
     Q_OBJECT
 
-    Q_PROPERTY(float sensitivity MEMBER _sensitivity)
-    Q_PROPERTY(float offset MEMBER _offset)
-    Q_PROPERTY(float deadzone MEMBER _deadzone)
-    Q_PROPERTY(float instantaneousValue MEMBER _instantaneousValue)
+    Q_PROPERTY(float value READ value NOTIFY valueChanged)
+
+    Q_PROPERTY(float sensitivity MEMBER _sensitivity NOTIFY sensitivityChanged)
+    Q_PROPERTY(float offset MEMBER _offset NOTIFY offsetChanged)
+    Q_PROPERTY(float deadZone MEMBER _deadZone NOTIFY deadZoneChanged)
 
 public:
     explicit AxisAnalogBinding(QObject *parent = 0);
+
+	float value();
+
+signals:
+    void valueChanged();
+
+    void sensitivityChanged();
+    void offsetChanged();
+    void deadZoneChanged();
 
 public slots:
     void onSignalUpdated(float position);
 
 private:
+    float _value;
+
     float _sensitivity;
     float _offset;
-    float _deadzone;
-
-    float _instantaneousValue;
-};
+    float _deadZone;
+}; // end AxisAnalogBinding
 
 #endif // AXISANALOGBINDING_H

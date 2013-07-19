@@ -13,20 +13,20 @@ ButtonDigitalBinding::ButtonDigitalBinding(QObject *parent) :
 		ControlBinding(parent),
 		_invert(false),
 		_toggle(false),
-		_state(false)
+		_isOn(false)
 {
-    // Annoyingly, `Q_PROPERTY` doesn't work with signals defined in the base class. So, we cheat.
-    connect(this, SIGNAL(stateChanged()), this, SIGNAL(ControlBinding::stateChanged()));
+    // Emit stateChanged whenever any of our state properties change.
+    connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
 } // end ButtonDigitalBinding
 
 /**
- * @brief Returns the current state of this binding.
+ * @brief Returns the current isOn of this binding.
  * @return true, if this binding is "on", and false if it is "off".
  */
-bool ButtonDigitalBinding::state()
+bool ButtonDigitalBinding::isOn()
 {
-    return _state;
-} // end state
+    return _isOn;
+} // end isOn
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -44,14 +44,14 @@ void ButtonDigitalBinding::onSignalUpdated(bool pressed, bool repeating)
         // Only toggle if our last state was not pressed, and our current state is pressed.
         if(!_lastPressedState && pressed)
         {
-            emit stateChanged();
-            _state = !_state;
+            emit isOnChanged();
+            _isOn = !_isOn;
         } // end if
     }
     else
     {
-        emit stateChanged();
-        _state = (pressed != _invert);
+        emit isOnChanged();
+        _isOn = (pressed != _invert);
     } // end if
 
     _lastPressedState = pressed;

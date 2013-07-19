@@ -11,14 +11,16 @@
  */
 ButtonAnalogBinding::ButtonAnalogBinding(QObject *parent) :
 		ControlBinding(parent),
+		_isOn(false),
+		_mode(BM_UNDEFINED),
 		_momentaryValue(0),
-		_setValue(0),
+		_valueToSet(0),
 		_changeRate(0),
-		_instantaneousValue(0),
-		_accumulatedValue(0),
-		_value(0),
-		_mode(BM_UNDEFINED)
+		_invert(false)
 {
+    // Emit stateChanged whenever any of our state properties change.
+    connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
+    connect(this, SIGNAL(invertChanged()), this, SIGNAL(stateChanged()));
 } // end ButtonAnalogBinding
 
 /**
@@ -30,37 +32,45 @@ ButtonAnalogBinding::BindingMode ButtonAnalogBinding::mode()
     return _mode;
 } // end mode
 
-float ButtonAnalogBinding::getMomentaryValue()
+float ButtonAnalogBinding::momentaryValue()
 {
     return _momentaryValue;
-} // end getMomentary
+} // end momentary
 
-float ButtonAnalogBinding::getSetValue()
+float ButtonAnalogBinding::valueToSet()
 {
-    return _setValue;
-} // end getSetValue
+    return _valueToSet;
+} // end valueToSet
 
-float ButtonAnalogBinding::getChangeRate()
+float ButtonAnalogBinding::changeRate()
 {
     return _changeRate;
-} // end getChangeRate
+} // end changeRate
+
+bool ButtonAnalogBinding::isOn()
+{
+	return _isOn;
+} // end isOn
 
 void ButtonAnalogBinding::setMomentaryValue(float val)
 {
-    _mode = BM_MOMENTARY;
     _momentaryValue = val;
+    setMode(BM_MOMENTARY);
+    emit momentaryValueChanged();
 } // end setMomentaryValue
 
-void ButtonAnalogBinding::setSetValue(float val)
+void ButtonAnalogBinding::setValueToSet(float val)
 {
-    _mode = BM_SETVALUE;
-    _setValue = val;
-} // end setSetValue
+    _valueToSet = val;
+    setMode(BM_SETVALUE);
+    emit valueToSetChanged();
+} // end setValueToSet
 
 void ButtonAnalogBinding::setChangeRate(float val)
 {
-    _mode = BM_CHANGERATE;
-    _setValue = val;
+    _valueToSet = val;
+    setMode(BM_CHANGERATE);
+    emit changeRateChanged();
 } // end setChangeRate
 
 /*********************************************************************************************************************/
@@ -76,37 +86,39 @@ void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 {
     // If the 'invert' option is disabled, this equates to 'if pressed'; if 'invert' is enabled, it equates to
     // 'if not pressed'.
-    bool currentState = (pressed == _invert);
+    bool newState = (pressed == _invert);
 
-    switch(_mode)
-    {
-        case BM_MOMENTARY:
-        {
-            _instantaneousValue = currentState ? _momentaryValue : 0;
-            emit stateChanged();
-            break;
-        }
+    if(_isOn != newState)
+	{
+		_isOn = newState;
 
-        case BM_CHANGERATE:
-        {
-            _accumulatedValue = currentState ? _changeRate : 0;
-            emit stateChanged();
-            break;
-        }
+		// Only emit isOnChanged if we have a mode set; otherwise, we're effectively disabled.
+		switch(_mode)
+		{
+			case BM_MOMENTARY:
+			case BM_CHANGERATE:
+			case BM_SETVALUE:
+				emit isOnChanged();
+				break;
+		} // end switch
+	} // end if
+} // end onSignalUpdated
 
-        case BM_SETVALUE:
-        {
-            _value = currentState ? _setValue : 0;
-            emit stateChanged();
-            break;
-        }
+/*********************************************************************************************************************/
+/* Private Methods                                                                                                   */
+/*********************************************************************************************************************/
 
-        default:
-        {
-            _instantaneousValue = 0;
-            _accumulatedValue = 0;
-            _value = 0;
-            break;
-        } // end default
-    } // end switch
-}
+void ButtonAnalogBinding::setMode(BindingMode newMode)
+{
+    if(_mode == newMode)
+	{
+		// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the current
+		// mode did, so we need to tell our slot to update.
+		emit stateChanged();
+	}
+	else
+	{
+		_mode = newMode;
+		emit modeChanged();
+	} // end if
+} // end setMode

@@ -17,27 +17,29 @@ class AxisDigitalBinding : public ControlBinding
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool state READ state NOTIFY stateChanged)
-    Q_PROPERTY(bool invert MEMBER _invert)
+    Q_PROPERTY(bool isOn READ isOn NOTIFY isOnChanged)
+
     Q_PROPERTY(float threshold MEMBER _threshold)
-    Q_PROPERTY(float  overlap MEMBER _overlap)
+    Q_PROPERTY(float overlap MEMBER _overlap)
+    Q_PROPERTY(bool invert MEMBER _invert)
 
 public:
     explicit AxisDigitalBinding(QObject *parent = 0);
 
-    bool state();
+    bool isOn();
 
 signals:
-    void stateChanged();
+    void isOnChanged();
 
 public slots:
     void onSignalUpdated(float position);
 
  private:
+    bool _isOn;
+
     float _threshold;
     float _overlap;
     bool _invert;
-    bool _state;
-};
+}; // end AxisDigitalBinding
 
 #endif // AXISDIGITALBINDING_H

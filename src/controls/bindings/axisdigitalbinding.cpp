@@ -11,19 +11,19 @@
  */
 AxisDigitalBinding::AxisDigitalBinding(QObject *parent) :
 		ControlBinding(parent),
+		_isOn(false),
 		_threshold(0),
 		_overlap(0),
-		_invert(false),
-		_state(false)
+		_invert(false)
 {
-    // Annoyingly, `Q_PROPERTY` doesn't work with signals defined in the base class. So, we cheat.
-    connect(this, SIGNAL(stateChanged()), this, SIGNAL(ControlBinding::stateChanged()));
+    // Emit stateChanged whenever any of our state properties change.
+    connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
 } // end AxisDigitalBinding
 
-bool AxisDigitalBinding::state()
+bool AxisDigitalBinding::isOn()
 {
-   return _state;
-} // end state
+   return _isOn;
+} // end isOn
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -35,7 +35,7 @@ bool AxisDigitalBinding::state()
  */
 void AxisDigitalBinding::onSignalUpdated(float position)
 {
-    bool previousState = _state;
+    bool previousState = _isOn;
 
     if(previousState != _invert)
     {
@@ -43,8 +43,8 @@ void AxisDigitalBinding::onSignalUpdated(float position)
          // then change if we fall below `threshold` - `overlap`.
         if(position < (_threshold - _overlap))
         {
-            _state = !previousState;
-            emit stateChanged();
+            _isOn = !previousState;
+            emit isOnChanged();
         } // end if
     }
     else
@@ -52,8 +52,8 @@ void AxisDigitalBinding::onSignalUpdated(float position)
         // Otherwise, change if we go above `threshold`.
         if(position > _threshold)
         {
-            _state = !previousState;
-            emit stateChanged();
+            _isOn = !previousState;
+            emit isOnChanged();
         } // end if
     } // end if
 } // end onSignalUpdated
