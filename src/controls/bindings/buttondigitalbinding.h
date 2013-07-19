@@ -10,6 +10,7 @@
 class ButtonDigitalBinding : public ControlBinding
 {
     Q_OBJECT
+
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
     Q_PROPERTY(bool invert MEMBER _invert)
     Q_PROPERTY(bool toggle MEMBER _toggle)

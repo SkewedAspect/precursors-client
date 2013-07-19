@@ -10,6 +10,7 @@
 class AxisAnalogBinding : public ControlBinding
 {
     Q_OBJECT
+
     Q_PROPERTY(float sensitivity MEMBER _sensitivity)
     Q_PROPERTY(float offset MEMBER _offset)
     Q_PROPERTY(float deadzone MEMBER _deadzone)

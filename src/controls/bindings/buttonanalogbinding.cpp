@@ -1,27 +1,25 @@
 #include "buttonanalogbinding.h"
 
 
-/**********************************************************************************************************************/
-/* Public API                                                                                                         */
-/**********************************************************************************************************************/
+/*********************************************************************************************************************/
+/* Public API                                                                                                        */
+/*********************************************************************************************************************/
 
 /**
  * @brief Default Constructor
  * @param parent The parent QObject.
  */
 ButtonAnalogBinding::ButtonAnalogBinding(QObject *parent) :
-    ControlBinding(parent),
-    _momentaryValue(0),
-    _setValue(0),
-    _changeRate(0),
-    _instantaneousValue(0),
-    _accumulatedValue(0),
-    _value(0),
-    _mode(BM_UNDEFINED)
+		ControlBinding(parent),
+		_momentaryValue(0),
+		_setValue(0),
+		_changeRate(0),
+		_instantaneousValue(0),
+		_accumulatedValue(0),
+		_value(0),
+		_mode(BM_UNDEFINED)
 {
-    // Annoyingly, `Q_PROPERTY` doesn't work with signals defined in the base class. So, we cheat.
-    connect(this, SIGNAL(stateChanged()), parent, SIGNAL(stateChanged()));
-}
+} // end ButtonAnalogBinding
 
 /**
  * @brief Returns the current mode for this binding.
@@ -65,14 +63,14 @@ void ButtonAnalogBinding::setChangeRate(float val)
     _setValue = val;
 } // end setChangeRate
 
-/**********************************************************************************************************************/
-/* Slots                                                                                                              */
-/**********************************************************************************************************************/
+/*********************************************************************************************************************/
+/* Slots                                                                                                             */
+/*********************************************************************************************************************/
 
 /**
  * @brief Should get called whenever the connected InputSignal's value changes.
- * @param pressed True if the button is currently being pressed, false otherwise.
- * @param repeating True if this slot is being called because of a key repeate event.
+ * @param pressed true if the button is currently being pressed, false otherwise.
+ * @param repeating true if this slot is being called because of a key repeate event.
  */
 void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 {
@@ -80,7 +78,7 @@ void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
     // 'if not pressed'.
     bool currentState = (pressed == _invert);
 
-    switch (_mode)
+    switch(_mode)
     {
         case BM_MOMENTARY:
         {
