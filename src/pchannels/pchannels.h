@@ -42,7 +42,7 @@ public:
     static PChannels& instance();
 
     Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
-    void disconnect();
+    void disconnect(QString reason = "Quit");
 
     void send(QVariant envelope, ChannelMode mode, bool encrypted = true);
     void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);

@@ -86,7 +86,7 @@ void PChannels::connectToServer(QString serverHostName, quint16 port, QString us
 /**
  * @brief Disconnects from the server.
  */
-void PChannels::disconnect()
+void PChannels::disconnect(QString reason)
 {
     // Clear our IP and port
     this->port = 0;
@@ -110,6 +110,8 @@ void PChannels::disconnect()
     {
         this->udpSocket->disconnectFromHost();
     } // end if
+
+	emit disconnected(reason);
 } // end disconnect
 
 /**
@@ -324,7 +326,7 @@ void PChannels::handleLoginResponse(bool confirmed)
     if(!confirmed)
     {
         logger.notice(QString("Server denied login: \"%1\".").arg(replyMessage["reason"].toString()));
-        emit disconnected(replyMessage["reason"].toString());
+        disconnect(replyMessage["reason"].toString());
     }
     else
     {
@@ -347,7 +349,7 @@ void PChannels::handleTCPResponse(bool confirmed)
     if(!confirmed)
     {
         logger.error(QString("Server denied tcp connection: \"%1\".").arg(replyMessage["reason"].toString()));
-        emit disconnected(replyMessage["reason"].toString());
+        disconnect(replyMessage["reason"].toString());
     }
     else
     {
@@ -368,7 +370,7 @@ void PChannels::handleUDPResponse(bool confirmed)
     if(!confirmed)
     {
         logger.error(QString("Server denied udp connection: \"%1\".").arg(replyMessage["reason"].toString()));
-        emit disconnected(replyMessage["reason"].toString());
+        disconnect(replyMessage["reason"].toString());
     }
     else
     {
