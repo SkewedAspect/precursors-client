@@ -167,6 +167,9 @@ ApplicationWindow {
                     onClicked: {
                         login();
                     } // end onClicked
+                    Keys.onReturnPressed: {
+                        login();
+                    } // end onReturnPressed
                 } // end Button
             } // end RowLayout
         } // end GroupBox
