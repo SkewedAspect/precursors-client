@@ -25,10 +25,6 @@ set(CONTROLS_HEADERS
 	slots/controlslot.h
 	slots/analogcontrolslot.h
 
-	ois/oisdriver.h
-
-	qt/qtdriver.h
-
    	${CMAKE_CURRENT_BINARY_DIR}/../config.h
 	)
 
@@ -56,10 +52,6 @@ set(CONTROLS_SOURCES
 	slots/digitalcontrolslot.cpp
 	slots/controlslot.cpp
 	slots/analogcontrolslot.cpp
-
-	ois/oisdriver.cpp
-
-	qt/qtdriver.cpp
 	)
 
 add_library(Controls SHARED
@@ -70,12 +62,6 @@ add_library(Controls SHARED
 set_target_properties(Controls PROPERTIES COMPILE_FLAGS -fPIC)
 set_target_properties(Controls PROPERTIES DEBUG_POSTFIX _d)
 
-include_directories(
-	${CMAKE_CURRENT_BINARY_DIR}/..
-	${CMAKE_CURRENT_SOURCE_DIR}/..
-	${OIS_INCLUDE_DIR}
-	)
-
 qt5_use_modules(Controls
 	Gui
 	Qml
@@ -84,14 +70,90 @@ qt5_use_modules(Controls
 	)
 
 # Tell CMake what to link with
-#TODO: Commented until macports updates to CMake 2.8.11 or newer.
 target_link_libraries(Controls
+	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
 	#Qt5::Gui
 	#Qt5::Qml
 	#Qt5::Quick
 	#Qt5::Core
 
+	PLogging
+	PSettings
+	)
+
+include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}/..
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+	${OIS_INCLUDE_DIR}
+	)
+
+
+#### OIS Driver ####
+
+set(CONTROLS_OISDRIVER_HEADERS
+	ois/oisdriver.h
+	)
+
+set(CONTROLS_OISDRIVER_SOURCES
+	ois/oisdriver.cpp
+	)
+
+add_library(ControlsOISDriver SHARED
+	${CONTROLS_OISDRIVER_HEADERS}
+	${CONTROLS_OISDRIVER_SOURCES}
+	)
+
+set_target_properties(ControlsOISDriver PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(ControlsOISDriver PROPERTIES DEBUG_POSTFIX _d)
+
+qt5_use_modules(ControlsOISDriver
+	Gui
+	Core
+	)
+
+target_link_libraries(ControlsOISDriver
+	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
+	#Qt5::Gui
+	#Qt5::Core
+
 	OIS
+
+	PLogging
+	PSettings
+	)
+
+
+#### Qt Driver ####
+
+set(CONTROLS_QTDRIVER_HEADERS
+	qt/qtdriver.h
+	)
+
+set(CONTROLS_QTDRIVER_SOURCES
+	qt/qtdriver.cpp
+	)
+
+add_library(ControlsQtDriver SHARED
+	${CONTROLS_QTDRIVER_HEADERS}
+	${CONTROLS_QTDRIVER_SOURCES}
+	)
+
+set_target_properties(ControlsQtDriver PROPERTIES COMPILE_FLAGS -fPIC)
+set_target_properties(ControlsQtDriver PROPERTIES DEBUG_POSTFIX _d)
+
+qt5_use_modules(ControlsQtDriver
+	Gui
+	Qml
+	Quick
+	Core
+	)
+
+target_link_libraries(ControlsQtDriver
+	#TODO: Commented until macports updates to CMake 2.8.11 or newer.
+	#Qt5::Gui
+	#Qt5::Qml
+	#Qt5::Quick
+	#Qt5::Core
 
 	PLogging
 	PSettings
@@ -103,21 +165,29 @@ if(WIN32 AND NOT MINGW)
 	add_custom_command(TARGET Controls POST_BUILD
 		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
 		)
+	add_custom_command(TARGET ControlsOISDriver POST_BUILD
+		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
+		)
+	add_custom_command(TARGET ControlsQtDriver POST_BUILD
+		COMMAND copy \"$(TargetPath)"\"" .\\dist\\bin
+		)
 endif(WIN32 AND NOT MINGW)
 
 if(MINGW OR UNIX)
-	set(ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
-	set(LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
+	set_target_properties(ControlsOISDriver PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
+	set_target_properties(ControlsOISDriver PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
+
+	set_target_properties(ControlsQtDriver PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
+	set_target_properties(ControlsQtDriver PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/dist/bin)
 endif(MINGW OR UNIX)
 
 
-if(WIN32)
-	install(TARGETS Controls
-		LIBRARY DESTINATION bin
-		CONFIGURATIONS All)
-elseif(UNIX)
-	install(TARGETS Controls
-		LIBRARY DESTINATION bin
-		CONFIGURATIONS All)
+if(WIN32 OR UNIX)
+	install(TARGETS Controls LIBRARY DESTINATION bin CONFIGURATIONS All)
+	install(TARGETS ControlsOISDriver LIBRARY DESTINATION bin CONFIGURATIONS All)
+	install(TARGETS ControlsQtDriver LIBRARY DESTINATION bin CONFIGURATIONS All)
 endif()
-

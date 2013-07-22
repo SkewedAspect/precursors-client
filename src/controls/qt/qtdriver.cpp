@@ -3,8 +3,8 @@
 #include "qtdriver.h"
 
 
-QtDriver::QtDriver(ControlsManager* manager, QWindow* window) :
-    InputDriver(manager, window)
+QtDriver::QtDriver() :
+    InputDriver()
 {
 } // end QtDriver
 
@@ -12,3 +12,8 @@ QString QtDriver::name()
 {
 	return "Qt Input Driver";
 } // end name
+
+void QtDriver::setWindow(QWindow* window)
+{
+	_window = window;
+} // end setWindow
