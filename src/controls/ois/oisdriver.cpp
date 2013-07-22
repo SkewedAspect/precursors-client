@@ -25,45 +25,84 @@ QString describeOISType(OIS::Type type)
 } // end describeOISType
 
 
-OISDriver::OISDriver(ControlsManager* manager, QWindow* window) :
-		InputDriver(manager, window),
-		_logger(PLogManager::getLogger("horde3d")),
-		_settings(PSettingsManager::instance())
+OISDriver::OISDriver() :
+		_ois(NULL),
+		_logger(PLogManager::getLogger("OISDriver")),
+		_settings(PSettingsManager::instance()),
+		InputDriver()
 {
-	ois = OIS::InputManager::createInputSystem((std::size_t) window->winId());
-
-	_logger.info(QString("%1 starting; using OIS %2 with input system \"%3\".")
-			.arg(name())
-			.arg(QString::fromStdString(ois->getVersionName()))
-			.arg(QString::fromStdString(ois->inputSystemName()))
-			);
-
-	for(int type = OIS::OISUnknown; type <= OIS::OISMultiTouch; ++type)
-	{
-		int deviceCount = ois->getNumberOfDevices((OIS::Type) type);
-		_logger.debug(QString("%1 %2 devices found.")
-				.arg(deviceCount)
-				.arg(describeOISType((OIS::Type) type))
-				);
-	} // end for
-
-	// typedef std::multimap<Type, std::string> DeviceList;
-	OIS::DeviceList devices = (ois->listFreeDevices());
-	for(OIS::DeviceList::const_iterator it = devices.begin(); it != devices.end(); ++it)
-	{
-		_logger.debug(QString("    %1: %2")
-				.arg(describeOISType(it->first))
-				.arg(QString::fromStdString(it->second))
-				);
-	} // end for
 } // end OISDriver
 
 OISDriver::~OISDriver()
 {
-	OIS::InputManager::destroyInputSystem(ois);
+	teardownOIS();
 } // end ~OISDriver
 
 QString OISDriver::name()
 {
 	return "OIS Input Driver";
 } // end name
+
+void OISDriver::setWindow(QWindow* window)
+{
+	_logger.info(QString("OISDriver::setWindow(%1)").arg((std::size_t) window));
+
+	teardownOIS();
+
+	try
+	{
+		_ois = OIS::InputManager::createInputSystem((std::size_t) window->winId());
+
+		_logger.info(QString("%1 starting; using OIS %2 with input system \"%3\".")
+				.arg(name())
+				.arg(QString::fromStdString(_ois->getVersionName()))
+				.arg(QString::fromStdString(_ois->inputSystemName()))
+				);
+
+		for(int type = OIS::OISUnknown; type <= OIS::OISMultiTouch; ++type)
+		{
+			int deviceCount = _ois->getNumberOfDevices((OIS::Type) type);
+
+			_logger.debug(QString("%1 %2 devices found.")
+					.arg(deviceCount)
+					.arg(describeOISType((OIS::Type) type))
+					);
+		} // end for
+
+		// typedef std::multimap<Type, std::string> DeviceList;
+		OIS::DeviceList availableDevices = (_ois->listFreeDevices());
+		for(OIS::DeviceList::const_iterator it = availableDevices.begin(); it != availableDevices.end(); ++it)
+		{
+			OIS::Object* device = _ois->createInputObject(it->first, true, it->second);
+
+			_logger.debug(QString("    - %1 (id: %2; vendor: %3)")
+					.arg(describeOISType(device->type()))
+					.arg(device->getID())
+					.arg(QString::fromStdString(device->vendor()))
+					);
+
+			devices.append(device);
+		} // end for
+	}
+	catch(std::exception& exc)
+	{
+		_logger.fatal(QString("Exception caught while initializing OIS! %1").arg(exc.what()));
+	} // end try
+
+	_window = window;
+} // end setWindow
+
+void OISDriver::teardownOIS()
+{
+	_logger.info("OISDriver::teardownOIS()");
+
+	if(_ois)
+	{
+		while(!devices.isEmpty())
+		{
+			_ois->destroyInputObject(devices.takeFirst());
+		} // end while
+
+		OIS::InputManager::destroyInputSystem(_ois);
+	} // end if
+} // end teardownOIS

@@ -2,7 +2,7 @@
 #include "horde3dwindow.h"
 #include "entity.h"
 
-#include "controls/ois/oisdriver.h"
+#include "controls/controlsmanager.h"
 
 #include <Horde3DUtils.h>
 
@@ -50,8 +50,18 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 			Qt::QueuedConnection
 			);
 
-	OISDriver inputDriver(NULL, this);
-	_logger.debug(QString("Loaded input driver \"%1\".").arg(inputDriver.name()));
+	ControlsManager controls(NULL);
+	controls.setWindow(this);
+
+	_logger.debug("Available input drivers:");
+	foreach(const QString& driverFileName, controls.findInputDrivers())
+	{
+		_logger.debug(QString(" - %1").arg(driverFileName));
+		if(!controls.loadInputDriver(driverFileName))
+		{
+			_logger.error(QString("Error loading input driver \"%1\"!").arg(driverFileName));
+		} // end if
+	} // end foreach
 } // end Horde3DWindow
 
 Horde3DWindow::~Horde3DWindow()
