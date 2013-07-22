@@ -9,13 +9,45 @@ import Precursors.Networking 1.0
 GameWindow {
     id: mainWindow
 
+    SubWindow {
+        id: chatWindow
+        x: 10
+        y: 10
+        width: 450
+        height: 300
+        opacity: .2
+        title: "Insert Chat Here"
+        style: SubWindowStyle {}
+
+        Behavior on opacity {
+            NumberAnimation{
+                duration: 100
+            }
+        }
+
+        MouseArea {
+            id: chatArea
+            hoverEnabled: true
+            anchors.fill: parent
+            onEntered: {
+                console.log("Entered");
+                chatWindow.opacity = .8;
+            }
+            onExited: {
+                console.log("Exited");
+                chatWindow.opacity = .2;
+            }
+        }
+    }
+
+
 	SubWindow {
 		id: charWindow
-		//x: (parent.width - width) / 2
-		x: 100
+        x: (parent.width - width) / 2
 		y: (parent.height - height) / 2
 		width: 300
 		height: charWinLayout.implicitHeight + 4 * margin
+        opacity: .9
 
 		title: "Choose a Character"
 		style: SubWindowStyle { }
