@@ -43,19 +43,48 @@ private:
 }; // end OISDriver
 
 
-class OISDriverEventHandler : public QObject, public OIS::KeyListener, public OIS::MouseListener, public OIS::JoyStickListener
+class OISDriverEventHandler : public QObject
 {
 	Q_OBJECT
 
 public:
-	OISDriverEventHandler(GenericDevice* device, OIS::Object* oisDevice);
+	OISDriverEventHandler(QString name);
 	~OISDriverEventHandler();
 
-	bool keyPressed(const OIS::KeyEvent& arg);
-	bool keyReleased(const OIS::KeyEvent& arg);
+protected:
+	QString name;
+	GenericDevice* device;
+}; // end OISDriverEventHandler
+
+
+class OISMouseEventHandler : public OISDriverEventHandler, public OIS::MouseListener
+{
+	Q_OBJECT
+
+public:
+	OISMouseEventHandler(InputDriver* driver, OIS::Mouse* oisDevice);
+	~OISMouseEventHandler();
+
 	bool mouseMoved(const OIS::MouseEvent& arg);
 	bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
+
+protected:
+	void timerEvent(QTimerEvent* event);
+
+	OIS::Mouse* oisDevice;
+
+	PLogger& _logger;
+}; // end OISMouseEventHandler
+
+class OISJoystickEventHandler : public OISDriverEventHandler, public OIS::JoyStickListener
+{
+	Q_OBJECT
+
+public:
+	OISJoystickEventHandler(InputDriver* driver, OIS::JoyStick* oisDevice);
+	~OISJoystickEventHandler();
+
 	bool buttonPressed(const OIS::JoyStickEvent& arg, int button);
 	bool buttonReleased(const OIS::JoyStickEvent& arg, int button);
 	bool axisMoved(const OIS::JoyStickEvent& arg, int axis);
@@ -65,10 +94,9 @@ public:
 protected:
 	void timerEvent(QTimerEvent* event);
 
-	GenericDevice* device;
-	OIS::Object* oisDevice;
+	OIS::JoyStick* oisDevice;
 
 	PLogger& _logger;
-}; // end OISDriverEventHandler
+}; // end OISJoystickEventHandler
 
 #endif // OISDRIVER_H
