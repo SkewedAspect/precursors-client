@@ -1,8 +1,7 @@
 #include <QWindow>
 
-#include <OIS.h>
-
 #include "oisdriver.h"
+#include "../devices/genericdevice.h"
 
 
 QString describeOISType(OIS::Type type)
@@ -73,15 +72,72 @@ void OISDriver::setWindow(QWindow* window)
 		OIS::DeviceList availableDevices = (_ois->listFreeDevices());
 		for(OIS::DeviceList::const_iterator it = availableDevices.begin(); it != availableDevices.end(); ++it)
 		{
-			OIS::Object* device = _ois->createInputObject(it->first, true, it->second);
+			OIS::Object* oisDevice = _ois->createInputObject(it->first, true, it->second);
 
 			_logger.debug(QString("    - %1 (id: %2; vendor: %3)")
-					.arg(describeOISType(device->type()))
-					.arg(device->getID())
-					.arg(QString::fromStdString(device->vendor()))
+					.arg(describeOISType(oisDevice->type()))
+					.arg(oisDevice->getID())
+					.arg(QString::fromStdString(oisDevice->vendor()))
 					);
 
-			devices.append(device);
+			GenericDevice* genDevice = new GenericDevice(
+					(InputDriver*) this,
+					QString("Device %1").arg(oisDevice->getID())
+					);
+
+			/*
+			genDevice->addAxisSignal(AxisInputSignal* signal);
+			genDevice->addButtonSignal(ButtonInputSignal* signal);
+			*/
+
+			OISDriverEventHandler* handler = new OISDriverEventHandler(genDevice, oisDevice);
+
+			switch(oisDevice->type())
+			{
+				/* We really don't want this.
+				case OIS::OISKeyboard:
+				{
+					OIS::Keyboard* keyboard = (OIS::Keyboard*) oisDevice;
+					keyboard->setEventCallback(handler);
+					break;
+				} // end case
+				*/
+
+				case OIS::OISMouse:
+				{
+					OIS::Mouse* mouse = (OIS::Mouse*) oisDevice;
+					mouse->setEventCallback(handler);
+
+					const OIS::MouseState &mouseState = mouse->getMouseState();
+					mouseState.width = 100;
+					mouseState.height = 100;
+
+					_logger.debug(QString("Created mouse event handler for %1.").arg(describeOISType(oisDevice->type())));
+					break;
+				} // end case
+
+				case OIS::OISJoyStick:
+				{
+					OIS::JoyStick* joystick = (OIS::JoyStick*) oisDevice;
+					joystick->setEventCallback(handler);
+					_logger.debug(QString("Created joystick event handler for %1.").arg(describeOISType(oisDevice->type())));
+					break;
+				} // end case
+
+				/*TODO: Implement?
+				case OIS::OISTablet:
+				case OIS::OISMultiTouch:
+				*/
+
+				default:
+					_logger.warn(QString("Unrecognized device type %1 for id=%2, vendor=%3!")
+							.arg(describeOISType(oisDevice->type()))
+							.arg(oisDevice->getID())
+							.arg(QString::fromStdString(oisDevice->vendor()))
+							);
+			} // end switch
+
+			_devices[oisDevice] = handler;
 		} // end for
 	}
 	catch(std::exception& exc)
@@ -98,11 +154,127 @@ void OISDriver::teardownOIS()
 
 	if(_ois)
 	{
-		while(!devices.isEmpty())
+		foreach(OIS::Object* oisDevice, _devices.keys())
 		{
-			_ois->destroyInputObject(devices.takeFirst());
-		} // end while
+			switch(oisDevice->type())
+			{
+				/* Unused currently.
+				case OIS::OISKeyboard:
+				{
+					OIS::Keyboard* keyboard = (OIS::Keyboard*) oisDevice;
+					keyboard->setEventCallback(NULL);
+					break;
+				} // end case
+				*/
+
+				case OIS::OISMouse:
+				{
+					OIS::Mouse* mouse = (OIS::Mouse*) oisDevice;
+					mouse->setEventCallback(NULL);
+					break;
+				} // end case
+
+				case OIS::OISJoyStick:
+				{
+					OIS::JoyStick* joystick = (OIS::JoyStick*) oisDevice;
+					joystick->setEventCallback(NULL);
+					break;
+				} // end case
+
+				/*TODO: Implement?
+				case OIS::OISTablet:
+				case OIS::OISMultiTouch:
+				*/
+
+				default:
+					_logger.warn(QString("Unrecognized device type %1 for id=%2, vendor=%3!")
+							.arg(describeOISType(oisDevice->type()))
+							.arg(oisDevice->getID())
+							.arg(QString::fromStdString(oisDevice->vendor()))
+							);
+			} // end switch
+			_ois->destroyInputObject(oisDevice);
+			delete _devices[oisDevice];
+			_devices.remove(oisDevice);
+		} // end foreach
 
 		OIS::InputManager::destroyInputSystem(_ois);
 	} // end if
 } // end teardownOIS
+
+
+OISDriverEventHandler::OISDriverEventHandler(GenericDevice* device, OIS::Object* oisDevice) :
+		device(device),
+		oisDevice(oisDevice),
+		_logger(PLogManager::getLogger("OISDriverEventHandler")),
+		QObject()
+{
+	startTimer(10);
+} // end OISDriverEventHandler
+
+OISDriverEventHandler::~OISDriverEventHandler()
+{
+	device->deleteLater();
+} // end ~OISDriverEventHandler
+
+void OISDriverEventHandler::timerEvent(QTimerEvent* event)
+{
+	oisDevice->capture();
+} // end ~OISDriverEventHandler
+
+bool OISDriverEventHandler::keyPressed(const OIS::KeyEvent& arg)
+{
+} // end keyPressed
+
+bool OISDriverEventHandler::keyReleased(const OIS::KeyEvent& arg)
+{
+} // end keyReleased
+
+bool OISDriverEventHandler::mouseMoved(const OIS::MouseEvent& arg)
+{
+	const OIS::MouseState& s = arg.state;
+	_logger.debug(QString("Mouse moved: abs(%1, %2, %3); rel: (%4, %5, %6)")
+				  .arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
+				  .arg(s.X.rel).arg(s.Y.rel).arg(s.Z.rel)
+				  );
+} // end mouseMoved
+
+bool OISDriverEventHandler::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+{
+	const OIS::MouseState& s = arg.state;
+	_logger.debug(QString("Mouse button %1 pressed: abs(%2, %3, %4); rel: (%5, %6, %7)")
+			.arg(id)
+			.arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
+			.arg(s.X.rel).arg(s.Y.rel).arg(s.Z.rel)
+			);
+} // end mousePressed
+
+bool OISDriverEventHandler::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+{
+	const OIS::MouseState& s = arg.state;
+	_logger.debug(QString("Mouse button %1 released: abs(%2, %3, %4); rel: (%5, %6, %7)")
+			.arg(id)
+			.arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
+			.arg(s.X.rel).arg(s.Y.rel).arg(s.Z.rel)
+			);
+} // end mouseReleased
+
+bool OISDriverEventHandler::buttonPressed(const OIS::JoyStickEvent& arg, int button)
+{
+} // end buttonPressed
+
+bool OISDriverEventHandler::buttonReleased(const OIS::JoyStickEvent& arg, int button)
+{
+} // end buttonReleased
+
+bool OISDriverEventHandler::axisMoved(const OIS::JoyStickEvent& arg, int axis)
+{
+} // end axisMoved
+
+bool OISDriverEventHandler::povMoved(const OIS::JoyStickEvent& arg, int pov)
+{
+} // end povMoved
+
+bool OISDriverEventHandler::vector3Moved(const OIS::JoyStickEvent& arg, int index)
+{
+} // end vector3Moved
