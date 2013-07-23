@@ -18,7 +18,7 @@ void ControlsManager::setWindow(QWindow* window)
 
 	foreach(IInputDriver* driver, _drivers.values())
 	{
-		driver->setWindow(window);
+		driver->setWindow(_window);
 	} // end foreach
 } // end setWindow
 
@@ -29,6 +29,11 @@ QWindow* ControlsManager::window()
 
 bool ControlsManager::loadInputDriver(QString driverFileName)
 {
+	if(_drivers.contains(driverFileName))
+	{
+		return true;
+	} // end if
+
 	QPluginLoader pluginLoader(driverFileName);
 
 	QObject* plugin = pluginLoader.instance();
@@ -37,6 +42,13 @@ bool ControlsManager::loadInputDriver(QString driverFileName)
 		IInputDriver* inputDriver = qobject_cast<IInputDriver*>(plugin);
 		if(inputDriver)
 		{
+			_drivers[driverFileName] = inputDriver;
+
+			if(_window)
+			{
+				inputDriver->setWindow(_window);
+			} // end if
+
 			return true;
 		} // end if
 	} // end if
