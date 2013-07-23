@@ -9,7 +9,12 @@ class AxisInputSignal : public InputSignal
     Q_OBJECT
 
 public:
-    explicit AxisInputSignal(QObject *parent = 0);
+    explicit AxisInputSignal(InputDevice* device, QString name, QString description);
+
+    void emitUpdated(float position);
+
+signals:
+    void updated(float position);
 };
 
 #endif // AXISINPUTSIGNAL_H

@@ -30,10 +30,10 @@ class InputDevice : public QObject
     Q_PROPERTY(SignalHash inputSignals READ inputSignals)
 
 public:
-    explicit InputDevice(QObject *parent = 0);
+    explicit InputDevice(InputDriver* driver);
 
-    QString id();
-    InputDriver* driver();
+    virtual QString id();
+    virtual InputDriver* driver();
     AxisSignalHash axisSignals();
     ButtonSignalHash buttonSignals();
     SignalHash inputSignals();
@@ -41,12 +41,11 @@ public:
 signals:
     void detached();
 
-private:
+protected:
     QString _id;
     InputDriver* _driver;
     AxisSignalHash _axisSignals;
     ButtonSignalHash _buttonSignals;
-    SignalHash _inputSignals;
-};
+}; // end InputDevice
 
 #endif // INPUTDEVICE_H

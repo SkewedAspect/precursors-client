@@ -16,12 +16,21 @@ class InputSignal : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit InputSignal(QObject *parent = 0);
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString description READ description)
+    Q_PROPERTY(InputDevice* device READ device)
 
-    QString name;
-    QString description;
-    InputDevice* device;
+public:
+    explicit InputSignal(InputDevice* device, QString name, QString description = QString());
+
+    QString name();
+    QString description();
+    InputDevice* device();
+
+private:
+    QString _name;
+    QString _description;
+    InputDevice* _device;
 };
 
 #endif // INPUTSIGNAL_H

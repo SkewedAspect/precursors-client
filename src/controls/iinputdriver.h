@@ -23,7 +23,8 @@ public:
     virtual bool deactivate() = 0;
 
     virtual void setWindow(QWindow* window) = 0;
-};
+}; // end IInputDriver
+
 
 #define IInputDriver_IID "com.skewedaspect.rfi.Precursors.IInputDriver"
 

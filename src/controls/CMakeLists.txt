@@ -16,10 +16,8 @@ set(CONTROLS_HEADERS
 	signals/inputsignal.h
 	signals/buttoninputsignal.h
 
-	devices/joystickdevice.h
 	devices/inputdevice.h
-	devices/mousedevice.h
-	devices/keyboarddevice.h
+	devices/genericdevice.h
 
 	slots/digitalcontrolslot.h
 	slots/controlslot.h
@@ -44,10 +42,8 @@ set(CONTROLS_SOURCES
 	signals/inputsignal.cpp
 	signals/buttoninputsignal.cpp
 
-	devices/joystickdevice.cpp
 	devices/inputdevice.cpp
-	devices/mousedevice.cpp
-	devices/keyboarddevice.cpp
+	devices/genericdevice.cpp
 
 	slots/digitalcontrolslot.cpp
 	slots/controlslot.cpp

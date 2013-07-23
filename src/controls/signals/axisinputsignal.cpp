@@ -1,7 +1,12 @@
 #include "axisinputsignal.h"
 
 
-AxisInputSignal::AxisInputSignal(QObject *parent) :
-    InputSignal(parent)
+AxisInputSignal::AxisInputSignal(InputDevice* device, QString name, QString description) :
+		InputSignal(device, name, description)
 {
-}
+} // end AxisInputSignal
+
+void AxisInputSignal::emitUpdated(float position)
+{
+	emit updated(position);
+} // end emitUpdated

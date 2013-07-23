@@ -1,8 +1,8 @@
 #include "inputdevice.h"
 
 
-InputDevice::InputDevice(QObject *parent) :
-    QObject(parent)
+InputDevice::InputDevice(InputDriver* driver) :
+    QObject((QObject*) driver)
 {
 }
 
@@ -28,5 +28,17 @@ InputDevice::ButtonSignalHash InputDevice::buttonSignals()
 
 InputDevice::SignalHash InputDevice::inputSignals()
 {
-	return _inputSignals;
+	SignalHash inputSignals;
+
+	foreach(QString key, _axisSignals.keys())
+	{
+		inputSignals[key] = (InputSignal*) _axisSignals[key];
+	} // end foreach
+
+	foreach(QString key, _buttonSignals.keys())
+	{
+		inputSignals[key] = (InputSignal*) _buttonSignals[key];
+	} // end foreach
+
+	return inputSignals;
 } // end inputSignals

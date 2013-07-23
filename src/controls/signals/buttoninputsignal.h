@@ -9,7 +9,11 @@ class ButtonInputSignal : public InputSignal
     Q_OBJECT
 
 public:
-    explicit ButtonInputSignal(QObject *parent = 0);
+    explicit ButtonInputSignal(InputDevice* device, QString name, QString description);
+    void emitUpdated(bool pressed, bool repeating);
+
+signals:
+    void updated(bool pressed, bool repeating);
 };
 
 #endif // BUTTONINPUTSIGNAL_H
