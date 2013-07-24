@@ -25,6 +25,8 @@ QString QtDriver::name()
 
 void QtDriver::setWindow(QWindow* window)
 {
+	_logger.debug("setWindow");
+
 	if(!_mouseDevice)
 	{
 		_mouseDevice = new GenericDevice(this, "Dumb Mouse");
@@ -92,30 +94,16 @@ void QtDriver::onMouseMoved(QMouseEvent* event, QPoint screenDelta)
 {
 	float divisor = fmax(_screenSize.width(), _screenSize.height());
 
-	float deltaX = screenDelta.x() / divisor;
-	float deltaY = screenDelta.y() / divisor;
-
-	_logger.debug(QString("Mouse moved: %1, %2 (%3, %4)")
-			.arg(deltaX).arg(deltaY)
-			.arg(screenDelta.x()).arg(screenDelta.y())
-			);
-
-	_mouseAxes["X"]->emitUpdated(deltaX);
-	_mouseAxes["Y"]->emitUpdated(deltaY);
+	_mouseAxes["X"]->emitUpdated(screenDelta.x() / divisor);
+	_mouseAxes["Y"]->emitUpdated(screenDelta.y() / divisor);
 } // end onMouseMoved
 
 void QtDriver::onMousePressed(QMouseEvent* event)
 {
-	_logger.debug(QString("Mouse button %1 pressed.")
-			.arg(event->button())
-			);
 	_mouseButtons[event->button()]->emitUpdated(true);
 } // end onMousePressed
 
 void QtDriver::onMouseReleased(QMouseEvent* event)
 {
-	_logger.debug(QString("Mouse button %1 released.")
-			.arg(event->button())
-			);
 	_mouseButtons[event->button()]->emitUpdated(false);
 } // end onMouseReleased
