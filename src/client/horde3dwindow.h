@@ -6,6 +6,8 @@
 
 #include <Horde3D.h>
 
+#include "controls/controlsmanager.h"
+
 #include "horde3dmanager.h"
 #include "horde3ditemanim.h"
 
@@ -28,6 +30,8 @@ class Horde3DWindow : public QQuickWindow
 	Q_PROPERTY(Entity* camDolly READ camDolly)
 	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
 	Q_PROPERTY(float maxViewDistance READ maxViewDistance WRITE setMaxViewDistance NOTIFY maxViewDistanceChanged)
+	Q_PROPERTY(bool grabMouse READ grabMouse WRITE setGrabMouse NOTIFY grabMouseChanged)
+	Q_PROPERTY(QPoint lastRecenterPos READ lastRecenterPos)
 
 public:
 	Horde3DWindow(QWindow* parent = 0);
@@ -37,8 +41,11 @@ public:
 	Entity* camDolly() const;
 	float fps() const;
 	float maxViewDistance() const;
+	bool grabMouse() const;
+	QPoint lastRecenterPos() const;
 
 	void setMaxViewDistance(float maxViewDist);
+	void setGrabMouse(bool grab);
 
 	void saveQtState();
 	void restoreQtState();
@@ -49,9 +56,14 @@ signals:
 	void cameraChanged(const Entity* camera);
 	void fpsChanged(const float& newFPS);
 	void maxViewDistanceChanged(float maxViewDist);
+	void grabMouseChanged(bool grab);
 
-	protected slots:
-		void onInitFinished();
+	void mouseMoved(QMouseEvent* event, QPoint screenDelta);
+	void mousePressed(QMouseEvent* event);
+	void mouseReleased(QMouseEvent* event);
+
+protected slots:
+	void onInitFinished();
 	void onBeforeRendering();
 
 public slots:
@@ -61,6 +73,10 @@ protected:
 	virtual void resizeEvent(QResizeEvent* event);
 
 	virtual void timerEvent(QTimerEvent* event);
+
+	virtual void mouseMoveEvent(QMouseEvent* event);
+	virtual void mousePressEvent(QMouseEvent* event);
+	virtual void mouseReleaseEvent(QMouseEvent* event);
 
 private:
 	void updateView();
@@ -78,6 +94,8 @@ private:
 	float lastFrameTime;
 	float lastFPS;
 	float _shipRot;
+	bool _grabMouse;
+	QPoint _lastRecenterPos;
 
 	QSize _size;
 
@@ -91,6 +109,7 @@ private:
 
 	PLogger& _logger;
 	PSettingsManager& _settings;
+	ControlsManager _controls;
 	Horde3DManager& _mgr;
 }; // end Horde3DWindow
 
