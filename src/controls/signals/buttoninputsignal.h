@@ -10,7 +10,7 @@ class ButtonInputSignal : public InputSignal
 
 public:
     explicit ButtonInputSignal(InputDevice* device, QString name, QString description);
-    void emitUpdated(bool pressed, bool repeating);
+    void emitUpdated(bool pressed, bool repeating = false);
 
 signals:
     void updated(bool pressed, bool repeating);
