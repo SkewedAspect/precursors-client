@@ -26,6 +26,7 @@ public:
 	virtual QString name() = 0;
     virtual ControlsManager* manager();
     virtual QWindow* window();
+	virtual QObject* qObject();
 
     virtual void setWindow(QWindow* window) = 0;
 

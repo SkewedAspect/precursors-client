@@ -22,6 +22,11 @@ QWindow* InputDriver::window()
 	return _window;
 } // end window
 
+QObject* InputDriver::qObject()
+{
+	return (QObject*) this;
+} // end qObject
+
 bool InputDriver::activate(ControlsManager* manager)
 {
 	if(_manager)

@@ -18,6 +18,7 @@ public:
 	virtual QString name() = 0;
     virtual ControlsManager* manager() = 0;
     virtual QWindow* window() = 0;
+	virtual QObject* qObject() = 0;
 
     virtual bool activate(ControlsManager* manager) = 0;
     virtual bool deactivate() = 0;
