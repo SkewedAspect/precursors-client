@@ -88,6 +88,7 @@ void OISDriver::setWindow(QWindow* window)
 				} // end case
 				*/
 
+				/*
 				case OIS::OISMouse:
 				{
 					OIS::Object* oisDevice = _ois->createInputObject(it->first, true, it->second);
@@ -103,6 +104,7 @@ void OISDriver::setWindow(QWindow* window)
 					_logger.debug(QString("Created mouse event handler for %1.").arg(describeOISType(oisDevice->type())));
 					break;
 				} // end case
+				*/
 
 				case OIS::OISJoyStick:
 				{
@@ -175,7 +177,7 @@ OISDriverEventHandler::~OISDriverEventHandler()
 //-------------------------------------------------------------------------------------------------------------------//
 
 OISMouseEventHandler::OISMouseEventHandler(InputDriver* driver, OIS::Mouse* oisDevice) :
-		OISDriverEventHandler(QString("Mouse %1").arg(oisDevice->getID())),
+		OISDriverEventHandler(QString("%1 (Mouse)").arg(QString::fromStdString(oisDevice->vendor()))),
 		oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISMouseEventHandler.%1").arg(name)))
 {
@@ -236,13 +238,7 @@ bool OISMouseEventHandler::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseB
 //-------------------------------------------------------------------------------------------------------------------//
 
 OISJoystickEventHandler::OISJoystickEventHandler(InputDriver* driver, OIS::JoyStick* oisDevice) :
-		OISDriverEventHandler(
-				oisDevice->getID() == -1
-					? QString::fromStdString(oisDevice->vendor())
-					: QString("%1 (id: %2)")
-						.arg(QString::fromStdString(oisDevice->vendor()))
-						.arg(oisDevice->getID())
-				),
+		OISDriverEventHandler(QString::fromStdString(oisDevice->vendor())),
 		oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISJoystickEventHandler.%1").arg(name)))
 {
