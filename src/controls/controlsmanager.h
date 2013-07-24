@@ -48,6 +48,8 @@ signals:
 public slots:
     void onDeviceAttached(InputDevice* device);
     void onDeviceDetached(InputDevice* device);
+	void onAxisSignalUpdated(float position);
+	void onButtonSignalUpdated(bool pressed, bool repeating);
 
 private:
     InputDriverHash _drivers;

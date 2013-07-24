@@ -1,5 +1,7 @@
 #include "controlsmanager.h"
 #include "iinputdriver.h"
+#include "controls/signals/axisinputsignal.h"
+#include "controls/signals/buttoninputsignal.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -42,6 +44,11 @@ bool ControlsManager::loadInputDriver(QString driverFileName)
 		IInputDriver* inputDriver = qobject_cast<IInputDriver*>(plugin);
 		if(inputDriver)
 		{
+			connect(inputDriver->qObject(), SIGNAL(deviceAttached(InputDevice*)),
+					this, SLOT(onDeviceAttached(InputDevice*)));
+			connect(inputDriver->qObject(), SIGNAL(deviceDetached(InputDevice*)),
+					this, SLOT(onDeviceDetached(InputDevice*)));
+
 			_drivers[driverFileName] = inputDriver;
 
 			if(_window)
@@ -80,12 +87,47 @@ QStringList ControlsManager::findInputDrivers()
 
 void ControlsManager::onDeviceAttached(InputDevice* device)
 {
+	_logger.debug(QString("Device %1 attached; connecting signals...").arg(device->id()));
+
+	foreach(AxisInputSignal* axisSignal, device->axisSignals().values())
+	{
+		_logger.debug(QString(" - axis signal %2").arg(axisSignal->name()));
+		connect(axisSignal, SIGNAL(updated(float)), this, SLOT(onAxisSignalUpdated(float)));
+	} // end foreach
+
+	foreach(ButtonInputSignal* buttonSignal, device->buttonSignals().values())
+	{
+		_logger.debug(QString(" - button signal %2").arg(buttonSignal->name()));
+		connect(buttonSignal, SIGNAL(updated(bool, bool)), this, SLOT(onButtonSignalUpdated(bool, bool)));
+	} // end foreach
+
 	_devices.insert(device->id(), device);
     emit devicesChanged();
 } // end onDeviceAttached
 
 void ControlsManager::onDeviceDetached(InputDevice* device)
 {
+	disconnect(device);
 	_devices.remove(device->id(), device);
     emit devicesChanged();
 } // end onDeviceDetached
+
+void ControlsManager::onAxisSignalUpdated(float position)
+{
+	InputSignal* signal = qobject_cast<InputSignal*>(sender());
+	_logger.debug(QString("Device \"%1\": axis \"%2\" updated: %3")
+			.arg(signal->device()->id())
+			.arg(signal->name())
+			.arg(position)
+			);
+} // end onAxisSignalUpdated
+
+void ControlsManager::onButtonSignalUpdated(bool pressed, bool repeating)
+{
+	InputSignal* signal = qobject_cast<InputSignal*>(sender());
+	_logger.debug(QString("Device \"%1\": button \"%2\" updated: %3%4")
+			.arg(signal->device()->id())
+			.arg(signal->name())
+			.arg(pressed ? "pressed" : "not pressed").arg(repeating ? " (repeating)" : "")
+			);
+} // end onButtonSignalUpdated
