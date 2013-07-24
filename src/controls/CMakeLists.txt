@@ -114,6 +114,7 @@ target_link_libraries(ControlsOISDriver
 
 	OIS
 
+	Controls
 	PLogging
 	PSettings
 	)
@@ -151,6 +152,7 @@ target_link_libraries(ControlsQtDriver
 	#Qt5::Quick
 	#Qt5::Core
 
+	Controls
 	PLogging
 	PSettings
 	)
