@@ -72,20 +72,12 @@ void OISDriver::setWindow(QWindow* window)
 		OIS::DeviceList availableDevices = (_ois->listFreeDevices());
 		for(OIS::DeviceList::const_iterator it = availableDevices.begin(); it != availableDevices.end(); ++it)
 		{
-			OIS::Object* oisDevice = _ois->createInputObject(it->first, true, it->second);
-
-			_logger.debug(QString("    - %1 (id: %2; vendor: %3)")
-					.arg(describeOISType(oisDevice->type()))
-					.arg(oisDevice->getID())
-					.arg(QString::fromStdString(oisDevice->vendor()))
-					);
-
 			/*
 			genDevice->addAxisSignal(AxisInputSignal* signal);
 			genDevice->addButtonSignal(ButtonInputSignal* signal);
 			*/
 
-			switch(oisDevice->type())
+			switch(it->first)
 			{
 				/* We really don't want this, unless we can easily switch keyboard input between this and Qt itself.
 				case OIS::OISKeyboard:
@@ -98,6 +90,14 @@ void OISDriver::setWindow(QWindow* window)
 
 				case OIS::OISMouse:
 				{
+					OIS::Object* oisDevice = _ois->createInputObject(it->first, true, it->second);
+
+					_logger.debug(QString("    - %1 (id: %2; vendor: %3)")
+							.arg(describeOISType(oisDevice->type()))
+							.arg(oisDevice->getID())
+							.arg(QString::fromStdString(oisDevice->vendor()))
+							);
+
 					_devices[oisDevice] = new OISMouseEventHandler(this, (OIS::Mouse*) oisDevice);
 
 					_logger.debug(QString("Created mouse event handler for %1.").arg(describeOISType(oisDevice->type())));
@@ -106,6 +106,14 @@ void OISDriver::setWindow(QWindow* window)
 
 				case OIS::OISJoyStick:
 				{
+					OIS::Object* oisDevice = _ois->createInputObject(it->first, true, it->second);
+
+					_logger.debug(QString("    - %1 (id: %2; vendor: %3)")
+							.arg(describeOISType(oisDevice->type()))
+							.arg(oisDevice->getID())
+							.arg(QString::fromStdString(oisDevice->vendor()))
+							);
+
 					_devices[oisDevice] = new OISJoystickEventHandler(this, (OIS::JoyStick*) oisDevice);
 
 					_logger.debug(QString("Created joystick event handler for %1.").arg(describeOISType(oisDevice->type())));
@@ -118,10 +126,9 @@ void OISDriver::setWindow(QWindow* window)
 				*/
 
 				default:
-					_logger.warn(QString("Unrecognized device type %1 for id=%2, vendor=%3!")
-							.arg(describeOISType(oisDevice->type()))
-							.arg(oisDevice->getID())
-							.arg(QString::fromStdString(oisDevice->vendor()))
+					_logger.warn(QString("Unsupported device type %1 for vendor=%2!")
+							.arg(describeOISType(it->first))
+							.arg(QString::fromStdString(it->second))
 							);
 			} // end switch
 		} // end for
