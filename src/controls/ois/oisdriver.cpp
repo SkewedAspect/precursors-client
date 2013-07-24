@@ -321,7 +321,7 @@ bool OISJoystickEventHandler::povMoved(const OIS::JoyStickEvent& event, int povI
 			.arg(povIndex)
 			.arg(dir & OIS::Pov::North ? "North" : (dir & OIS::Pov::South ? "South" : ""))
 			.arg(dir & OIS::Pov::East ? "East" : (dir & OIS::Pov::West ? "West" : ""))
-			.arg(dir & OIS::Pov::Centered ? "Centered" : "")
+			.arg(dir == OIS::Pov::Centered ? "Centered" : "")
 			);
 	return true;
 } // end povMoved
