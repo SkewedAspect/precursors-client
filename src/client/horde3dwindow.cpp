@@ -122,17 +122,13 @@ void Horde3DWindow::setGrabMouse(bool grab)
 
 		if(grab)
 		{
+			_logger.debug("setGrabMouse: Grab enabled.");
+
 			// Hide mouse cursor.
 			QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
 
 			// Re-center mouse cursor.
 			_lastRecenterPos = geometry().center();
-
-			_logger.debug(QString("setGrabMouse: Grab enabled; recentering mouse (%1, %2) => (%3, %4)")
-					.arg(QCursor::pos().x()).arg(QCursor::pos().y())
-					.arg(_lastRecenterPos.x()).arg(_lastRecenterPos.y())
-					);
-
 			QCursor::setPos(_lastRecenterPos);
 		}
 		else
@@ -320,12 +316,6 @@ void Horde3DWindow::mouseMoveEvent(QMouseEvent* event)
 
 			// Re-center mouse cursor.
 			_lastRecenterPos = geometry().center();
-
-			_logger.debug(QString("Recentering mouse (%1, %2) => (%3, %4)")
-					.arg(QCursor::pos().x()).arg(QCursor::pos().y())
-					.arg(_lastRecenterPos.x()).arg(_lastRecenterPos.y())
-					);
-
 			QCursor::setPos(_lastRecenterPos);
 		} // end if
 	}
