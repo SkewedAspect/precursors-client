@@ -11,6 +11,8 @@
 
 
 class GenericDevice;
+class AxisInputSignal;
+class ButtonInputSignal;
 
 class OISDriverEventHandler;
 
@@ -52,7 +54,7 @@ public:
 	~OISDriverEventHandler();
 
 	QString name;
-	GenericDevice* device;
+	GenericDevice* _device;
 }; // end OISDriverEventHandler
 
 
@@ -64,14 +66,14 @@ public:
 	OISMouseEventHandler(InputDriver* driver, OIS::Mouse* oisDevice);
 	~OISMouseEventHandler();
 
-	bool mouseMoved(const OIS::MouseEvent& arg);
-	bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
+	bool mouseMoved(const OIS::MouseEvent& event);
+	bool mousePressed(const OIS::MouseEvent& event, OIS::MouseButtonID id);
+	bool mouseReleased(const OIS::MouseEvent& event, OIS::MouseButtonID id);
 
 protected:
 	void timerEvent(QTimerEvent* event);
 
-	OIS::Mouse* oisDevice;
+	OIS::Mouse* _oisDevice;
 
 	PLogger& _logger;
 }; // end OISMouseEventHandler
@@ -84,16 +86,20 @@ public:
 	OISJoystickEventHandler(InputDriver* driver, OIS::JoyStick* oisDevice);
 	~OISJoystickEventHandler();
 
-	bool buttonPressed(const OIS::JoyStickEvent& arg, int button);
-	bool buttonReleased(const OIS::JoyStickEvent& arg, int button);
-	bool axisMoved(const OIS::JoyStickEvent& arg, int axis);
-	bool povMoved(const OIS::JoyStickEvent& arg, int pov);
-	bool vector3Moved(const OIS::JoyStickEvent& arg, int index);
+	bool buttonPressed(const OIS::JoyStickEvent& event, int buttonIndex);
+	bool buttonReleased(const OIS::JoyStickEvent& event, int buttonIndex);
+	bool axisMoved(const OIS::JoyStickEvent& event, int axisIndex);
+	bool sliderMoved(const OIS::JoyStickEvent& event, int sliderIndex);
+	bool povMoved(const OIS::JoyStickEvent& event, int povIndex);
+	bool vector3Moved(const OIS::JoyStickEvent& event, int vec3Index);
 
 protected:
 	void timerEvent(QTimerEvent* event);
 
-	OIS::JoyStick* oisDevice;
+	OIS::JoyStick* _oisDevice;
+
+	QList<AxisInputSignal*> _axes;
+	QList<ButtonInputSignal*> _buttons;
 
 	PLogger& _logger;
 }; // end OISJoystickEventHandler

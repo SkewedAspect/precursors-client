@@ -1,7 +1,9 @@
 #include <QWindow>
 
 #include "oisdriver.h"
-#include "../devices/genericdevice.h"
+#include "controls/devices/genericdevice.h"
+#include "controls/signals/axisinputsignal.h"
+#include "controls/signals/buttoninputsignal.h"
 
 
 QString describeOISType(OIS::Type type)
@@ -117,7 +119,7 @@ void OISDriver::setWindow(QWindow* window)
 							);
 
 					_devices[oisDevice] = new OISJoystickEventHandler(this, (OIS::JoyStick*) oisDevice);
-					emit deviceAttached(_devices[oisDevice]->device);
+					emit deviceAttached(_devices[oisDevice]->_device);
 
 					_logger.debug(QString("Created joystick event handler for %1.").arg(describeOISType(oisDevice->type())));
 					break;
@@ -179,33 +181,33 @@ OISDriverEventHandler::~OISDriverEventHandler()
 
 OISMouseEventHandler::OISMouseEventHandler(InputDriver* driver, OIS::Mouse* oisDevice) :
 		OISDriverEventHandler(QString("%1 (Mouse)").arg(QString::fromStdString(oisDevice->vendor()))),
-		oisDevice(oisDevice),
+		_oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISMouseEventHandler.%1").arg(name)))
 {
-	device = new GenericDevice(driver, name);
+	_device = new GenericDevice(driver, name);
 
-	const OIS::MouseState &mouseState = oisDevice->getMouseState();
+	const OIS::MouseState &mouseState = _oisDevice->getMouseState();
 	mouseState.width = 100;
 	mouseState.height = 100;
 
-	oisDevice->setEventCallback(this);
+	_oisDevice->setEventCallback(this);
 	startTimer(10);
 } // end OISMouseEventHandler
 
 OISMouseEventHandler::~OISMouseEventHandler()
 {
-	oisDevice->setEventCallback(NULL);
-	device->deleteLater();
+	_oisDevice->setEventCallback(NULL);
+	_device->deleteLater();
 } // end ~OISMouseEventHandler
 
 void OISMouseEventHandler::timerEvent(QTimerEvent* event)
 {
-	oisDevice->capture();
+	_oisDevice->capture();
 } // end ~OISMouseEventHandler
 
-bool OISMouseEventHandler::mouseMoved(const OIS::MouseEvent& arg)
+bool OISMouseEventHandler::mouseMoved(const OIS::MouseEvent& event)
 {
-	const OIS::MouseState& s = arg.state;
+	const OIS::MouseState& s = event.state;
 	_logger.debug(QString("Mouse moved: abs(%1, %2, %3); rel: (%4, %5, %6)")
 			.arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
 			.arg(s.X.rel).arg(s.Y.rel).arg(s.Z.rel)
@@ -213,9 +215,9 @@ bool OISMouseEventHandler::mouseMoved(const OIS::MouseEvent& arg)
 	return true;
 } // end mouseMoved
 
-bool OISMouseEventHandler::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+bool OISMouseEventHandler::mousePressed(const OIS::MouseEvent& event, OIS::MouseButtonID id)
 {
-	const OIS::MouseState& s = arg.state;
+	const OIS::MouseState& s = event.state;
 	_logger.debug(QString("Mouse button %1 pressed: abs(%2, %3, %4); rel: (%5, %6, %7)")
 			.arg(id)
 			.arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
@@ -224,9 +226,9 @@ bool OISMouseEventHandler::mousePressed(const OIS::MouseEvent& arg, OIS::MouseBu
 	return true;
 } // end mousePressed
 
-bool OISMouseEventHandler::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+bool OISMouseEventHandler::mouseReleased(const OIS::MouseEvent& event, OIS::MouseButtonID id)
 {
-	const OIS::MouseState& s = arg.state;
+	const OIS::MouseState& s = event.state;
 	_logger.debug(QString("Mouse button %1 released: abs(%2, %3, %4); rel: (%5, %6, %7)")
 			.arg(id)
 			.arg(s.X.abs).arg(s.Y.abs).arg(s.Z.abs)
@@ -240,55 +242,81 @@ bool OISMouseEventHandler::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseB
 
 OISJoystickEventHandler::OISJoystickEventHandler(InputDriver* driver, OIS::JoyStick* oisDevice) :
 		OISDriverEventHandler(QString::fromStdString(oisDevice->vendor())),
-		oisDevice(oisDevice),
+		_oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISJoystickEventHandler.%1").arg(name)))
 {
-	device = new GenericDevice(driver, name);
+	_device = new GenericDevice(driver, name);
 
-	oisDevice->setEventCallback(this);
+	OIS::JoyStickState state = _oisDevice->getJoyStickState();
+
+	for(std::vector<OIS::Axis>::iterator i = state.mAxes.begin(), e = state.mAxes.end(); i != e; ++i)
+	{
+		QString axisName = QString("Axis %1").arg(_axes.length() + 1);
+		AxisInputSignal* axisSignal = new AxisInputSignal(_device, axisName, axisName);
+		_axes.append(axisSignal);
+		_device->addAxisSignal(axisSignal);
+	} // end for
+
+	for(std::vector<bool>::iterator i = state.mButtons.begin(), e = state.mButtons.end(); i != e; ++i)
+	{
+		QString buttonName = QString("Button %1").arg(_buttons.length() + 1);
+		ButtonInputSignal* buttonSignal = new ButtonInputSignal(_device, buttonName, buttonName);
+		_buttons.append(buttonSignal);
+		_device->addButtonSignal(buttonSignal);
+	} // end for
+
+	//FIXME: POV hats!
+	//FIXME: Sliders! (???)
+	//FIXME: Vector3s!
+
+	_oisDevice->setEventCallback(this);
 	startTimer(10);
 } // end OISJoystickEventHandler
 
 OISJoystickEventHandler::~OISJoystickEventHandler()
 {
-	oisDevice->setEventCallback(NULL);
-	device->deleteLater();
+	_oisDevice->setEventCallback(NULL);
+	_device->deleteLater();
 } // end ~OISJoystickEventHandler
 
 void OISJoystickEventHandler::timerEvent(QTimerEvent* event)
 {
-	oisDevice->capture();
+	_oisDevice->capture();
 } // end ~OISJoystickEventHandler
 
-bool OISJoystickEventHandler::buttonPressed(const OIS::JoyStickEvent& arg, int buttonIndex)
+bool OISJoystickEventHandler::buttonPressed(const OIS::JoyStickEvent& event, int buttonIndex)
 {
-	_logger.debug(QString("Button %1 pressed.").arg(buttonIndex));
+	_buttons[buttonIndex]->emitUpdated(true);
 	return true;
 } // end buttonPressed
 
-bool OISJoystickEventHandler::buttonReleased(const OIS::JoyStickEvent& arg, int buttonIndex)
+bool OISJoystickEventHandler::buttonReleased(const OIS::JoyStickEvent& event, int buttonIndex)
 {
-	_logger.debug(QString("Button %1 released.").arg(buttonIndex));
+	_buttons[buttonIndex]->emitUpdated(false);
 	return true;
 } // end buttonReleased
 
-bool OISJoystickEventHandler::axisMoved(const OIS::JoyStickEvent& arg, int axisIndex)
+bool OISJoystickEventHandler::axisMoved(const OIS::JoyStickEvent& event, int axisIndex)
 {
-	// Provide a little dead zone
-	if(abs(arg.state.mAxes[axisIndex].abs) > 2500 || arg.state.mAxes[axisIndex].abs < -2500)
-	{
-		_logger.debug(QString("Axis %1: %2")
-				.arg(axisIndex)
-				.arg(arg.state.mAxes[axisIndex].abs)
-				);
-	} // end if
+	_axes[axisIndex]->emitUpdated(event.state.mAxes[axisIndex].abs);
 
 	return true;
 } // end axisMoved
 
-bool OISJoystickEventHandler::povMoved(const OIS::JoyStickEvent& arg, int povIndex)
+bool OISJoystickEventHandler::sliderMoved(const OIS::JoyStickEvent& event, int sliderIndex)
 {
-	int dir = arg.state.mPOV[povIndex].direction;
+	_logger.debug(QString("Slider %1: (%2, %3)")
+			.arg(sliderIndex)
+			.arg(event.state.mSliders[sliderIndex].abX)
+			.arg(event.state.mSliders[sliderIndex].abY)
+			);
+
+	return true;
+} // end sliderMoved
+
+bool OISJoystickEventHandler::povMoved(const OIS::JoyStickEvent& event, int povIndex)
+{
+	int dir = event.state.mPOV[povIndex].direction;
 	_logger.debug(QString("POV %1: %2%3%4")
 			.arg(povIndex)
 			.arg(dir & OIS::Pov::North ? "North" : (dir & OIS::Pov::South ? "South" : ""))
@@ -298,9 +326,9 @@ bool OISJoystickEventHandler::povMoved(const OIS::JoyStickEvent& arg, int povInd
 	return true;
 } // end povMoved
 
-bool OISJoystickEventHandler::vector3Moved(const OIS::JoyStickEvent& arg, int vec3Index)
+bool OISJoystickEventHandler::vector3Moved(const OIS::JoyStickEvent& event, int vec3Index)
 {
-	OIS::Vector3 vec = arg.state.mVectors[vec3Index];
+	OIS::Vector3 vec = event.state.mVectors[vec3Index];
 	_logger.debug(QString("Orientation %1: (%2, %3, %4)")
 			.arg(vec3Index)
 			.arg(vec.x).arg(vec.y).arg(vec.z)
