@@ -51,7 +51,6 @@ public:
 	OISDriverEventHandler(QString name);
 	~OISDriverEventHandler();
 
-protected:
 	QString name;
 	GenericDevice* device;
 }; // end OISDriverEventHandler

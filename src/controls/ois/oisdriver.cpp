@@ -117,6 +117,7 @@ void OISDriver::setWindow(QWindow* window)
 							);
 
 					_devices[oisDevice] = new OISJoystickEventHandler(this, (OIS::JoyStick*) oisDevice);
+					emit deviceAttached(_devices[oisDevice]->device);
 
 					_logger.debug(QString("Created joystick event handler for %1.").arg(describeOISType(oisDevice->type())));
 					break;
