@@ -12,6 +12,8 @@ import "../js/logging.js" as Logging
 import "../js/game.js" as Game
 
 Horde3DWindow {
+    id: gameWindow
+
     width: 1024; height: 768
     color: "black"
 
@@ -126,6 +128,17 @@ Horde3DWindow {
                         headingVel = 0;
                     }
                     break;
+
+                case Qt.Key_F10:
+					gameWindow.close();
+                    break;
+
+				case Qt.Key_F1:
+					if(!release)
+					{
+						gameWindow.grabMouse = !gameWindow.grabMouse;
+					}
+					break;
 
                 case Qt.Key_Up:
                     pitchVel += factor * pitchSpeed;
