@@ -3,7 +3,7 @@
 
 InputSignal::InputSignal(InputDevice* device, QString name, QString description) :
 		_name(name),
-		_description(description),
+		_description(description.isNull() ? name : description),
 		_device(device),
 		QObject((QObject*) device)
 {

@@ -9,7 +9,7 @@ class AxisInputSignal : public InputSignal
     Q_OBJECT
 
 public:
-    explicit AxisInputSignal(InputDevice* device, QString name, QString description);
+    explicit AxisInputSignal(InputDevice* device, QString name, QString description = QString());
 
     void emitUpdated(float position);
 
