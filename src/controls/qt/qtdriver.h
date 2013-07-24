@@ -12,6 +12,10 @@
 class QMouseEvent;
 class QScreen;
 
+class GenericDevice;
+class AxisInputSignal;
+class ButtonInputSignal;
+
 
 class QtDriver : public InputDriver
 {
@@ -35,7 +39,11 @@ public slots:
 	void onMouseReleased(QMouseEvent* event);
 
 protected:
-	QSize screenSize;
+	QSize _screenSize;
+
+	GenericDevice* _mouseDevice;
+	QHash<QString, AxisInputSignal*> _mouseAxes;
+	QHash<Qt::MouseButton, ButtonInputSignal*> _mouseButtons;
 
 	PLogger& _logger;
 	PSettingsManager& _settings;
