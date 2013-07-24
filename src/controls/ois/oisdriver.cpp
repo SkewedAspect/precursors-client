@@ -240,6 +240,46 @@ bool OISMouseEventHandler::mouseReleased(const OIS::MouseEvent& event, OIS::Mous
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+struct OISJoystickEventHandler::Hat
+{
+	enum HatDirection {
+		North,
+		South,
+		East,
+		West
+	};
+
+	QString name;
+	int index;
+	QList<ButtonInputSignal*> _signals;
+	int lastDirection;
+
+	Hat(GenericDevice* device, int index) :
+			index(index),
+			name(QString("POV Hat %1").arg(index + 1))
+	{
+		_signals.append(new ButtonInputSignal(device, QString("%1 North").arg(name)));
+		_signals.append(new ButtonInputSignal(device, QString("%1 South").arg(name)));
+		_signals.append(new ButtonInputSignal(device, QString("%1 East").arg(name)));
+		_signals.append(new ButtonInputSignal(device, QString("%1 West").arg(name)));
+	} // end Hat
+
+	void changed(int direction)
+	{
+		int changes = lastDirection ^ direction;
+
+		if(changes != 0)
+		{
+#define CHECK_DIRECTION(DIRECTION) if(changes & OIS::Pov::DIRECTION) { _signals[DIRECTION]->emitUpdated(direction & OIS::Pov::DIRECTION); }
+			CHECK_DIRECTION(North)
+			CHECK_DIRECTION(South)
+			CHECK_DIRECTION(East)
+			CHECK_DIRECTION(West)
+#undef CHECK_DIRECTION
+		} // end if
+	} // end changed
+}; // end Hat
+
 OISJoystickEventHandler::OISJoystickEventHandler(InputDriver* driver, OIS::JoyStick* oisDevice) :
 		OISDriverEventHandler(QString::fromStdString(oisDevice->vendor())),
 		_oisDevice(oisDevice),
@@ -263,6 +303,16 @@ OISJoystickEventHandler::OISJoystickEventHandler(InputDriver* driver, OIS::JoySt
 		ButtonInputSignal* buttonSignal = new ButtonInputSignal(_device, buttonName, buttonName);
 		_buttons.append(buttonSignal);
 		_device->addButtonSignal(buttonSignal);
+	} // end for
+
+	for(int idx = 0; idx < 4; ++idx)
+	{
+		Hat* hat = new Hat(_device, idx);
+		for(int dir = 0; dir < 4; ++dir)
+		{
+			_device->addButtonSignal(hat->_signals[dir]);
+		} // end for
+		_hats.append(hat);
 	} // end for
 
 	//FIXME: POV hats!
@@ -316,13 +366,7 @@ bool OISJoystickEventHandler::sliderMoved(const OIS::JoyStickEvent& event, int s
 
 bool OISJoystickEventHandler::povMoved(const OIS::JoyStickEvent& event, int povIndex)
 {
-	int dir = event.state.mPOV[povIndex].direction;
-	_logger.debug(QString("POV %1: %2%3%4")
-			.arg(povIndex)
-			.arg(dir & OIS::Pov::North ? "North" : (dir & OIS::Pov::South ? "South" : ""))
-			.arg(dir & OIS::Pov::East ? "East" : (dir & OIS::Pov::West ? "West" : ""))
-			.arg(dir == OIS::Pov::Centered ? "Centered" : "")
-			);
+	_hats[povIndex]->changed(event.state.mPOV[povIndex].direction);
 	return true;
 } // end povMoved
 

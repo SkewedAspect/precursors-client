@@ -94,12 +94,15 @@ public:
 	bool vector3Moved(const OIS::JoyStickEvent& event, int vec3Index);
 
 protected:
+	struct Hat;
+
 	void timerEvent(QTimerEvent* event);
 
 	OIS::JoyStick* _oisDevice;
 
 	QList<AxisInputSignal*> _axes;
 	QList<ButtonInputSignal*> _buttons;
+	QList<Hat*> _hats;
 
 	PLogger& _logger;
 }; // end OISJoystickEventHandler
