@@ -52,24 +52,32 @@ void PSettingsManager::reload()
             "skewedaspect/precursors.config.json");
 
     // Apply all files to our settings.
-    for (int i = 0; i < settingsFiles.size(); ++i)
+    for(int i = 0; i < settingsFiles.size(); ++i)
     {
         QFile file(settingsFiles[i]);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             break;
         } // end if
 
-        // Setup a text stream
+        // Set up a text stream.
         QTextStream in(&file);
 
-        // Get a QVariantMap of our settings
-        QVariantMap settings = QJsonDocument::fromJson(in.readAll().toUtf8()).toVariant().toMap();
+        // Get a QVariantMap of our settings.
+		QJsonParseError jsonError;
+		QJsonDocument json = QJsonDocument::fromJson(in.readAll().toUtf8(), &jsonError);
 
-        // Iterate over all settings, and only if the key is not set do we apply it. (This is because our files are
-        // sorted higest priority to lowest.
-        QMapIterator<QString, QVariant> settingsIt(settings);
-        while (settingsIt.hasNext())
+		if(jsonError.error != QJsonParseError::NoError)
+		{
+			logger.error(QString("Error parsing settings file \"%1\"! (error: %2)")
+					.arg(settingsFiles[i]).arg(jsonError.errorString()));
+			break;
+		} // end if
+
+        // Iterate over all settings, and only if the key is not set do we apply it. (because our files are sorted from
+		// highest priority to lowest)
+        QMapIterator<QString, QVariant> settingsIt(json.toVariant().toMap());
+        while(settingsIt.hasNext())
         {
             settingsIt.next();
             if(!this->_settings.contains(settingsIt.key()))
