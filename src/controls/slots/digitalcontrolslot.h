@@ -8,13 +8,26 @@ class DigitalControlSlot : public ControlSlot
 {
     Q_OBJECT
 
-public:
-    explicit DigitalControlSlot(QObject *parent = 0);
+    Q_PROPERTY(bool state READ state NOTIFY stateChanged)
 
-    bool state;
+public:
+    explicit DigitalControlSlot(QString name, ControlContext* context);
+
+	virtual const ControlSlot::Type type() const;
+
+    bool state() const;
+
+public slots:
+	virtual void onBindingStateChanged();
+	virtual void onBindingAttached(ControlBinding* binding);
+	virtual void onBindingRemoved(ControlBinding* binding);
 
 signals:
     void stateChanged(bool state);
-};
+
+private:
+    bool _toggleState;
+    bool _state;
+}; // end DigitalControlSlot
 
 #endif // DIGITALCONTROLSLOT_H

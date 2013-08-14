@@ -9,8 +9,8 @@
  * @brief Default Constructor
  * @param parent The parent QObject.
  */
-AxisAnalogBinding::AxisAnalogBinding(QObject *parent) :
-		ControlBinding(parent),
+AxisAnalogBinding::AxisAnalogBinding(ControlBindingMap* bindingMap) :
+		ControlBinding(bindingMap),
 		_value(0),
 		_sensitivity(0),
 		_offset(0),

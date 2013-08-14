@@ -9,21 +9,55 @@
  * @brief Default Constructor
  * @param parent The parent QObject.
  */
-AxisDigitalBinding::AxisDigitalBinding(QObject *parent) :
-		ControlBinding(parent),
-		_isOn(false),
+AxisDigitalBinding::AxisDigitalBinding(ControlBindingMap* bindingMap) :
+		BaseDigitalBinding(bindingMap),
 		_threshold(0),
 		_overlap(0),
-		_invert(false)
+		_lowerThreshold(0),
+		_upperThreshold(0)
 {
-    // Emit stateChanged whenever any of our state properties change.
-    connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
 } // end AxisDigitalBinding
 
-bool AxisDigitalBinding::isOn()
+float AxisDigitalBinding::threshold()
 {
-   return _isOn;
-} // end isOn
+	return _threshold;
+} // end threshold
+
+float AxisDigitalBinding::overlap()
+{
+	return _overlap;
+} // end overlap
+
+float AxisDigitalBinding::lowerThreshold()
+{
+	return _lowerThreshold;
+} // end lowerThreshold
+
+float AxisDigitalBinding::upperThreshold()
+{
+	return _upperThreshold;
+} // end upperThreshold
+
+void AxisDigitalBinding::setThreshold(float threshold)
+{
+	_threshold = threshold;
+	updateTriggerRange();
+	emit thresholdChanged();
+} // end setThreshold
+
+void AxisDigitalBinding::setOverlap(float overlap)
+{
+	_overlap = overlap;
+	updateTriggerRange();
+	emit overlapChanged();
+} // end setOverlap
+
+void AxisDigitalBinding::updateTriggerRange()
+{
+	_lowerThreshold = _threshold - (_overlap / 2);
+	_upperThreshold = _threshold + (_overlap / 2);
+	emit triggerRangeChanged();
+} // end updateTriggerRange
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -35,25 +69,20 @@ bool AxisDigitalBinding::isOn()
  */
 void AxisDigitalBinding::onSignalUpdated(float position)
 {
-    bool previousState = _isOn;
-
-    if(previousState != _invert)
+    if(inputState())
     {
-         // If either we were previously active and `invert` is false, or if we were inactive and `invert` is true,
-         // then change if we fall below `threshold` - `overlap`.
-        if(position < (_threshold - _overlap))
+         // If the input state was previously on, then change to off if we fall below `_lowerThreshold`.
+        if(position < _lowerThreshold)
         {
-            _isOn = !previousState;
-            emit isOnChanged();
+			setInputState(false);
         } // end if
     }
     else
     {
-        // Otherwise, change if we go above `threshold`.
-        if(position > _threshold)
+        // Otherwise, change if we go above `_upperThreshold`.
+        if(position > _upperThreshold)
         {
-            _isOn = !previousState;
-            emit isOnChanged();
+			setInputState(true);
         } // end if
     } // end if
 } // end onSignalUpdated

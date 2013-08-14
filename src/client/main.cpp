@@ -8,6 +8,10 @@
 #include "pchannels/pchannels.h"
 #include "pchannels/pchannelsrequest.h"
 #include "psettings/psettings.h"
+#include "controls/controlsmanager.h"
+#include "controls/controlcontext.h"
+#include "controls/slots/analogcontrolslot.h"
+#include "controls/slots/digitalcontrolslot.h"
 
 #include "entity.h"
 #include "horde3ditem.h"
@@ -32,8 +36,15 @@ int main(int argc, char **argv)
     PChannels& networking = PChannels::instance();
     PreUtil& utils = PreUtil::instance();
     PLogManager& logMan = PLogManager::instance();
+	ControlsManager& controls = ControlsManager::instance();
     Horde3DManager& horde3d = Horde3DManager::instance();
     TimestampSync& timestamp = TimestampSync::instance();
+
+	// Load controls contexts
+	if(!controls.loadContextDefs("resources/contexts.json"))
+	{
+		return -1;
+	} // end if
 
     // Register application fonts
     QFontDatabase::addApplicationFont("resources/fonts/trajan.otf");
@@ -50,6 +61,10 @@ int main(int argc, char **argv)
     qmlRegisterType<Horde3DItem>("Horde3D", 1, 0, "Horde3DItem");
     qmlRegisterType<Horde3DWindow>("Horde3D", 1, 0, "Horde3DWindow");
 
+    qmlRegisterType<ControlContext>();
+    qmlRegisterType<AnalogControlSlot>();
+    qmlRegisterType<DigitalControlSlot>();
+
     // Setup QML
     QQmlApplicationEngine engine;
 
@@ -58,6 +73,7 @@ int main(int argc, char **argv)
     engine.rootContext()->setContextProperty("logMan", &logMan);
     engine.rootContext()->setContextProperty("networking", &networking);
     engine.rootContext()->setContextProperty("utils", &utils);
+    engine.rootContext()->setContextProperty("controls", &controls);
     engine.rootContext()->setContextProperty("horde3d", &horde3d);
     engine.rootContext()->setContextProperty("timestamp", &timestamp);
 

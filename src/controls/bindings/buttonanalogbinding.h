@@ -40,7 +40,7 @@ public:
         BM_CHANGERATE	/*!< Change Rate mode. */
     };
 
-    explicit ButtonAnalogBinding(QObject *parent = 0);
+    explicit ButtonAnalogBinding(ControlBindingMap* bindingMap);
 
     bool isOn();
     BindingMode mode();

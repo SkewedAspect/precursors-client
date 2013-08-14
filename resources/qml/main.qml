@@ -124,6 +124,8 @@ GameWindow {
 						if(confirmed)
 						{
 							charWindow.visible = false;
+
+							controls.currentContext = controls.context('flightsim');
 						} // end if
 					} // end onCharSelReply
 				}

@@ -7,6 +7,7 @@ set(CONTROLS_HEADERS
 	inputdriver.h
 
 	bindings/controlbinding.h
+	bindings/basedigitalbinding.h
 	bindings/buttondigitalbinding.h
 	bindings/buttonanalogbinding.h
 	bindings/axisanalogbinding.h
@@ -33,6 +34,7 @@ set(CONTROLS_SOURCES
 	inputdriver.cpp
 
 	bindings/controlbinding.cpp
+	bindings/basedigitalbinding.cpp
 	bindings/buttondigitalbinding.cpp
 	bindings/buttonanalogbinding.cpp
 	bindings/axisanalogbinding.cpp

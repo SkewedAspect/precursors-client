@@ -169,14 +169,29 @@ Horde3DWindow {
             id: wrapper
             anchors.fill: parent
 
-            NumberAnimation {
-                id: animateRotation
-                properties: "pitch"
-                from: 0.0
-                to: 360.0
-                loops: Animation.Infinite
-                duration: 1000
-            }
+			Connections {
+				target: controls.context('flightsim').analogSlot('heading');
+				onValueChanged: {
+					console.log("Got onValueChanged for 'heading'.");
+                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('heading'));
+				}
+			}
+
+			Connections {
+				target: controls.context('flightsim').analogSlot('pitch');
+				onValueChanged: {
+					console.log("Got onValueChanged for 'pitch'.");
+                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('pitch'));
+				}
+			}
+
+			Connections {
+				target: controls.context('flightsim').analogSlot('roll');
+				onValueChanged: {
+					console.log("Got onValueChanged for 'roll'.");
+                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('roll'));
+				}
+			}
 
             function updateRotation(mouse) {
                 var mouseSensitivity = -settings.get('mouseSensitivity', 0.1);
@@ -184,8 +199,6 @@ Horde3DWindow {
                 {
                     mainWindow.camDolly.rotateHeading((mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity);
                     mainWindow.camDolly.rotatePitch((mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity);
-                    //horde3d.avatar.rotateHeading((mouse.x - (updateRotation.lastX || mouse.x)) * mouseSensitivity);
-                    //horde3d.avatar.rotatePitch((mouse.y - (updateRotation.lastY || mouse.y)) * mouseSensitivity);
                 } // end if
 
                 updateRotation.lastX = mouse.x;
@@ -199,12 +212,6 @@ Horde3DWindow {
             onPositionChanged: {
                 updateRotation(mouse);
             }
-            /*
-            onClicked: {
-                animateRotation.target = horde3d.avatar;
-                animateRotation.start();
-            }
-            */
         }
 
         Text {

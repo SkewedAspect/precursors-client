@@ -16,14 +16,23 @@ class ControlBinding : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit ControlBinding(QObject *parent = 0);
+    Q_PROPERTY(bool isActive READ isActive NOTIFY isActiveChanged)
 
-    bool isActive;
-    ControlBindingMap* map;
+public:
+	typedef QList<ControlBinding*> List;
+
+    explicit ControlBinding(ControlBindingMap* bindingMap);
+
+    bool isActive();
+    ControlBindingMap* map();
 
 signals:
+	void isActiveChanged();
     void stateChanged();
-};
+
+private:
+    bool _isActive;
+    ControlBindingMap* _map;
+}; // end ControlBinding
 
 #endif // CONTROLBINDING_H

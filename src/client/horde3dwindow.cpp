@@ -37,7 +37,7 @@ Horde3DWindow::Horde3DWindow(QWindow* parent) :
 		_skybox(NULL),
 		_logger(PLogManager::getLogger("horde3dwindow")),
 		_settings(PSettingsManager::instance()),
-		_controls(NULL),
+		_controls(ControlsManager::instance()),
 		_mgr(Horde3DManager::instance())
 {
 	lastFrameStart.start();

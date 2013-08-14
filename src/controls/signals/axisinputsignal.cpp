@@ -6,6 +6,11 @@ AxisInputSignal::AxisInputSignal(InputDevice* device, QString name, QString desc
 {
 } // end AxisInputSignal
 
+const InputSignal::Type AxisInputSignal::type() const
+{
+	return InputSignal::AXIS;
+} // end type
+
 void AxisInputSignal::emitUpdated(float position)
 {
 	emit updated(position);

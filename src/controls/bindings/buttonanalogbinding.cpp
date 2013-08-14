@@ -9,8 +9,8 @@
  * @brief Default Constructor
  * @param parent The parent QObject.
  */
-ButtonAnalogBinding::ButtonAnalogBinding(QObject *parent) :
-		ControlBinding(parent),
+ButtonAnalogBinding::ButtonAnalogBinding(ControlBindingMap* bindingMap) :
+		ControlBinding(bindingMap),
 		_isOn(false),
 		_mode(BM_UNDEFINED),
 		_momentaryValue(0),

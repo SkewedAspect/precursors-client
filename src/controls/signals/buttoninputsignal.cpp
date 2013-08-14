@@ -6,6 +6,11 @@ ButtonInputSignal::ButtonInputSignal(InputDevice* device, QString name, QString 
 {
 } // end ButtonInputSignal
 
+const InputSignal::Type ButtonInputSignal::type() const
+{
+	return InputSignal::BUTTON;
+} // end type
+
 void ButtonInputSignal::emitUpdated(bool pressed, bool repeating)
 {
 	emit updated(pressed, repeating);

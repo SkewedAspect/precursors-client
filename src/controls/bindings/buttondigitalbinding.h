@@ -1,40 +1,29 @@
 #ifndef BUTTONDIGITALBINDING_H
 #define BUTTONDIGITALBINDING_H
 
-#include "controlbinding.h"
+#include "basedigitalbinding.h"
 
 
 /**
  * @brief A binding between a button signal and a digital input slot.
+ *
+ * This binding type takes 2 options:
+ *
+ * - `toggle`: If true, invert the slot's value when we transition from a "low" value to a "high" value.
+ * - `invert`: If true, trigger the binding on a "low" value (or "high" to "low" transition) instead of a "high" value
+ *     (or "low" to "high" transition).
  */
-class ButtonDigitalBinding : public ControlBinding
+class ButtonDigitalBinding : public BaseDigitalBinding
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isOn READ isOn NOTIFY isOnChanged)
-
-    Q_PROPERTY(bool invert MEMBER _invert NOTIFY invertChanged)
-    Q_PROPERTY(bool toggle MEMBER _toggle NOTIFY toggleChanged)
-
 public:
-    explicit ButtonDigitalBinding(QObject *parent = 0);
-
-    bool isOn();
-
-signals:
-    void isOnChanged();
-    void invertChanged();
-    void toggleChanged();
+    explicit ButtonDigitalBinding(ControlBindingMap* bindingMap);
 
 public slots:
     void onSignalUpdated(bool pressed, bool repeating);
 
 private:
-    bool _isOn;
-
-    bool _invert;
-    bool _toggle;
-
     bool _lastPressedState;
 }; // end ButtonDigitalBinding
 

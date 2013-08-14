@@ -18,7 +18,7 @@ class AxisAnalogBinding : public ControlBinding
     Q_PROPERTY(float deadZone MEMBER _deadZone NOTIFY deadZoneChanged)
 
 public:
-    explicit AxisAnalogBinding(QObject *parent = 0);
+    explicit AxisAnalogBinding(ControlBindingMap* bindingMap);
 
 	float value();
 

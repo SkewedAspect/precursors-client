@@ -16,6 +16,7 @@ class ButtonInputSignal;
 
 class OISDriverEventHandler;
 
+//-------------------------------------------------------------------------------------------------------------------//
 
 class OISDriver : public InputDriver
 {
@@ -44,6 +45,7 @@ private:
 	PSettingsManager& _settings;
 }; // end OISDriver
 
+//-------------------------------------------------------------------------------------------------------------------//
 
 class OISDriverEventHandler : public QObject
 {
@@ -57,6 +59,7 @@ public:
 	GenericDevice* _device;
 }; // end OISDriverEventHandler
 
+//-------------------------------------------------------------------------------------------------------------------//
 
 class OISMouseEventHandler : public OISDriverEventHandler, public OIS::MouseListener
 {
@@ -77,6 +80,8 @@ protected:
 
 	PLogger& _logger;
 }; // end OISMouseEventHandler
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 class OISJoystickEventHandler : public OISDriverEventHandler, public OIS::JoyStickListener
 {

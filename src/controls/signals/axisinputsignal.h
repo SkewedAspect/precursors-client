@@ -11,6 +11,8 @@ class AxisInputSignal : public InputSignal
 public:
     explicit AxisInputSignal(InputDevice* device, QString name, QString description = QString());
 
+	virtual const InputSignal::Type type() const;
+
     void emitUpdated(float position);
 
 signals:

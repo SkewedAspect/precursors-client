@@ -29,7 +29,7 @@ void QtDriver::setWindow(QWindow* window)
 
 	if(!_mouseDevice)
 	{
-		_mouseDevice = new GenericDevice(this, "Dumb Mouse");
+		_mouseDevice = new GenericDevice(this, InputDevice::MOUSE, "Dumb Mouse");
 
 		_mouseAxes["X"] = new AxisInputSignal(_mouseDevice, "X", "horizontal movement");
 		_mouseAxes["Y"] = new AxisInputSignal(_mouseDevice, "Y", "vertical movement");

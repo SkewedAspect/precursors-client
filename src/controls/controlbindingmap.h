@@ -5,8 +5,16 @@
 #include <QObject>
 #include <QString>
 
+#include "plogging/plogging.h"
 
+#include "controls/bindings/controlbinding.h"
+
+
+class ControlContext;
+class InputDevice;
 class ControlBinding;
+class InputSignal;
+class ControlSlot;
 
 
 /**
@@ -22,12 +30,33 @@ class ControlBindingMap : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit ControlBindingMap(QObject *parent = 0);
+    Q_PROPERTY(bool isActive READ isActive NOTIFY isActiveChanged)
+	Q_PROPERTY(ControlContext* context READ context)
+	Q_PROPERTY(InputDevice* device READ device)
+    Q_PROPERTY(ControlBinding::List bindings READ bindings NOTIFY bindingsChanged)
 
-    QString name;
-    QString description;
-    QList<ControlBinding*> bindings;
-};
+public:
+    explicit ControlBindingMap(ControlContext* context, InputDevice* device);
+
+    bool isActive() const;
+	ControlContext* context() const;
+	InputDevice* device() const;
+    const ControlBinding::List bindings() const;
+
+	Q_INVOKABLE void load(QVariantMap bindings);
+
+signals:
+	void isActiveChanged();
+	void bindingsChanged();
+
+private:
+	ControlBinding* createBinding(InputSignal* inputSignal, ControlSlot* controlSlot);
+
+	ControlContext* _context;
+	InputDevice* _device;
+    ControlBinding::List _bindings;
+
+	PLogger& _logger;
+}; // end ControlBindingMap
 
 #endif // CONTROLBINDINGMAP_H

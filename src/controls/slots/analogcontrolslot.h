@@ -8,15 +8,31 @@ class AnalogControlSlot : public ControlSlot
 {
     Q_OBJECT
 
-public:
-    explicit AnalogControlSlot(QObject *parent = 0);
+    Q_PROPERTY(float instantaneousValue READ instantaneousValue)
+    Q_PROPERTY(float accumulatedValue READ accumulatedValue)
+    Q_PROPERTY(float value READ value NOTIFY valueChanged)
 
-    float instantaneousValue;
-    float accumulatedValue;
-    float value;
+public:
+	explicit AnalogControlSlot(QString name, ControlContext* context);
+
+	virtual const ControlSlot::Type type() const;
+
+    float instantaneousValue() const;
+    float accumulatedValue() const;
+    float value() const;
+
+public slots:
+	virtual void onBindingStateChanged();
+	virtual void onBindingAttached(ControlBinding* binding);
+	virtual void onBindingRemoved(ControlBinding* binding);
 
 signals:
     void valueChanged(float value);
-};
+
+private:
+    float _instantaneousValue;
+    float _accumulatedValue;
+    float _value;
+}; // end AnalogControlSlot
 
 #endif // ANALOGCONTROLSLOT_H

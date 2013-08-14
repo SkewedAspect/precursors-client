@@ -16,6 +16,18 @@ class InputSignal : public QObject
 {
     Q_OBJECT
 
+public:
+	enum Type
+	{
+		AXIS,
+		BUTTON
+	}; // end Type
+	Q_ENUMS(Type)
+
+	static QString typeString(const Type);
+
+private:
+    Q_PROPERTY(Type type READ type)
     Q_PROPERTY(QString name READ name)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(InputDevice* device READ device)
@@ -23,9 +35,10 @@ class InputSignal : public QObject
 public:
     explicit InputSignal(InputDevice* device, QString name, QString description = QString());
 
-    QString name();
-    QString description();
-    InputDevice* device();
+	virtual const Type type() const = 0;
+    const QString name() const;
+    const QString description() const;
+    InputDevice* device() const;
 
 private:
     QString _name;

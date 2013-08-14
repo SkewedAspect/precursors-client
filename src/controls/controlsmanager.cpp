@@ -1,18 +1,84 @@
 #include "controlsmanager.h"
+#include "controlcontext.h"
+#include "controlbindingmap.h"
 #include "iinputdriver.h"
-#include "controls/signals/axisinputsignal.h"
-#include "controls/signals/buttoninputsignal.h"
+
+#include "controls/devices/inputdevice.h"
+#include "controls/signals/inputsignal.h"
+#include "controls/slots/controlslot.h"
 
 #include <QCoreApplication>
 #include <QDir>
 #include <QPluginLoader>
+#include <QJsonDocument>
+#include <QTextStream>
 
 
 ControlsManager::ControlsManager(QObject* parent) :
 		_logger(PLogManager::getLogger("ControlsManager")),
+		_settings(PSettingsManager::instance()),
 		QObject(parent)
 {
 } // end ControlsManager
+
+ControlsManager& ControlsManager::instance()
+{
+    static ControlsManager _instance;
+    return _instance;
+} // end instance
+
+const ControlsManager::ControlSlotHash ControlsManager::controlSlots() const
+{
+	return _controlSlots;
+} // end controlSlots
+
+const ControlsManager::InputDriverHash ControlsManager::drivers() const
+{
+	return _drivers;
+} // end drivers
+
+const ControlsManager::InputDeviceHash ControlsManager::devices() const
+{
+	return _devices;
+} // end devices
+
+const ControlsManager::ControlContextHash ControlsManager::contexts() const
+{
+	return _contexts;
+} // end contexts
+
+QWindow* ControlsManager::window() const
+{
+	return _window;
+} // end window
+
+ControlContext* ControlsManager::currentContext() const
+{
+	return _currentContext;
+} // end setCurrentContext
+
+void ControlsManager::setCurrentContext(ControlContext* context)
+{
+	if(_currentContext)
+	{
+		_currentContext->setIsActive(false);
+	} // end if
+
+	_currentContext = context;
+
+	if(context)
+	{
+		context->setIsActive(true);
+	} // end if
+
+	_logger.info(QString("Current context changed to \"%1\"").arg(context->name()));
+	emit currentContextChanged();
+} // end setCurrentContext
+
+ControlContext* ControlsManager::context(QString name)
+{
+	return _contexts.value(name);
+} // end context
 
 void ControlsManager::setWindow(QWindow* window)
 {
@@ -23,11 +89,6 @@ void ControlsManager::setWindow(QWindow* window)
 		driver->setWindow(_window);
 	} // end foreach
 } // end setWindow
-
-QWindow* ControlsManager::window()
-{
-	return _window;
-} // end window
 
 bool ControlsManager::loadInputDriver(QString driverFileName)
 {
@@ -87,19 +148,9 @@ QStringList ControlsManager::findInputDrivers()
 
 void ControlsManager::onDeviceAttached(InputDevice* device)
 {
-	_logger.debug(QString("Device %1 attached; connecting signals...").arg(device->id()));
+	_logger.debug(QString("Device %1 attached.").arg(device->id()));
 
-	foreach(AxisInputSignal* axisSignal, device->axisSignals().values())
-	{
-		_logger.debug(QString(" - axis signal %2").arg(axisSignal->name()));
-		connect(axisSignal, SIGNAL(updated(float)), this, SLOT(onAxisSignalUpdated(float)));
-	} // end foreach
-
-	foreach(ButtonInputSignal* buttonSignal, device->buttonSignals().values())
-	{
-		_logger.debug(QString(" - button signal %2").arg(buttonSignal->name()));
-		connect(buttonSignal, SIGNAL(updated(bool, bool)), this, SLOT(onButtonSignalUpdated(bool, bool)));
-	} // end foreach
+	device->loadBindings();
 
 	_devices.insert(device->id(), device);
     emit devicesChanged();
@@ -115,7 +166,7 @@ void ControlsManager::onDeviceDetached(InputDevice* device)
 void ControlsManager::onAxisSignalUpdated(float position)
 {
 	InputSignal* signal = qobject_cast<InputSignal*>(sender());
-	_logger.debug(QString("Device \"%1\": axis \"%2\" updated: %3")
+	_logger.debug(QString("Device \"%1\" (unmapped): axis \"%2\" updated: %3")
 			.arg(signal->device()->id())
 			.arg(signal->name())
 			.arg(position)
@@ -125,9 +176,47 @@ void ControlsManager::onAxisSignalUpdated(float position)
 void ControlsManager::onButtonSignalUpdated(bool pressed, bool repeating)
 {
 	InputSignal* signal = qobject_cast<InputSignal*>(sender());
-	_logger.debug(QString("Device \"%1\": button \"%2\" updated: %3%4")
+	_logger.debug(QString("Device \"%1\" (unmapped): button \"%2\" updated: %3%4")
 			.arg(signal->device()->id())
 			.arg(signal->name())
-			.arg(pressed ? "pressed" : "not pressed").arg(repeating ? " (repeating)" : "")
+			.arg(pressed ? "pressed" : "not pressed")
+			.arg(repeating ? " (repeating)" : "")
 			);
 } // end onButtonSignalUpdated
+
+bool ControlsManager::loadContextDefs(QString path)
+{
+	QFile file(path);
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		_logger.error(QString("Couldn't open context definition file \"%1\"! (error: %2)")
+				.arg(path).arg(file.error()));
+		return false;
+	} // end if
+
+	// Set up a text stream
+	QTextStream in(&file);
+
+	// Read the context definitions
+	QJsonParseError jsonError;
+	QJsonDocument json = QJsonDocument::fromJson(in.readAll().toUtf8(), &jsonError);
+
+	if(jsonError.error != QJsonParseError::NoError)
+	{
+		_logger.error(QString("Error parsing context definition file \"%1\"! (error: %2)")
+				.arg(path).arg(jsonError.errorString()));
+		return false;
+	} // end if
+
+	QMapIterator<QString, QVariant> contextIter(json.toVariant().toMap());
+	while(contextIter.hasNext())
+	{
+		contextIter.next();
+		ControlContext* ctx = new ControlContext(contextIter.key(), this);
+		ctx->loadSlotDefinitions(contextIter.value().toMap());
+		_contexts[contextIter.key()] = ctx;
+		_logger.debug(QString("Loaded context \"%1\".").arg(contextIter.key()));
+	} // end while
+
+	return true;
+} // end loadContextDefs

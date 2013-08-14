@@ -5,8 +5,10 @@
 #include <QObject>
 #include <QString>
 
+#include "controls/bindings/controlbinding.h"
 
-class ControlBinding;
+
+class ControlContext;
 
 
 /**
@@ -15,14 +17,47 @@ class ControlBinding;
  */
 class ControlSlot : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit ControlSlot(QObject *parent = 0);
+	enum Type
+	{
+		ANALOG,
+		DIGITAL
+	}; // end Type
+	Q_ENUMS(Type)
 
-    QString name;
-    QString description;
-    QList<ControlBinding*> bindings;
-};
+	static QString typeString(const Type);
+
+private:
+    Q_PROPERTY(Type type READ type)
+	Q_PROPERTY(QString name READ name)
+	Q_PROPERTY(ControlContext* context READ context)
+	Q_PROPERTY(QString description READ description)
+	Q_PROPERTY(ControlBinding::List bindings READ bindings NOTIFY bindingsChanged)
+
+public:
+	explicit ControlSlot(QString name, ControlContext* context);
+
+	virtual const Type type() const = 0;
+	const QString name() const;
+	ControlContext* context() const;
+	const QString description() const;
+	const ControlBinding::List bindings() const;
+
+public slots:
+	virtual void onBindingStateChanged() = 0;
+	virtual void onBindingAttached(ControlBinding* binding);
+	virtual void onBindingRemoved(ControlBinding* binding);
+
+signals:
+	void bindingsChanged();
+
+private:
+	QString _name;
+	ControlContext* _context;
+	QString _description;
+	ControlBinding::List _bindings;
+}; // end ControlSlot
 
 #endif // CONTROLSLOT_H

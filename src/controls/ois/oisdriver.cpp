@@ -184,7 +184,7 @@ OISMouseEventHandler::OISMouseEventHandler(InputDriver* driver, OIS::Mouse* oisD
 		_oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISMouseEventHandler.%1").arg(name)))
 {
-	_device = new GenericDevice(driver, name);
+	_device = new GenericDevice(driver, InputDevice::MOUSE, name);
 
 	const OIS::MouseState &mouseState = _oisDevice->getMouseState();
 	mouseState.width = 100;
@@ -256,6 +256,7 @@ struct OISJoystickEventHandler::Hat
 
 	Hat(GenericDevice* device, int index) :
 			index(index),
+			lastDirection(0),
 			name(QString("POV Hat %1").arg(index + 1))
 	{
 		_signals.append(new ButtonInputSignal(device, QString("%1 North").arg(name)));
@@ -285,7 +286,7 @@ OISJoystickEventHandler::OISJoystickEventHandler(InputDriver* driver, OIS::JoySt
 		_oisDevice(oisDevice),
 		_logger(PLogManager::getLogger(QString("OISJoystickEventHandler.%1").arg(name)))
 {
-	_device = new GenericDevice(driver, name);
+	_device = new GenericDevice(driver, InputDevice::JOYSTICK, name);
 
 	OIS::JoyStickState state = _oisDevice->getJoyStickState();
 

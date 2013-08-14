@@ -10,6 +10,9 @@ class ButtonInputSignal : public InputSignal
 
 public:
     explicit ButtonInputSignal(InputDevice* device, QString name, QString description = QString());
+
+	virtual const InputSignal::Type type() const;
+
     void emitUpdated(bool pressed, bool repeating = false);
 
 signals:

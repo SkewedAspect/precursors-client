@@ -1,0 +1,7 @@
+{
+    "flightsim": {
+        "heading": "analog",
+        "pitch": "analog",
+        "roll": "analog"
+    }
+}

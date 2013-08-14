@@ -109,7 +109,7 @@ private:
 
 	PLogger& _logger;
 	PSettingsManager& _settings;
-	ControlsManager _controls;
+	ControlsManager& _controls;
 	Horde3DManager& _mgr;
 }; // end Horde3DWindow
 
