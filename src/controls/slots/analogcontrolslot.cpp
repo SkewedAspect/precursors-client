@@ -1,5 +1,6 @@
 #include "analogcontrolslot.h"
-#include "../controlcontext.h"
+#include "controls/controlcontext.h"
+#include "controls/bindings/buttonanalogbinding.h"
 
 
 AnalogControlSlot::AnalogControlSlot(QString name, ControlContext* context) :
@@ -31,13 +32,23 @@ float AnalogControlSlot::value() const
 	return _value;
 } // end value
 
-void AnalogControlSlot::onBindingMomentaryStateChanged()
+void AnalogControlSlot::onBindingMomentaryStateSet()
 {
 	_instantaneousValue = 0;
+	foreach(ControlBinding* binding, bindings())
+	{
+		ButtonAnalogBinding* buttonAnalog = qobject_cast<ButtonAnalogBinding*>(binding);
+		if(buttonAnalog && buttonAnalog->mode() == ButtonAnalogBinding::BM_MOMENTARY && buttonAnalog->isOn())
+		{
+			_instantaneousValue += buttonAnalog->momentaryValue();
+			break;
+		} // end if
+	} // end foreach
+
 	updateValue();
 } // end onBindingMomentaryStateChanged
 
-void AnalogControlSlot::onBindingChangeRateChanged()
+void AnalogControlSlot::onBindingChangeRateSet()
 {
 	_accumulatedValue = 9999999999;
 	updateValue();

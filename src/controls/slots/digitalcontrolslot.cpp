@@ -33,7 +33,7 @@ void DigitalControlSlot::onMomentaryBindingIsOnChanged()
     _momentaryState = false;
 	foreach(ControlBinding* binding, bindings())
 	{
-		BaseDigitalBinding* digital = (BaseDigitalBinding*) binding;
+		BaseDigitalBinding* digital = qobject_cast<BaseDigitalBinding*>(binding);
 		if(!digital->toggle() && digital->isOn())
 		{
 			_momentaryState = true;

@@ -535,7 +535,7 @@ void QtDriver::onKeyPressed(QKeyEvent* event)
 {
 	if(_keyboardButtons.contains(event->key()))
 	{
-		_keyboardButtons[event->key()]->emitUpdated(true);
+		_keyboardButtons[event->key()]->emitUpdated(true, event->isAutoRepeat());
 	}
 	else
 	{
@@ -547,7 +547,7 @@ void QtDriver::onKeyReleased(QKeyEvent* event)
 {
 	if(_keyboardButtons.contains(event->key()))
 	{
-		_keyboardButtons[event->key()]->emitUpdated(false);
+		_keyboardButtons[event->key()]->emitUpdated(false, event->isAutoRepeat());
 	}
 	else
 	{

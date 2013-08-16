@@ -100,10 +100,15 @@ bool ButtonAnalogBinding::configure(QVariantMap bindingDef)
 /**
  * @brief Should get called whenever the connected InputSignal's value changes.
  * @param pressed true if the button is currently being pressed, false otherwise.
- * @param repeating true if this slot is being called because of a key repeate event.
+ * @param repeating true if this slot is being called because of a key repeat event.
  */
 void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 {
+	if(repeating)
+	{
+		return;
+	} // end if
+
     // If the 'invert' option is disabled, this equates to 'if pressed'; if 'invert' is enabled, it equates to
     // 'if not pressed'.
     bool newState = (pressed != _invert);

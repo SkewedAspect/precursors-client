@@ -116,7 +116,7 @@ Horde3DWindow {
 	Connections {
 		target: controls.context('flightsim').analogSlot('heading');
 		onValueChanged: {
-			//console.log("Got onValueChanged for 'heading'.");
+			logger.debug("Got onValueChanged for 'heading': %1", controls.context('flightsim').analogSlot('heading').value);
 			mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('heading').value);
 		}
 	}
@@ -124,7 +124,7 @@ Horde3DWindow {
 	Connections {
 		target: controls.context('flightsim').analogSlot('pitch');
 		onValueChanged: {
-			//console.log("Got onValueChanged for 'pitch'.");
+			logger.debug("Got onValueChanged for 'pitch': %1", controls.context('flightsim').analogSlot('pitch').value);
 			mainWindow.camDolly.rotatePitch(controls.context('flightsim').analogSlot('pitch').value);
 		}
 	}
@@ -132,7 +132,7 @@ Horde3DWindow {
 	Connections {
 		target: controls.context('flightsim').analogSlot('roll');
 		onValueChanged: {
-			//console.log("Got onValueChanged for 'roll'.");
+			logger.debug("Got onValueChanged for 'roll': %1", controls.context('flightsim').analogSlot('roll').value);
 			mainWindow.camDolly.rotateRoll(controls.context('flightsim').analogSlot('roll').value);
 		}
 	}

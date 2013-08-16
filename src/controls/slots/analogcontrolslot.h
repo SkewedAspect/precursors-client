@@ -29,8 +29,8 @@ public:
     float value() const;
 
 public slots:
-	void onBindingMomentaryStateChanged();
-	void onBindingChangeRateChanged();
+	void onBindingMomentaryStateSet();
+	void onBindingChangeRateSet();
 	void onBindingSetTo(float val);
 	virtual void onBindingAttached(ControlBinding* binding);
 	virtual void onBindingRemoved(ControlBinding* binding);
