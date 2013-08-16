@@ -170,26 +170,47 @@ Horde3DWindow {
             anchors.fill: parent
 
 			Connections {
+				target: controls.context('flightsim').digitalSlot('fire');
+				onStateChanged: {
+					console.log("Got 'fire'.", controls.context('flightsim').digitalSlot('fire').state);
+				}
+			}
+
+			Connections {
+				target: controls.context('flightsim').digitalSlot('coast');
+				onStateChanged: {
+					console.log("Got 'coast'.", controls.context('flightsim').digitalSlot('coast').state);
+				}
+			}
+
+			Connections {
+				target: controls.context('flightsim').digitalSlot('headlights');
+				onStateChanged: {
+					console.log("Got 'headlights'.", controls.context('flightsim').digitalSlot('headlights').state);
+				}
+			}
+
+			Connections {
 				target: controls.context('flightsim').analogSlot('heading');
 				onValueChanged: {
-					console.log("Got onValueChanged for 'heading'.");
-                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('heading'));
+					//console.log("Got onValueChanged for 'heading'.");
+                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('heading').value);
 				}
 			}
 
 			Connections {
 				target: controls.context('flightsim').analogSlot('pitch');
 				onValueChanged: {
-					console.log("Got onValueChanged for 'pitch'.");
-                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('pitch'));
+					//console.log("Got onValueChanged for 'pitch'.");
+                    mainWindow.camDolly.rotatePitch(controls.context('flightsim').analogSlot('pitch').value);
 				}
 			}
 
 			Connections {
 				target: controls.context('flightsim').analogSlot('roll');
 				onValueChanged: {
-					console.log("Got onValueChanged for 'roll'.");
-                    mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('roll'));
+					//console.log("Got onValueChanged for 'roll'.");
+                    mainWindow.camDolly.rotateRoll(controls.context('flightsim').analogSlot('roll').value);
 				}
 			}
 

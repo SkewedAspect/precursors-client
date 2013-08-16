@@ -1,6 +1,8 @@
 #ifndef AXISANALOGBINDING_H
 #define AXISANALOGBINDING_H
 
+#include "plogging/plogging.h"
+
 #include "controlbinding.h"
 
 
@@ -11,7 +13,7 @@ class AxisAnalogBinding : public ControlBinding
 {
     Q_OBJECT
 
-    Q_PROPERTY(float value READ value NOTIFY valueChanged)
+    Q_PROPERTY(float value READ value NOTIFY setTo)
 
     Q_PROPERTY(float sensitivity MEMBER _sensitivity NOTIFY sensitivityChanged)
     Q_PROPERTY(float offset MEMBER _offset NOTIFY offsetChanged)
@@ -22,8 +24,10 @@ public:
 
 	float value();
 
+	virtual bool configure(QVariantMap bindingDef);
+
 signals:
-    void valueChanged();
+    void setTo(float value);
 
     void sensitivityChanged();
     void offsetChanged();
@@ -38,6 +42,8 @@ private:
     float _sensitivity;
     float _offset;
     float _deadZone;
+
+	PLogger& _logger;
 }; // end AxisAnalogBinding
 
 #endif // AXISANALOGBINDING_H

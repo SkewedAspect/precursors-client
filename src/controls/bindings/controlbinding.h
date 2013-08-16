@@ -26,9 +26,10 @@ public:
     bool isActive();
     ControlBindingMap* map();
 
+	virtual bool configure(QVariantMap bindingDef) = 0;
+
 signals:
 	void isActiveChanged();
-    void stateChanged();
 
 private:
     bool _isActive;

@@ -59,12 +59,16 @@ void ControlBindingMap::load(QVariantMap bindings)
 				);
 
 		ControlBinding* binding = createBinding(inputSignal, controlSlot);
+		if(binding)
+		{
+			binding->configure(bindingDef);
+		} // end if
 	} // end while
 } // end load
 
 ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, ControlSlot* controlSlot)
 {
-	ControlBinding* binding = NULL;;
+	ControlBinding* binding = NULL;
 	switch(inputSignal->type())
 	{
 		case InputSignal::AXIS:
@@ -72,9 +76,11 @@ ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, Contr
 			{
 				case ControlSlot::ANALOG:
 					binding = new AxisAnalogBinding(this);
+					connect(binding, SIGNAL(setTo(float)), controlSlot, SLOT(onBindingSetTo(float)));
 					break;
 				case ControlSlot::DIGITAL:
 					binding = new AxisDigitalBinding(this);
+					connect(binding, SIGNAL(stateChanged()), controlSlot, SLOT(onBindingStateChanged()));
 					break;
 				default:
 					_logger.error(QString("Unrecognized ControlSlot type: %1").arg(controlSlot->type()));
@@ -89,9 +95,14 @@ ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, Contr
 			{
 				case ControlSlot::ANALOG:
 					binding = new ButtonAnalogBinding(this);
+					connect(binding, SIGNAL(momentaryStateChanged()), controlSlot, SLOT(onMomentaryStateChanged()));
+					connect(binding, SIGNAL(changeRateChanged()), controlSlot, SLOT(onChangeRateChanged()));
+					connect(binding, SIGNAL(setTo(float)), controlSlot, SLOT(onSetTo(float)));
 					break;
 				case ControlSlot::DIGITAL:
 					binding = new ButtonDigitalBinding(this);
+					connect(binding, SIGNAL(isOnChanged()), controlSlot, SLOT(onMomentaryBindingIsOnChanged()));
+					connect(binding, SIGNAL(triggered()), controlSlot, SLOT(onToggleBindingTriggered()));
 					break;
 				default:
 					_logger.error(QString("Unrecognized ControlSlot type: %1").arg(controlSlot->type()));
@@ -106,7 +117,7 @@ ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, Contr
 			return NULL;
 	} // end switch
 
-	connect(binding, SIGNAL(stateChanged()), controlSlot, SLOT(onBindingStateChanged()));
+	controlSlot->onBindingAttached(binding);
 
 	return binding;
 } // end createBinding

@@ -1,6 +1,10 @@
 #include "axisanalogbinding.h"
 
 
+// Assume the range of values from the axis is approximately in a 16-bit int range
+#define DEFAULT_SENSITIVITY 1.f / 32768.f
+
+
 /*********************************************************************************************************************/
 /* Public API                                                                                                        */
 /*********************************************************************************************************************/
@@ -10,20 +14,30 @@
  * @param parent The parent QObject.
  */
 AxisAnalogBinding::AxisAnalogBinding(ControlBindingMap* bindingMap) :
-		ControlBinding(bindingMap),
 		_value(0),
-		_sensitivity(0),
+		_sensitivity(DEFAULT_SENSITIVITY),
 		_offset(0),
-		_deadZone(0)
+		_deadZone(0),
+		_logger(PLogManager::getLogger("AxisAnalogBinding")),
+		ControlBinding(bindingMap)
 {
-    // Emit stateChanged whenever any of our state properties change.
-    connect(this, SIGNAL(valueChanged()), this, SIGNAL(stateChanged()));
 } // end AxisAnalogBinding
 
 float AxisAnalogBinding::value()
 {
 	return _value;
 } // end value
+
+bool AxisAnalogBinding::configure(QVariantMap bindingDef)
+{
+    _sensitivity = bindingDef.value("sensitivity", DEFAULT_SENSITIVITY).toFloat();
+    _offset = bindingDef.value("offset", 0.f).toFloat();
+    _deadZone = bindingDef.value("deadZone", 0.f).toFloat();
+
+    emit sensitivityChanged();
+    emit offsetChanged();
+    emit deadZoneChanged();
+} // end configure
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -64,6 +78,6 @@ void AxisAnalogBinding::onSignalUpdated(float position)
     if(_value != value)
 	{
 		_value = value;
-		emit valueChanged();
+		emit setTo(_value);
     } // end if
 } // onSignalUpdated

@@ -27,7 +27,11 @@ public:
     void setInvert(bool invert);
     void setToggle(bool toggle);
 
+	virtual bool configure(QVariantMap bindingDef);
+
 signals:
+    void stateChanged();
+
 	/**
 	 * If this is a momentary (non-toggle) binding, this is connected to the control slot's momentaryUpdated() slot.
 	 */

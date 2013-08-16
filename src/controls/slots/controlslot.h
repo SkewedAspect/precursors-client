@@ -46,7 +46,6 @@ public:
 	const ControlBinding::List bindings() const;
 
 public slots:
-	virtual void onBindingStateChanged() = 0;
 	virtual void onBindingAttached(ControlBinding* binding);
 	virtual void onBindingRemoved(ControlBinding* binding);
 

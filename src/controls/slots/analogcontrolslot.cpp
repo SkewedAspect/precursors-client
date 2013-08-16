@@ -1,10 +1,12 @@
 #include "analogcontrolslot.h"
+#include "../controlcontext.h"
 
 
 AnalogControlSlot::AnalogControlSlot(QString name, ControlContext* context) :
 		_instantaneousValue(0),
 		_accumulatedValue(0),
 		_value(0),
+		_logger(PLogManager::getLogger(QString("AnalogControlSlot[\"%1\" in \"%2\"]").arg(name).arg(context->name()))),
 		ControlSlot(name, context)
 {
 } // end AnalogControlSlot
@@ -29,10 +31,23 @@ float AnalogControlSlot::value() const
 	return _value;
 } // end value
 
-void AnalogControlSlot::onBindingStateChanged()
+void AnalogControlSlot::onBindingMomentaryStateChanged()
 {
-	//FIXME: Implement!
-} // end onBindingStateChanged
+	_instantaneousValue = 0;
+	updateValue();
+} // end onBindingMomentaryStateChanged
+
+void AnalogControlSlot::onBindingChangeRateChanged()
+{
+	_accumulatedValue = 9999999999;
+	updateValue();
+} // end onBindingChangeRateChanged
+
+void AnalogControlSlot::onBindingSetTo(float val)
+{
+	_accumulatedValue = val;
+	updateValue();
+} // end onBindingSetTo
 
 void AnalogControlSlot::onBindingAttached(ControlBinding* binding)
 {
@@ -43,3 +58,9 @@ void AnalogControlSlot::onBindingRemoved(ControlBinding* binding)
 {
 	ControlSlot::onBindingRemoved(binding);
 } // end onBindingRemoved
+
+void AnalogControlSlot::updateValue()
+{
+	_value = _instantaneousValue + _accumulatedValue;
+    emit valueChanged(_value);
+} // end updateValue

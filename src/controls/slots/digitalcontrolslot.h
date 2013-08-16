@@ -1,6 +1,8 @@
 #ifndef DIGITALCONTROLSLOT_H
 #define DIGITALCONTROLSLOT_H
 
+#include "plogging/plogging.h"
+
 #include "controlslot.h"
 
 
@@ -18,7 +20,8 @@ public:
     bool state() const;
 
 public slots:
-	virtual void onBindingStateChanged();
+	void onToggleBindingTriggered();
+	void onMomentaryBindingIsOnChanged();
 	virtual void onBindingAttached(ControlBinding* binding);
 	virtual void onBindingRemoved(ControlBinding* binding);
 
@@ -27,7 +30,9 @@ signals:
 
 private:
     bool _toggleState;
-    bool _state;
+    bool _momentaryState;
+
+	PLogger& _logger;
 }; // end DigitalControlSlot
 
 #endif // DIGITALCONTROLSLOT_H

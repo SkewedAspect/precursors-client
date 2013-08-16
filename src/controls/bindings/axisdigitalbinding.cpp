@@ -1,3 +1,5 @@
+#include <QVariantMap>
+
 #include "axisdigitalbinding.h"
 
 
@@ -52,12 +54,20 @@ void AxisDigitalBinding::setOverlap(float overlap)
 	emit overlapChanged();
 } // end setOverlap
 
-void AxisDigitalBinding::updateTriggerRange()
+bool AxisDigitalBinding::configure(QVariantMap bindingDef)
 {
-	_lowerThreshold = _threshold - (_overlap / 2);
-	_upperThreshold = _threshold + (_overlap / 2);
-	emit triggerRangeChanged();
-} // end updateTriggerRange
+	BaseDigitalBinding::configure(bindingDef);
+
+    if(bindingDef.contains("threshold"))
+	{
+		setThreshold(bindingDef["threshold"].toFloat());
+	} // end if
+
+    if(bindingDef.contains("overlap"))
+	{
+		setOverlap(bindingDef["overlap"].toFloat());
+	} // end if
+} // end configure
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -86,3 +96,10 @@ void AxisDigitalBinding::onSignalUpdated(float position)
         } // end if
     } // end if
 } // end onSignalUpdated
+
+void AxisDigitalBinding::updateTriggerRange()
+{
+	_lowerThreshold = _threshold - (_overlap / 2);
+	_upperThreshold = _threshold + (_overlap / 2);
+	emit triggerRangeChanged();
+} // end updateTriggerRange

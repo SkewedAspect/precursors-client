@@ -53,7 +53,13 @@ public:
     void setValueToSet(float val);
     void setChangeRate(float val);
 
+	virtual bool configure(QVariantMap bindingDef);
+
 signals:
+    void momentaryStateSet();
+	void changeRateSet();
+    void setTo(float value);
+
     void isOnChanged();
 
     void momentaryValueChanged();

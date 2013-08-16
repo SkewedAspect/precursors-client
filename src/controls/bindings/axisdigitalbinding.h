@@ -35,6 +35,8 @@ public:
     void setThreshold(float threshold);
     void setOverlap(float overlap);
 
+	virtual bool configure(QVariantMap bindingDef);
+
 signals:
 	void thresholdChanged();
 	void overlapChanged();

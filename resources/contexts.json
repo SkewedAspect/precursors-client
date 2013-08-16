@@ -2,6 +2,9 @@
     "flightsim": {
         "heading": "analog",
         "pitch": "analog",
-        "roll": "analog"
+        "roll": "analog",
+        "fire": "digital",
+        "coast": "digital",
+        "headlights": "digital"
     }
 }

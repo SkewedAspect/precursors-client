@@ -1,3 +1,5 @@
+#include <QVariantMap>
+
 #include "basedigitalbinding.h"
 
 
@@ -13,7 +15,8 @@ BaseDigitalBinding::BaseDigitalBinding(ControlBindingMap* bindingMap) :
 		ControlBinding(bindingMap),
 		_isOn(false),
 		_invert(false),
-		_toggle(false)
+		_toggle(false),
+		_lastInputState(false)
 {
     // Emit stateChanged whenever any of our state properties change.
     connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
@@ -48,6 +51,15 @@ void BaseDigitalBinding::setToggle(bool toggle)
 	_toggle = toggle;
 } // end setToggle
 
+bool BaseDigitalBinding::configure(QVariantMap bindingDef)
+{
+	_invert = bindingDef.value("invert", false).toBool();
+	_toggle = bindingDef.value("toggle", false).toBool();
+
+    emit invertChanged();
+    emit toggleChanged();
+} // end configure
+
 bool BaseDigitalBinding::inputState()
 {
 	return _lastInputState;
@@ -61,7 +73,6 @@ void BaseDigitalBinding::setInputState(bool state)
 	} // end if
 
 	_isOn = (state != _invert);
-	emit isOnChanged();
 
     if(_toggle)
     {
@@ -71,6 +82,10 @@ void BaseDigitalBinding::setInputState(bool state)
         {
             emit triggered();
         } // end if
+	}
+	else
+	{
+		emit isOnChanged();
     } // end if
 
     _lastInputState = state;

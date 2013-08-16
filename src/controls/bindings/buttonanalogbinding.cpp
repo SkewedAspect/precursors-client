@@ -1,3 +1,5 @@
+#include <QVariantMap>
+
 #include "buttonanalogbinding.h"
 
 
@@ -18,9 +20,6 @@ ButtonAnalogBinding::ButtonAnalogBinding(ControlBindingMap* bindingMap) :
 		_changeRate(0),
 		_invert(false)
 {
-    // Emit stateChanged whenever any of our state properties change.
-    connect(this, SIGNAL(isOnChanged()), this, SIGNAL(stateChanged()));
-    connect(this, SIGNAL(invertChanged()), this, SIGNAL(stateChanged()));
 } // end ButtonAnalogBinding
 
 /**
@@ -68,10 +67,31 @@ void ButtonAnalogBinding::setValueToSet(float val)
 
 void ButtonAnalogBinding::setChangeRate(float val)
 {
-    _valueToSet = val;
+    _changeRate = val;
     setMode(BM_CHANGERATE);
     emit changeRateChanged();
 } // end setChangeRate
+
+bool ButtonAnalogBinding::configure(QVariantMap bindingDef)
+{
+    if(bindingDef.contains("momentaryValue"))
+	{
+		setMomentaryValue(bindingDef["momentaryValue"].toFloat());
+	} // end if
+
+    if(bindingDef.contains("valueToSet"))
+	{
+		setValueToSet(bindingDef["valueToSet"].toFloat());
+	} // end if
+
+    if(bindingDef.contains("changeRate"))
+	{
+		setChangeRate(bindingDef["changeRate"].toFloat());
+	} // end if
+
+	_invert = bindingDef.value("invert", false).toBool();
+    void invertChanged();
+} // end configure
 
 /*********************************************************************************************************************/
 /* Slots                                                                                                             */
@@ -86,19 +106,22 @@ void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 {
     // If the 'invert' option is disabled, this equates to 'if pressed'; if 'invert' is enabled, it equates to
     // 'if not pressed'.
-    bool newState = (pressed == _invert);
+    bool newState = (pressed != _invert);
 
     if(_isOn != newState)
 	{
 		_isOn = newState;
 
-		// Only emit isOnChanged if we have a mode set; otherwise, we're effectively disabled.
 		switch(_mode)
 		{
 			case BM_MOMENTARY:
+				emit momentaryStateSet();
+				break;
 			case BM_CHANGERATE:
+				emit changeRateSet();
+				break;
 			case BM_SETVALUE:
-				emit isOnChanged();
+				emit setTo(_valueToSet);
 				break;
 		} // end switch
 	} // end if
@@ -114,10 +137,34 @@ void ButtonAnalogBinding::setMode(BindingMode newMode)
 	{
 		// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the current
 		// mode did, so we need to tell our slot to update.
-		emit stateChanged();
+		switch(_mode)
+		{
+			case BM_MOMENTARY:
+				emit momentaryStateSet();
+				break;
+			case BM_CHANGERATE:
+				emit changeRateSet();
+				break;
+			case BM_SETVALUE:
+				emit setTo(_valueToSet);
+				break;
+		} // end switch
 	}
 	else
 	{
+		bool wasOn = _isOn;
+		_isOn = false;
+		switch(_mode)
+		{
+			case BM_MOMENTARY:
+				emit momentaryStateSet();
+				break;
+			case BM_CHANGERATE:
+				emit changeRateSet();
+				break;
+		} // end switch
+		_isOn = wasOn;
+
 		_mode = newMode;
 		emit modeChanged();
 	} // end if
