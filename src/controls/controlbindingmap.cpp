@@ -48,8 +48,20 @@ void ControlBindingMap::load(QVariantMap bindings)
 		bindingIter.next();
 		InputSignal* inputSignal = _device->inputSignals().value(bindingIter.key(), NULL);
 
+		if(!inputSignal)
+		{
+			_logger.error(QString("Unrecognized input signal \"%1\"!").arg(bindingIter.key()));
+			continue;
+		} // end if
+
 		QVariantMap bindingDef = bindingIter.value().toMap();
 		ControlSlot* controlSlot = _context->controlSlots().value(bindingDef["slot"].toString());
+
+		if(!controlSlot)
+		{
+			_logger.error(QString("Unrecognized control slot \"%1\"!").arg(bindingDef["slot"].toString()));
+			continue;
+		} // end if
 
 		_logger.debug(QString("   - %1 signal \"%2\" => %3 slot \"%4\"")
 				.arg(InputSignal::typeString(inputSignal->type()))

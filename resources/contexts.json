@@ -5,6 +5,8 @@
         "roll": "analog",
         "fire": "digital",
         "coast": "digital",
-        "headlights": "digital"
+        "headlights": "digital",
+        "grabMouse": "digital",
+        "quit": "digital"
     }
 }

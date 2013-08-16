@@ -58,6 +58,9 @@ signals:
 	void maxViewDistanceChanged(float maxViewDist);
 	void grabMouseChanged(bool grab);
 
+	void keyPressed(QKeyEvent* event);
+	void keyReleased(QKeyEvent* event);
+
 	void mouseMoved(QMouseEvent* event, QPoint screenDelta);
 	void mousePressed(QMouseEvent* event);
 	void mouseReleased(QMouseEvent* event);
@@ -73,6 +76,9 @@ protected:
 	virtual void resizeEvent(QResizeEvent* event);
 
 	virtual void timerEvent(QTimerEvent* event);
+
+	virtual void keyPressEvent(QKeyEvent* event);
+	virtual void keyReleaseEvent(QKeyEvent* event);
 
 	virtual void mouseMoveEvent(QMouseEvent* event);
 	virtual void mousePressEvent(QMouseEvent* event);

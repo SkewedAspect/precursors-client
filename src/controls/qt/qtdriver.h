@@ -9,6 +9,7 @@
 #include "controls/inputdriver.h"
 
 
+class QKeyEvent;
 class QMouseEvent;
 class QScreen;
 
@@ -34,12 +35,18 @@ public:
 public slots:
 	void onScreenChanged(QScreen* screen);
 
+	void onKeyPressed(QKeyEvent* event);
+	void onKeyReleased(QKeyEvent* event);
+
 	void onMouseMoved(QMouseEvent* event, QPoint screenDelta);
 	void onMousePressed(QMouseEvent* event);
 	void onMouseReleased(QMouseEvent* event);
 
 protected:
 	QSize _screenSize;
+
+	GenericDevice* _keyboardDevice;
+	QHash<int, ButtonInputSignal*> _keyboardButtons;
 
 	GenericDevice* _mouseDevice;
 	QHash<QString, AxisInputSignal*> _mouseAxes;

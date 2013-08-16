@@ -301,6 +301,28 @@ void Horde3DWindow::timerEvent(QTimerEvent* event)
 	update();
 } // end timerEvent
 
+void Horde3DWindow::keyPressEvent(QKeyEvent* event)
+{
+	QQuickWindow::keyPressEvent(event);
+
+	if(!event->isAccepted())
+	{
+		emit keyPressed(event);
+		event->accept();
+	} // end if
+} // end keyPressEvent
+
+void Horde3DWindow::keyReleaseEvent(QKeyEvent* event)
+{
+	QQuickWindow::keyReleaseEvent(event);
+
+	if(!event->isAccepted())
+	{
+		emit keyReleased(event);
+		event->accept();
+	} // end if
+} // end keyReleaseEvent
+
 void Horde3DWindow::mouseMoveEvent(QMouseEvent* event)
 {
 	if(_grabMouse)
