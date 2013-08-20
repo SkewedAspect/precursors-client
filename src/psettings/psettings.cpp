@@ -51,6 +51,9 @@ void PSettingsManager::reload()
     QStringList settingsFiles = QStandardPaths::locateAll(QStandardPaths::ConfigLocation,
             "skewedaspect/precursors.config.json");
 
+	// Add initial config path to settings files.
+	settingsFiles.append("resources/default.config.json");
+
     // Apply all files to our settings.
     for(int i = 0; i < settingsFiles.size(); ++i)
     {
