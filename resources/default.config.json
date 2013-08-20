@@ -1,2 +1,58 @@
 {
+    "controls": {
+        "keyboard": {
+            "devices": {
+                "Keyboard": {
+                    "contexts": {
+                        "flightsim": {
+                            "Up": {
+                                "momentaryValue": -0.5,
+                                "slot": "pitch"
+                            },
+                            "Down": {
+                                "momentaryValue": 0.5,
+                                "slot": "pitch"
+                            },
+                            "Left": {
+                                "momentaryValue": 0.5,
+                                "slot": "heading"
+                            },
+                            "Right": {
+                                "momentaryValue": -0.5,
+                                "slot": "heading"
+                            },
+
+                            "End": {
+                                "setValue": 0,
+                                "slot": "throttle"
+                            },
+                            "Home": {
+                                "setValue": 1,
+                                "slot": "throttle"
+                            },
+                            "PageDown": {
+                                "changeRate": -0.3,
+                                "slot": "throttle"
+                            },
+                            "PageUp": {
+                                "changeRate": 0.3,
+                                "slot": "throttle"
+                            },
+
+                            "Escape": {
+                                "slot": "openGameMenu"
+                            },
+                            "F1": {
+                                "slot": "grabMouse",
+                                "toggle": true
+                            },
+                            "F10": {
+                                "slot": "quit"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
