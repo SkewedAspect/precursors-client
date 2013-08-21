@@ -37,7 +37,7 @@ function updateEntity(event, entity)
 	//logger.debug("Update: %1", JSON.stringify(event));
 
 	//TODO: Set the behavior.
-	logger.debug("Should load behavior: \'%1\'", event.behavior);
+	//logger.debug("Should load behavior: \'%1\'", event.behavior);
 
 	//-----------------------------------------------------------------------------------------------------------------
 	//TODO: This code needs to go someplace else, and be turned into something a bit more general.
@@ -105,7 +105,7 @@ function handleIncomingEvent(channel, event)
 		{
 			case "update":
 			{
-				logger.notify("Incoming Update for Entity \'%1\'", entityID);
+				//logger.notify("Incoming Update for Entity \'%1\'", entityID);
 
 				if(ignoredEntities.contains(entityID))
 				{
