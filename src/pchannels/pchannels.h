@@ -42,11 +42,11 @@ public:
     static PChannels& instance();
 
     Q_INVOKABLE void connectToServer(QString serverHostName, quint16 port, QString username, QString pwdHash);
-    void disconnect(QString reason = "Quit");
+    Q_INVOKABLE void disconnect(QString reason = "Quit");
 
     void send(QVariant envelope, ChannelMode mode, bool encrypted = true);
-    void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
-    void sendRequest(PChannelsRequest* request, bool encrypted = true);
+    Q_INVOKABLE void sendEvent(QString channel, QVariant message, ChannelMode mode, bool encrypted = true);
+    Q_INVOKABLE void sendRequest(PChannelsRequest* request, bool encrypted = true);
 
     Q_INVOKABLE PChannelsRequest* buildRequest(QString channel, QVariant message, ChannelMode mode = CM_RELIABLE);
 
