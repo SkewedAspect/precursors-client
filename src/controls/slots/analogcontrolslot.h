@@ -1,6 +1,8 @@
 #ifndef ANALOGCONTROLSLOT_H
 #define ANALOGCONTROLSLOT_H
 
+#include <QTime>
+
 #include "plogging/plogging.h"
 
 #include "controlslot.h"
@@ -38,12 +40,20 @@ public slots:
 signals:
     void valueChanged(float value);
 
+protected:
+	virtual void timerEvent(QTimerEvent* event);
+
 private:
 	void updateValue();
 
     float _instantaneousValue;
     float _accumulatedValue;
+    float _accumulatedRateOfChange;
     float _value;
+
+	bool _timerRunning;
+	int _timerID;
+	QTime _timeSinceLastROC;
 
 	PLogger& _logger;
 }; // end AnalogControlSlot
