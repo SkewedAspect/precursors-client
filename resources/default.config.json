@@ -5,21 +5,29 @@
                 "Keyboard": {
                     "contexts": {
                         "flightsim": {
-                            "Up": {
+                            "W": {
                                 "momentaryValue": -0.5,
                                 "slot": "pitch"
                             },
-                            "Down": {
+                            "S": {
                                 "momentaryValue": 0.5,
                                 "slot": "pitch"
                             },
-                            "Left": {
+                            "A": {
                                 "momentaryValue": 0.5,
                                 "slot": "heading"
                             },
-                            "Right": {
+                            "D": {
                                 "momentaryValue": -0.5,
                                 "slot": "heading"
+                            },
+                            "Q": {
+                                "momentaryValue": -0.5,
+                                "slot": "roll"
+                            },
+                            "E": {
+                                "momentaryValue": 0.5,
+                                "slot": "roll"
                             },
 
                             "End": {
