@@ -23,11 +23,11 @@
                             },
 
                             "End": {
-                                "setValue": 0,
+                                "valueToSet": 0,
                                 "slot": "throttle"
                             },
                             "Home": {
-                                "setValue": 1,
+                                "valueToSet": 1,
                                 "slot": "throttle"
                             },
                             "PageDown": {
