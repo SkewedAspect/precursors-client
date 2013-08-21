@@ -1,5 +1,8 @@
 {
     "flightsim": {
+        "sideslip": "analog",
+        "lift": "analog",
+        "throttle": "analog",
         "heading": "analog",
         "pitch": "analog",
         "roll": "analog",

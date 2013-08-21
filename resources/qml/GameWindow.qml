@@ -77,66 +77,6 @@ Horde3DWindow {
     } // end onFPSChanged
     onFpsChanged: onFPSChanged()
 
-	Connections {
-		target: controls.context('flightsim').digitalSlot('quit');
-		onStateChanged: {
-			logger.info("Exiting...");
-			gameWindow.close();
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').digitalSlot('grabMouse');
-		onStateChanged: {
-			gameWindow.grabMouse = controls.context('flightsim').digitalSlot('grabMouse').state;
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').digitalSlot('fire');
-		onStateChanged: {
-			console.log("Got 'fire'.", controls.context('flightsim').digitalSlot('fire').state);
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').digitalSlot('coast');
-		onStateChanged: {
-			console.log("Got 'coast'.", controls.context('flightsim').digitalSlot('coast').state);
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').digitalSlot('headlights');
-		onStateChanged: {
-			console.log("Got 'headlights'.", controls.context('flightsim').digitalSlot('headlights').state);
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').analogSlot('heading');
-		onValueChanged: {
-			logger.debug("Got onValueChanged for 'heading': %1", controls.context('flightsim').analogSlot('heading').value);
-			mainWindow.camDolly.rotateHeading(controls.context('flightsim').analogSlot('heading').value);
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').analogSlot('pitch');
-		onValueChanged: {
-			logger.debug("Got onValueChanged for 'pitch': %1", controls.context('flightsim').analogSlot('pitch').value);
-			mainWindow.camDolly.rotatePitch(controls.context('flightsim').analogSlot('pitch').value);
-		}
-	}
-
-	Connections {
-		target: controls.context('flightsim').analogSlot('roll');
-		onValueChanged: {
-			logger.debug("Got onValueChanged for 'roll': %1", controls.context('flightsim').analogSlot('roll').value);
-			mainWindow.camDolly.rotateRoll(controls.context('flightsim').analogSlot('roll').value);
-		}
-	}
-
 	Text {
 		id: fpsText
 		anchors.top: parent.top

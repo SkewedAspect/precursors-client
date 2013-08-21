@@ -7,6 +7,7 @@
 .import "../js/logging.js" as Logging
 .import "../js/entity_manager.js" as EntityManager
 .import "../js/level_manager.js" as LevelManager
+.import "../js/controls.js" as Controls
 
 // This modifies the prototypes of Array and Object to be like QList and QMap
 .import "../js/vendor/qtjs/qt.js" as QtJS
