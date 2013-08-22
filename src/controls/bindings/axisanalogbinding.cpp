@@ -1,10 +1,6 @@
 #include "axisanalogbinding.h"
 
 
-// Assume the range of values from the axis is approximately in a 16-bit int range
-#define DEFAULT_SENSITIVITY 1.f / 32768.f
-
-
 /*********************************************************************************************************************/
 /* Public API                                                                                                        */
 /*********************************************************************************************************************/
@@ -15,7 +11,7 @@
  */
 AxisAnalogBinding::AxisAnalogBinding(ControlBindingMap* bindingMap) :
 		_value(0),
-		_sensitivity(DEFAULT_SENSITIVITY),
+		_sensitivity(1),
 		_offset(0),
 		_deadZone(0),
 		_logger(PLogManager::getLogger("AxisAnalogBinding")),
@@ -30,7 +26,7 @@ float AxisAnalogBinding::value()
 
 bool AxisAnalogBinding::configure(QVariantMap bindingDef)
 {
-    _sensitivity = bindingDef.value("sensitivity", DEFAULT_SENSITIVITY).toFloat();
+    _sensitivity = bindingDef.value("sensitivity", 1).toFloat();
     _offset = bindingDef.value("offset", 0.f).toFloat();
     _deadZone = bindingDef.value("deadZone", 0.f).toFloat();
 
