@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QScreen>
 #include <QWindow>
+#include <QTimer>
 
 #include "controls/devices/genericdevice.h"
 #include "controls/signals/axisinputsignal.h"
@@ -17,6 +18,8 @@ QtDriver::QtDriver() :
 		_logger(PLogManager::getLogger("QtDriver")),
 		_settings(PSettingsManager::instance())
 {
+	_mouseTimer = new QTimer(this);
+    connect(_mouseTimer, SIGNAL(timeout()), this, SLOT(onMouseTimeout()));
 } // end QtDriver
 
 QString QtDriver::name()
@@ -559,6 +562,8 @@ void QtDriver::onMouseMoved(QMouseEvent* event, QPoint screenDelta)
 {
 	float divisor = fmax(_screenSize.width(), _screenSize.height());
 
+    _mouseTimer->start(20);
+
 	_mouseAxes["X"]->emitUpdated(screenDelta.x() / divisor);
 	_mouseAxes["Y"]->emitUpdated(screenDelta.y() / divisor);
 } // end onMouseMoved
@@ -572,3 +577,11 @@ void QtDriver::onMouseReleased(QMouseEvent* event)
 {
 	_mouseButtons[event->button()]->emitUpdated(false);
 } // end onMouseReleased
+
+void QtDriver::onMouseTimeout()
+{
+    _mouseTimer->stop();
+
+	_mouseAxes["X"]->emitUpdated(0);
+	_mouseAxes["Y"]->emitUpdated(0);
+} // end onMouseTimeout
