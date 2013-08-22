@@ -33,6 +33,9 @@ bool AxisAnalogBinding::configure(QVariantMap bindingDef)
     emit sensitivityChanged();
     emit offsetChanged();
     emit deadZoneChanged();
+
+	//TODO: Actually check for errors
+	return true;
 } // end configure
 
 /*********************************************************************************************************************/
