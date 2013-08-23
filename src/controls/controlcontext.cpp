@@ -8,6 +8,8 @@
 ControlContext::ControlContext(QString name, QObject *parent) :
 		_logger(PLogManager::getLogger(QString("ControlContext[%1]").arg(name))),
 		_name(name),
+		_description(""),
+		_isActive(false),
 		QObject(parent)
 {
 } // end ControlContext
