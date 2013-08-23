@@ -77,6 +77,9 @@ void AxisAnalogBinding::onSignalUpdated(float position)
     if(_value != value)
 	{
 		_value = value;
-		emit setTo(_value);
+		if(isActive())
+		{
+			emit setTo(_value);
+		} // end if
     } // end if
 } // onSignalUpdated

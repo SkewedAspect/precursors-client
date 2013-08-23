@@ -78,12 +78,12 @@ void BaseDigitalBinding::setInputState(bool state)
     {
         // Only toggle if our last state was off, and our current state is on. (or vice versa if 'invert' is enabled)
 		// If !invert, detect off => on transition (state == true); if invert, detect on => off (state == false)
-        if(_isOn)
+        if(_isOn && isActive())
         {
             emit triggered();
         } // end if
 	}
-	else
+	else if(isActive())
 	{
 		emit isOnChanged();
     } // end if

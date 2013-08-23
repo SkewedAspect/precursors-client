@@ -117,18 +117,21 @@ void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 	{
 		_isOn = newState;
 
-		switch(_mode)
+		if(isActive())
 		{
-			case BM_MOMENTARY:
-				emit momentaryStateSet();
-				break;
-			case BM_CHANGERATE:
-				emit changeRateSet();
-				break;
-			case BM_SETVALUE:
-				emit setTo(_valueToSet);
-				break;
-		} // end switch
+			switch(_mode)
+			{
+				case BM_MOMENTARY:
+					emit momentaryStateSet();
+					break;
+				case BM_CHANGERATE:
+					emit changeRateSet();
+					break;
+				case BM_SETVALUE:
+					emit setTo(_valueToSet);
+					break;
+			} // end switch
+		} // end if
 	} // end if
 } // end onSignalUpdated
 
@@ -140,37 +143,47 @@ void ButtonAnalogBinding::setMode(BindingMode newMode)
 {
     if(_mode == newMode)
 	{
-		// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the current
-		// mode did, so we need to tell our slot to update.
-		switch(_mode)
+		if(isActive())
 		{
-			case BM_MOMENTARY:
-				emit momentaryStateSet();
-				break;
-			case BM_CHANGERATE:
-				emit changeRateSet();
-				break;
-			case BM_SETVALUE:
-				emit setTo(_valueToSet);
-				break;
-		} // end switch
+			// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the current
+			// mode did, so we need to tell our slot to update.
+			switch(_mode)
+			{
+				case BM_MOMENTARY:
+					emit momentaryStateSet();
+					break;
+				case BM_CHANGERATE:
+					emit changeRateSet();
+					break;
+				case BM_SETVALUE:
+					emit setTo(_valueToSet);
+					break;
+			} // end switch
+		} // end if
 	}
 	else
 	{
-		bool wasOn = _isOn;
-		_isOn = false;
-		switch(_mode)
+		if(isActive())
 		{
-			case BM_MOMENTARY:
-				emit momentaryStateSet();
-				break;
-			case BM_CHANGERATE:
-				emit changeRateSet();
-				break;
-		} // end switch
-		_isOn = wasOn;
+			bool wasOn = _isOn;
+			_isOn = false;
+			switch(_mode)
+			{
+				case BM_MOMENTARY:
+					emit momentaryStateSet();
+					break;
+				case BM_CHANGERATE:
+					emit changeRateSet();
+					break;
+			} // end switch
+			_isOn = wasOn;
 
-		_mode = newMode;
-		emit modeChanged();
+			_mode = newMode;
+			emit modeChanged();
+		}
+		else
+		{
+			_mode = newMode;
+		} // end if
 	} // end if
 } // end setMode
