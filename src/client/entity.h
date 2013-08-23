@@ -21,6 +21,9 @@ class Entity : public QObject
 
 	Q_PROPERTY(Flags flags READ flags WRITE setFlags NOTIFY flagsChanged)
 	Q_PROPERTY(QQuaternion orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
+	Q_PROPERTY(qreal heading READ heading NOTIFY orientationChanged)
+	Q_PROPERTY(qreal pitch READ pitch NOTIFY orientationChanged)
+	Q_PROPERTY(qreal roll READ roll NOTIFY orientationChanged)
 	Q_PROPERTY(QVector3D pos READ pos WRITE setPos NOTIFY posChanged)
 	Q_PROPERTY(Entity* parent READ parent WRITE setParent NOTIFY parentChanged)
 	Q_PROPERTY(QVariantMap state MEMBER _state NOTIFY stateChanged)
@@ -42,6 +45,9 @@ public:
 
 	Flags flags() const;
 	QQuaternion orientation() const;
+	qreal heading() const;
+	qreal pitch() const;
+	qreal roll() const;
 	QVector3D pos() const;
 	Entity* parent() const;
 

@@ -54,6 +54,21 @@ QQuaternion Entity::orientation() const
 	return _orientation;
 } // end orientation
 
+qreal Entity::heading() const
+{
+	return matrixToHeading(_trans);
+} // end heading
+
+qreal Entity::pitch() const
+{
+	return matrixToPitch(_trans);
+} // end pitch
+
+qreal Entity::roll() const
+{
+	return matrixToRoll(_trans);
+} // end roll
+
 QVector3D Entity::pos() const
 {
 	return _trans.column(3).toVector3D();
