@@ -56,7 +56,7 @@ QQuaternion Entity::orientation() const
 
 QVector3D Entity::pos() const
 {
-	return _trans.row(3).toVector3D();
+	return _trans.column(3).toVector3D();
 } // end pos
 
 Entity* Entity::parent() const
