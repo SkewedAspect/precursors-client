@@ -31,39 +31,77 @@ function sendCommand(commandName /*, ... */)
     }, Networking.PChannels.CM_RELIABLE);
 } // end sendCommand
 
+function defineContextSlots(contextName, slots)
+{
+    var context = controls.context(contextName);
+
+    _.forIn(slots.digital, function(handler, slotName)
+    {
+        var slot = context.digitalSlot(slotName);
+        slot.stateChanged.connect(wrapDigital(slot, handler));
+    });
+
+    function wrapDigital(slot, handler)
+    {
+        return function()
+        {
+            handler(slot.state);
+        } // end function
+    } // end wrapDigital
+
+    _.forIn(slots.analog, function(handler, slotName)
+    {
+        var slot = context.analogSlot(slotName);
+        slot.valueChanged.connect(wrapAnalog(slot, handler));
+    });
+
+    function wrapAnalog(slot, handler)
+    {
+        return function()
+        {
+            handler(slot.value);
+        } // end function
+    } // end wrapAnalog
+} // end defineContextSlots
+
 function connectSignals()
 {
-    controls.context('flightsim').digitalSlot('quit').stateChanged.connect(function()
-    {
-        logger.info("Exiting...");
-        gameWindow.close();
+    defineContextSlots('flightsim', {
+        digital: {
+            quit: function()
+            {
+                logger.info("Exiting...");
+                gameWindow.close();
+            },
+
+            grabMouse: function(state)
+            {
+                gameWindow.grabMouse = state;
+            },
+
+            fire: function(state)
+            {
+                console.log("Got 'fire'.", state);
+            },
+
+            coast: function(state)
+            {
+                console.log("Got 'coast'.", state);
+            },
+
+            headlights: function(state)
+            {
+                console.log("Got 'headlights'.", state);
+            }
+        },
+        analog: {
+            sideslip: _.partial(sendCommand, 'sideslip'),
+            lift: _.partial(sendCommand, 'lift'),
+            throttle: _.partial(sendCommand, 'throttle'),
+
+            heading: _.partial(sendCommand, 'yaw'),
+            pitch: _.partial(sendCommand, 'pitch'),
+            roll: _.partial(sendCommand, 'roll')
+        }
     });
-
-    controls.context('flightsim').digitalSlot('grabMouse').stateChanged.connect(function()
-    {
-        gameWindow.grabMouse = controls.context('flightsim').digitalSlot('grabMouse').state;
-    });
-
-    controls.context('flightsim').digitalSlot('fire').stateChanged.connect(function()
-    {
-        console.log("Got 'fire'.", controls.context('flightsim').digitalSlot('fire').state);
-    });
-
-    controls.context('flightsim').digitalSlot('coast').stateChanged.connect(function()
-    {
-        console.log("Got 'coast'.", controls.context('flightsim').digitalSlot('coast').state);
-    });
-
-    controls.context('flightsim').digitalSlot('headlights').stateChanged.connect(function()
-    {
-        console.log("Got 'headlights'.", controls.context('flightsim').digitalSlot('headlights').state);
-    });
-
-    controls.context('flightsim').analogSlot('sideslip').valueChanged.connect(_.partial(sendCommand, 'sideslip'));
-    controls.context('flightsim').analogSlot('lift').valueChanged.connect(_.partial(sendCommand, 'lift'));
-    controls.context('flightsim').analogSlot('throttle').valueChanged.connect(_.partial(sendCommand, 'throttle'));
-
-    controls.context('flightsim').analogSlot('heading').valueChanged.connect(_.partial(sendCommand, 'yaw'));
-    controls.context('flightsim').analogSlot('pitch').valueChanged.connect(_.partial(sendCommand, 'pitch'));
-    controls.context('flightsim').analogSlot('roll').valueChanged.connect(_.partial(sendCommand, 'roll'));
 } // end connectSignals
