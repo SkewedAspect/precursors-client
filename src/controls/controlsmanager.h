@@ -57,6 +57,7 @@ public:
 
     void setWindow(QWindow* window);
 	void setCurrentContext(ControlContext* context);
+	Q_INVOKABLE void setCurrentContext(QString contextName);
 
 	bool loadInputDriver(QString driverFileName);
 	QStringList findInputDrivers();

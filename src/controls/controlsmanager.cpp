@@ -55,7 +55,7 @@ QWindow* ControlsManager::window() const
 ControlContext* ControlsManager::currentContext() const
 {
 	return _currentContext;
-} // end setCurrentContext
+} // end currentContext
 
 void ControlsManager::setCurrentContext(ControlContext* context)
 {
@@ -73,6 +73,11 @@ void ControlsManager::setCurrentContext(ControlContext* context)
 
 	_logger.info(QString("Current context changed to \"%1\"").arg(context->name()));
 	emit currentContextChanged();
+} // end setCurrentContext
+
+void ControlsManager::setCurrentContext(QString contextName)
+{
+	setCurrentContext(context(contextName));
 } // end setCurrentContext
 
 ControlContext* ControlsManager::context(QString name)
