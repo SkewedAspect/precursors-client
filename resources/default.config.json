@@ -61,6 +61,32 @@
                     }
                 }
             }
+        },
+        "mouse": {
+            "devices": {
+                "Dumb Mouse": {
+                    "contexts": {
+                        "flightsim": {
+                            "Left": {
+                                "changeRate": 0.3,
+                                "slot": "throttle"
+                            },
+                            "Right": {
+                                "changeRate": -0.3,
+                                "slot": "throttle"
+                            },
+                            "X": {
+                                "sensitivity": -10,
+                                "slot": "heading"
+                            },
+                            "Y": {
+                                "sensitivity": 10,
+                                "slot": "pitch"
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
