@@ -65,6 +65,9 @@ public:
 	Q_INVOKABLE void rotatePitch(qreal pitch);
 	Q_INVOKABLE void rotateRoll(qreal roll);
 
+	Q_INVOKABLE QQuaternion nlerp(const QQuaternion& other, float t) const;
+	Q_INVOKABLE QQuaternion slerp(const QQuaternion& other, float t) const;
+
 	Q_INVOKABLE void setState(QString key, QVariant value);
 	Q_INVOKABLE void updateState(QVariantMap delta);
 	Q_INVOKABLE QVariant getState(QString key, QVariant defaultValue);
@@ -92,6 +95,10 @@ public:
 	Q_INVOKABLE static Entity* getEntity(H3DNode node, bool createIfMissing = true);
 	Q_INVOKABLE static bool hasEntity(H3DNode node);
 	Q_INVOKABLE static bool contains(H3DNode thisNode, H3DNode otherNode);
+
+	Q_INVOKABLE static qreal quatToHeading(QQuaternion quat);
+	Q_INVOKABLE static qreal quatToPitch(QQuaternion quat);
+	Q_INVOKABLE static qreal quatToRoll(QQuaternion quat);
 
 	void apply();
 

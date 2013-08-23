@@ -184,6 +184,16 @@ void Entity::rotateRoll(qreal roll)
 	rotate(QQuaternion::fromAxisAndAngle(0, 0, 1, roll));
 } // end rotateRoll
 
+QQuaternion Entity::nlerp(const QQuaternion& other, float t) const
+{
+	return QQuaternion::nlerp(_orientation, other, t);
+} // end nlerp
+
+QQuaternion Entity::slerp(const QQuaternion& other, float t) const
+{
+	return QQuaternion::slerp(_orientation, other, t);
+} // end slerp
+
 
 QList<Entity*> Entity::find(QString childName)
 {
@@ -233,7 +243,7 @@ bool Entity::isDescendantOf(Entity* other)
 bool Entity::isDescendantOf(H3DNode other)
 {
 	return Entity::contains(other, _node);
-} // end contains
+} // end isDescendantOf
 
 
 Entity* Entity::newGroup(QString groupName)
@@ -480,3 +490,18 @@ bool Entity::contains(H3DNode thisNode, H3DNode otherNode)
 
 	return false;
 } // end isDescendantOf
+
+qreal Entity::quatToHeading(QQuaternion quat)
+{
+	return quatToHeading(quat);
+} // end quatToHeading
+
+qreal Entity::quatToPitch(QQuaternion quat)
+{
+	return quatToPitch(quat);
+} // end quatToPitch
+
+qreal Entity::quatToRoll(QQuaternion quat)
+{
+	return quatToRoll(quat);
+} // end quatToRoll
