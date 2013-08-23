@@ -284,7 +284,6 @@ void Horde3DWindow::updateView()
 		// Set virtual camera parameters
 		float aspectRatio = static_cast<float>(deviceWidth) / deviceHeight;
 		h3dSetupCameraView(_camera->node(), 45.0f, aspectRatio, 0.01f, maxViewDistance());
-		//_camDolly->scheduleOnce();
 		_camera->scheduleOnce();
 
 		H3DRes cameraPipeRes = h3dGetNodeParamI(_camera->node(), H3DCamera::PipeResI);
