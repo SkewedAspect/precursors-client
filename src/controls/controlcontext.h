@@ -61,6 +61,6 @@ private:
 	ControlBindingMapHash _bindingMaps;
 
 	PLogger& _logger;
-};
+}; // end ControlContext
 
 #endif // CONTROLCONTEXT_H
