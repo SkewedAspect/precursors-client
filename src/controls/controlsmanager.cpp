@@ -12,6 +12,7 @@
 #include <QPluginLoader>
 #include <QJsonDocument>
 #include <QTextStream>
+#include <QTimer>
 
 
 ControlsManager::ControlsManager(QObject* parent) :
@@ -66,14 +67,24 @@ void ControlsManager::setCurrentContext(ControlContext* context)
 
 	_currentContext = context;
 
-	if(context)
+	// Wait until events have been processed so we don't double-trigger context-switching input events.
+	QTimer::singleShot(0, this, SLOT(updateCurrentContextIsActive()));
+} // end setCurrentContext
+
+void ControlsManager::updateCurrentContextIsActive()
+{
+	if(_currentContext)
 	{
-		context->setIsActive(true);
+		_currentContext->setIsActive(true);
+		_logger.info(QString("Current context changed to \"%1\".").arg(_currentContext->name()));
+	}
+	else
+	{
+		_logger.info("Current context unset.");
 	} // end if
 
-	_logger.info(QString("Current context changed to \"%1\"").arg(context->name()));
 	emit currentContextChanged();
-} // end setCurrentContext
+} // end updateCurrentContextIsActive
 
 void ControlsManager::setCurrentContext(QString contextName)
 {

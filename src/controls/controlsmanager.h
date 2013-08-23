@@ -77,6 +77,8 @@ public slots:
 	void onAxisSignalUpdated(float position);
 	void onButtonSignalUpdated(bool pressed, bool repeating);
 
+	void updateCurrentContextIsActive();
+
 private:
 	ControlSlotHash _controlSlots;
     InputDriverHash _drivers;
