@@ -6,10 +6,24 @@
         "heading": "analog",
         "pitch": "analog",
         "roll": "analog",
+        "cameraZoom": "analog",
         "fire": "digital",
         "coast": "digital",
         "headlights": "digital",
         "grabMouse": "digital",
+        "switchToCapitalMode": "digital",
+        "quit": "digital"
+    },
+    "capital": {
+        "throttle": "analog",
+        "cameraHeading": "analog",
+        "cameraPitch": "analog",
+        "cameraZoom": "analog",
+        "fire": "digital",
+        "reorient": "digital",
+        "headlights": "digital",
+        "grabMouse": "digital",
+        "switchToFlightsimMode": "digital",
         "quit": "digital"
     }
 }
