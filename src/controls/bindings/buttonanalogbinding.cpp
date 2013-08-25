@@ -17,6 +17,7 @@ ButtonAnalogBinding::ButtonAnalogBinding(ControlBindingMap* bindingMap) :
 		_mode(BM_UNDEFINED),
 		_momentaryValue(0),
 		_valueToSet(0),
+		_incrementValue(0),
 		_changeRate(0),
 		_invert(false)
 {
@@ -41,10 +42,20 @@ float ButtonAnalogBinding::valueToSet()
     return _valueToSet;
 } // end valueToSet
 
+float ButtonAnalogBinding::incrementValue()
+{
+	return _incrementValue;
+} // end incrementValue
+
 float ButtonAnalogBinding::changeRate()
 {
     return _changeRate;
 } // end changeRate
+
+bool ButtonAnalogBinding::invert()
+{
+	return _invert;
+} // end invert
 
 bool ButtonAnalogBinding::isOn()
 {
@@ -65,12 +76,24 @@ void ButtonAnalogBinding::setValueToSet(float val)
     emit valueToSetChanged();
 } // end setValueToSet
 
+void ButtonAnalogBinding::setIncrementValue(float val)
+{
+    _incrementValue = val;
+    setMode(BM_INCREMENT);
+    emit incrementValueChanged();
+} // end setIncrementValue
+
 void ButtonAnalogBinding::setChangeRate(float val)
 {
     _changeRate = val;
     setMode(BM_CHANGERATE);
     emit changeRateChanged();
 } // end setChangeRate
+
+void ButtonAnalogBinding::setInvert(bool invert)
+{
+	_invert = invert;
+} // end setInvert
 
 bool ButtonAnalogBinding::configure(QVariantMap bindingDef)
 {
@@ -84,13 +107,22 @@ bool ButtonAnalogBinding::configure(QVariantMap bindingDef)
 		setValueToSet(bindingDef["valueToSet"].toFloat());
 	} // end if
 
+    if(bindingDef.contains("incrementValue"))
+	{
+		setIncrementValue(bindingDef["incrementValue"].toFloat());
+	} // end if
+
     if(bindingDef.contains("changeRate"))
 	{
 		setChangeRate(bindingDef["changeRate"].toFloat());
 	} // end if
 
-	_invert = bindingDef.value("invert", false).toBool();
-    void invertChanged();
+	bool newInvert = bindingDef.value("invert", false).toBool();
+	if(newInvert != _invert)
+	{
+		_invert = newInvert;
+		emit invertChanged();
+	} // end if
 } // end configure
 
 /*********************************************************************************************************************/
@@ -124,11 +156,14 @@ void ButtonAnalogBinding::onSignalUpdated(bool pressed, bool repeating)
 				case BM_MOMENTARY:
 					emit momentaryStateSet();
 					break;
-				case BM_CHANGERATE:
-					emit changeRateSet();
-					break;
 				case BM_SETVALUE:
 					emit setTo(_valueToSet);
+					break;
+				case BM_INCREMENT:
+					emit increment(_incrementValue);
+					break;
+				case BM_CHANGERATE:
+					emit changeRateSet();
 					break;
 			} // end switch
 		} // end if
@@ -145,18 +180,21 @@ void ButtonAnalogBinding::setMode(BindingMode newMode)
 	{
 		if(isActive())
 		{
-			// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the current
-			// mode did, so we need to tell our slot to update.
+			// In this case, although the values of `mode` and `isOn` didn't change, one of the parameters for the
+			// current mode did, so we need to tell our slot to update.
 			switch(_mode)
 			{
 				case BM_MOMENTARY:
 					emit momentaryStateSet();
 					break;
-				case BM_CHANGERATE:
-					emit changeRateSet();
-					break;
 				case BM_SETVALUE:
 					emit setTo(_valueToSet);
+					break;
+				case BM_INCREMENT:
+					emit increment(_incrementValue);
+					break;
+				case BM_CHANGERATE:
+					emit changeRateSet();
 					break;
 			} // end switch
 		} // end if

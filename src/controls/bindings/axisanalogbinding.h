@@ -18,20 +18,26 @@ class AxisAnalogBinding : public ControlBinding
     Q_PROPERTY(float sensitivity MEMBER _sensitivity NOTIFY sensitivityChanged)
     Q_PROPERTY(float offset MEMBER _offset NOTIFY offsetChanged)
     Q_PROPERTY(float deadZone MEMBER _deadZone NOTIFY deadZoneChanged)
+	Q_PROPERTY(bool delta READ isDelta WRITE setDelta NOTIFY deltaChanged)
 
 public:
     explicit AxisAnalogBinding(ControlBindingMap* bindingMap);
 
 	float value();
+	bool isDelta();
+
+	void setDelta(bool isDelta);
 
 	virtual bool configure(QVariantMap bindingDef);
 
 signals:
     void setTo(float value);
+	void changeRateSet();
 
     void sensitivityChanged();
     void offsetChanged();
     void deadZoneChanged();
+    void deltaChanged();
 
 public slots:
     void onSignalUpdated(float position);
@@ -42,6 +48,7 @@ private:
     float _sensitivity;
     float _offset;
     float _deadZone;
+	bool _isDelta;
 
 	PLogger& _logger;
 }; // end AxisAnalogBinding

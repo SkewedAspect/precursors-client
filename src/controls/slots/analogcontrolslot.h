@@ -32,8 +32,9 @@ public:
 
 public slots:
 	void onBindingMomentaryStateSet();
-	void onBindingChangeRateSet();
 	void onBindingSetTo(float val);
+	void onBindingIncrement(float val);
+	void onBindingChangeRateSet();
 	virtual void onBindingAttached(ControlBinding* binding);
 	virtual void onBindingRemoved(ControlBinding* binding);
 

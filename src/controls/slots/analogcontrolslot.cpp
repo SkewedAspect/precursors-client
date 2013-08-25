@@ -1,6 +1,7 @@
 #include "analogcontrolslot.h"
 #include "controls/controlcontext.h"
 #include "controls/bindings/buttonanalogbinding.h"
+#include "controls/bindings/axisanalogbinding.h"
 
 
 AnalogControlSlot::AnalogControlSlot(QString name, ControlContext* context) :
@@ -51,6 +52,18 @@ void AnalogControlSlot::onBindingMomentaryStateSet()
 	updateValue();
 } // end onBindingMomentaryStateChanged
 
+void AnalogControlSlot::onBindingSetTo(float val)
+{
+	_accumulatedValue = val;
+	updateValue();
+} // end onBindingSetTo
+
+void AnalogControlSlot::onBindingIncrement(float val)
+{
+	_accumulatedValue += val;
+	updateValue();
+} // end onBindingIncrement
+
 void AnalogControlSlot::onBindingChangeRateSet()
 {
 	int elapsedMS = _timeSinceLastROC.restart();
@@ -66,7 +79,14 @@ void AnalogControlSlot::onBindingChangeRateSet()
 		if(buttonAnalog && buttonAnalog->mode() == ButtonAnalogBinding::BM_CHANGERATE && buttonAnalog->isOn())
 		{
 			_accumulatedRateOfChange += buttonAnalog->changeRate();
-			break;
+		}
+		else
+		{
+			AxisAnalogBinding* axisAnalog = qobject_cast<AxisAnalogBinding*>(binding);
+			if(axisAnalog && axisAnalog->isDelta())
+			{
+				_accumulatedRateOfChange += axisAnalog->value();
+			} // end if
 		} // end if
 	} // end foreach
 
@@ -84,21 +104,6 @@ void AnalogControlSlot::onBindingChangeRateSet()
 	updateValue();
 } // end onBindingChangeRateChanged
 
-void AnalogControlSlot::timerEvent(QTimerEvent* event)
-{
-	int elapsedMS = _timeSinceLastROC.restart();
-
-	_accumulatedValue += _accumulatedRateOfChange * elapsedMS / 1000;
-
-	updateValue();
-} // end timerEvent
-
-void AnalogControlSlot::onBindingSetTo(float val)
-{
-	_accumulatedValue = val;
-	updateValue();
-} // end onBindingSetTo
-
 void AnalogControlSlot::onBindingAttached(ControlBinding* binding)
 {
 	ControlSlot::onBindingAttached(binding);
@@ -108,6 +113,15 @@ void AnalogControlSlot::onBindingRemoved(ControlBinding* binding)
 {
 	ControlSlot::onBindingRemoved(binding);
 } // end onBindingRemoved
+
+void AnalogControlSlot::timerEvent(QTimerEvent* event)
+{
+	int elapsedMS = _timeSinceLastROC.restart();
+
+	_accumulatedValue += _accumulatedRateOfChange * elapsedMS / 1000;
+
+	updateValue();
+} // end timerEvent
 
 void AnalogControlSlot::updateValue()
 {

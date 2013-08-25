@@ -14,6 +14,7 @@ AxisAnalogBinding::AxisAnalogBinding(ControlBindingMap* bindingMap) :
 		_sensitivity(1),
 		_offset(0),
 		_deadZone(0),
+		_isDelta(false),
 		_logger(PLogManager::getLogger("AxisAnalogBinding")),
 		ControlBinding(bindingMap)
 {
@@ -24,15 +25,27 @@ float AxisAnalogBinding::value()
 	return _value;
 } // end value
 
+bool AxisAnalogBinding::isDelta()
+{
+	return _isDelta;
+} // end isDelta
+
+void AxisAnalogBinding::setDelta(bool isDelta)
+{
+	_isDelta = isDelta;
+} // end setDelta
+
 bool AxisAnalogBinding::configure(QVariantMap bindingDef)
 {
     _sensitivity = bindingDef.value("sensitivity", 1).toFloat();
     _offset = bindingDef.value("offset", 0.f).toFloat();
     _deadZone = bindingDef.value("deadZone", 0.f).toFloat();
+	_isDelta = bindingDef.value("delta", false).toBool();
 
     emit sensitivityChanged();
     emit offsetChanged();
     emit deadZoneChanged();
+    emit deltaChanged();
 
 	//TODO: Actually check for errors
 	return true;
@@ -79,7 +92,14 @@ void AxisAnalogBinding::onSignalUpdated(float position)
 		_value = value;
 		if(isActive())
 		{
-			emit setTo(_value);
+			if(_isDelta)
+			{
+				emit changeRateSet();
+			}
+			else
+			{
+				emit setTo(_value);
+			} // end if
 		} // end if
     } // end if
 } // onSignalUpdated

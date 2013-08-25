@@ -89,6 +89,7 @@ ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, Contr
 				case ControlSlot::ANALOG:
 					binding = new AxisAnalogBinding(this);
 					connect(binding, SIGNAL(setTo(float)), controlSlot, SLOT(onBindingSetTo(float)));
+					connect(binding, SIGNAL(changeRateSet()), controlSlot, SLOT(onBindingChangeRateSet()));
 					break;
 				case ControlSlot::DIGITAL:
 					binding = new AxisDigitalBinding(this);
@@ -108,8 +109,9 @@ ControlBinding* ControlBindingMap::createBinding(InputSignal* inputSignal, Contr
 				case ControlSlot::ANALOG:
 					binding = new ButtonAnalogBinding(this);
 					connect(binding, SIGNAL(momentaryStateSet()), controlSlot, SLOT(onBindingMomentaryStateSet()));
-					connect(binding, SIGNAL(changeRateSet()), controlSlot, SLOT(onBindingChangeRateSet()));
 					connect(binding, SIGNAL(setTo(float)), controlSlot, SLOT(onBindingSetTo(float)));
+					connect(binding, SIGNAL(increment(float)), controlSlot, SLOT(onBindingIncrement(float)));
+					connect(binding, SIGNAL(changeRateSet()), controlSlot, SLOT(onBindingChangeRateSet()));
 					break;
 				case ControlSlot::DIGITAL:
 					binding = new ButtonDigitalBinding(this);
