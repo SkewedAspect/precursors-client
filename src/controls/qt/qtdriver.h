@@ -13,6 +13,7 @@ class QKeyEvent;
 class QMouseEvent;
 class QScreen;
 class QTimer;
+class QWheelEvent;
 
 class GenericDevice;
 class AxisInputSignal;
@@ -39,22 +40,23 @@ public slots:
 	void onKeyPressed(QKeyEvent* event);
 	void onKeyReleased(QKeyEvent* event);
 
+	void onMouseTimeout();
+
 	void onMouseMoved(QMouseEvent* event, QPoint screenDelta);
 	void onMousePressed(QMouseEvent* event);
 	void onMouseReleased(QMouseEvent* event);
-
-	void onMouseTimeout();
+	void onMouseWheel(QWheelEvent* event);
 
 protected:
 	QSize _screenSize;
 
 	GenericDevice* _keyboardDevice;
 	QHash<int, ButtonInputSignal*> _keyboardButtons;
-	QTimer* _mouseTimer;
 
 	GenericDevice* _mouseDevice;
 	QHash<QString, AxisInputSignal*> _mouseAxes;
 	QHash<Qt::MouseButton, ButtonInputSignal*> _mouseButtons;
+	QTimer* _mouseTimer;
 
 	PLogger& _logger;
 	PSettingsManager& _settings;

@@ -372,6 +372,19 @@ void Horde3DWindow::mouseReleaseEvent(QMouseEvent* event)
 	} // end if
 } // end mouseReleaseEvent
 
+void Horde3DWindow::wheelEvent(QWheelEvent* event)
+{
+	if(_grabMouse)
+	{
+		emit mouseWheel(event);
+		event->accept();
+	}
+	else
+	{
+		QQuickWindow::wheelEvent(event);
+	} // end if
+} // end mouseReleaseEvent
+
 void Horde3DWindow::onBeforeRendering()
 {
 	float frameTime = lastFrameStart.elapsed();
@@ -435,8 +448,9 @@ void Horde3DWindow::init()
 	_mgr.setAntiAliasingSamples(_qtContext->format().samples());
 
 	_camDolly = _mgr.root()->newGroup("camera dolly");
+	_camDolly->rotatePitch(-11);
 	_camera = _camDolly->newCamera("cam");
-	_camera->setPos(0, 20, 100);
+	_camera->setPos(0, 0, 100);
 	emit cameraChanged(_camera);
 
 	setClearBeforeRendering(false);

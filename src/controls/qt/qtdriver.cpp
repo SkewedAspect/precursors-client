@@ -15,6 +15,7 @@ QtDriver::QtDriver() :
 		InputDriver(),
 		_keyboardDevice(NULL),
 		_mouseDevice(NULL),
+		_mouseTimer(NULL),
 		_logger(PLogManager::getLogger("QtDriver")),
 		_settings(PSettingsManager::instance())
 {
@@ -474,9 +475,13 @@ void QtDriver::setWindow(QWindow* window)
 
 		_mouseAxes["X"] = new AxisInputSignal(_mouseDevice, "X", "horizontal movement");
 		_mouseAxes["Y"] = new AxisInputSignal(_mouseDevice, "Y", "vertical movement");
+		_mouseAxes["Wheel X"] = new AxisInputSignal(_mouseDevice, "Wheel X", "horizontal scrolling");
+		_mouseAxes["Wheel Y"] = new AxisInputSignal(_mouseDevice, "Wheel Y", "vertical scrolling");
 
 		_mouseDevice->addAxisSignal(_mouseAxes["X"]);
 		_mouseDevice->addAxisSignal(_mouseAxes["Y"]);
+		_mouseDevice->addAxisSignal(_mouseAxes["Wheel X"]);
+		_mouseDevice->addAxisSignal(_mouseAxes["Wheel Y"]);
 
 #define BTN(BUTTON, NAME, DESC)	_mouseButtons[Qt::BUTTON] = new ButtonInputSignal(_mouseDevice, NAME, DESC)
 		BTN(LeftButton, "Left", "The left button. (The left button may be the right button on left-handed mice.)");
@@ -524,6 +529,7 @@ void QtDriver::setWindow(QWindow* window)
 	connect(_window, SIGNAL(mouseMoved(QMouseEvent*, QPoint)), this, SLOT(onMouseMoved(QMouseEvent*, QPoint)));
 	connect(_window, SIGNAL(mousePressed(QMouseEvent*)), this, SLOT(onMousePressed(QMouseEvent*)));
 	connect(_window, SIGNAL(mouseReleased(QMouseEvent*)), this, SLOT(onMouseReleased(QMouseEvent*)));
+	connect(_window, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(onMouseWheel(QWheelEvent*)));
 
 	connect(_window, SIGNAL(keyPressed(QKeyEvent*)), this, SLOT(onKeyPressed(QKeyEvent*)));
 	connect(_window, SIGNAL(keyReleased(QKeyEvent*)), this, SLOT(onKeyReleased(QKeyEvent*)));
@@ -542,7 +548,7 @@ void QtDriver::onKeyPressed(QKeyEvent* event)
 	}
 	else
 	{
-		_logger.error(QString("WTF!?!? %1").arg(event->key()));
+		_logger.error(QString("onKeyPressed: Unrecognized key %1!").arg(event->key()));
 	} // end if
 } // end onKeyPressed
 
@@ -554,9 +560,19 @@ void QtDriver::onKeyReleased(QKeyEvent* event)
 	}
 	else
 	{
-		_logger.error(QString("WTF!?!? %1").arg(event->key()));
+		_logger.error(QString("onKeyReleased: Unrecognized key %1!").arg(event->key()));
 	} // end if
 } // end onKeyReleased
+
+void QtDriver::onMouseTimeout()
+{
+    _mouseTimer->stop();
+
+	_mouseAxes["X"]->emitUpdated(0);
+	_mouseAxes["Y"]->emitUpdated(0);
+	_mouseAxes["Wheel X"]->emitUpdated(0);
+	_mouseAxes["Wheel Y"]->emitUpdated(0);
+} // end onMouseTimeout
 
 void QtDriver::onMouseMoved(QMouseEvent* event, QPoint screenDelta)
 {
@@ -578,10 +594,16 @@ void QtDriver::onMouseReleased(QMouseEvent* event)
 	_mouseButtons[event->button()]->emitUpdated(false);
 } // end onMouseReleased
 
-void QtDriver::onMouseTimeout()
+void QtDriver::onMouseWheel(QWheelEvent* event)
 {
-    _mouseTimer->stop();
+	QPoint wheelDelta = event->angleDelta();
+    if(!event->pixelDelta().isNull())
+	{
+		wheelDelta = event->pixelDelta();
+    } // end if
 
-	_mouseAxes["X"]->emitUpdated(0);
-	_mouseAxes["Y"]->emitUpdated(0);
-} // end onMouseTimeout
+    _mouseTimer->start(20);
+
+	_mouseAxes["Wheel X"]->emitUpdated(wheelDelta.x());
+	_mouseAxes["Wheel Y"]->emitUpdated(wheelDelta.y());
+} // end onMouseWheel

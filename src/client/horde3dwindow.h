@@ -64,6 +64,7 @@ signals:
 	void mouseMoved(QMouseEvent* event, QPoint screenDelta);
 	void mousePressed(QMouseEvent* event);
 	void mouseReleased(QMouseEvent* event);
+	void mouseWheel(QWheelEvent* event);
 
 protected slots:
 	void onInitFinished();
@@ -83,6 +84,7 @@ protected:
 	virtual void mouseMoveEvent(QMouseEvent* event);
 	virtual void mousePressEvent(QMouseEvent* event);
 	virtual void mouseReleaseEvent(QMouseEvent* event);
+	virtual void wheelEvent(QWheelEvent* ev);
 
 private:
 	void updateView();
