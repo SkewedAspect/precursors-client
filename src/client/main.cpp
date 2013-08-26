@@ -17,6 +17,7 @@
 #include "horde3ditem.h"
 #include "horde3dmanager.h"
 #include "horde3dwindow.h"
+#include "math3d.h"
 #include "timestamp_sync.h"
 
 int main(int argc, char **argv)
@@ -39,6 +40,7 @@ int main(int argc, char **argv)
 	ControlsManager& controls = ControlsManager::instance();
     Horde3DManager& horde3d = Horde3DManager::instance();
     TimestampSync& timestamp = TimestampSync::instance();
+	Math3D math3d;
 
 	// Load controls contexts
 	if(!controls.loadContextDefs("resources/contexts.json"))
@@ -65,6 +67,8 @@ int main(int argc, char **argv)
     qmlRegisterType<AnalogControlSlot>();
     qmlRegisterType<DigitalControlSlot>();
 
+	qmlRegisterUncreatableType<Math3D, 1>("Precursors", 1, 0, "Math3D", "Math3D cannot be instantiated.");
+
     // Setup QML
     QQmlApplicationEngine engine;
 
@@ -76,6 +80,7 @@ int main(int argc, char **argv)
     engine.rootContext()->setContextProperty("controls", &controls);
     engine.rootContext()->setContextProperty("horde3d", &horde3d);
     engine.rootContext()->setContextProperty("timestamp", &timestamp);
+    engine.rootContext()->setContextProperty("math3d", &math3d);
 
     // load our main qml file
     engine.load("resources/qml/launcher.qml");

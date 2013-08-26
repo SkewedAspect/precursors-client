@@ -6,6 +6,8 @@
         "heading": "analog",
         "pitch": "analog",
         "roll": "analog",
+        "cameraHeading": "analog",
+        "cameraPitch": "analog",
         "cameraZoom": "analog",
         "fire": "digital",
         "coast": "digital",
@@ -16,6 +18,9 @@
     },
     "capital": {
         "throttle": "analog",
+        "heading": "analog",
+        "pitch": "analog",
+        "roll": "analog",
         "cameraHeading": "analog",
         "cameraPitch": "analog",
         "cameraZoom": "analog",

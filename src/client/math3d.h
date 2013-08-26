@@ -6,15 +6,34 @@
 #include <QtGui/QVector3D>
 
 
-QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll);
-template<typename T> void quatToHPR(QQuaternion quat, T* heading, T* pitch, T* roll);
-qreal quatToHeading(QQuaternion quat);
-qreal quatToPitch(QQuaternion quat);
-qreal quatToRoll(QQuaternion quat);
+class Math3D : public QObject
+{
+	Q_OBJECT
 
-void matrixToEuler(QMatrix4x4 mat, qreal *heading, qreal *pitch, qreal *roll);
-qreal matrixToHeading(QMatrix4x4 mat);
-qreal matrixToPitch(QMatrix4x4 mat);
-qreal matrixToRoll(QMatrix4x4 mat);
+public:
+	Q_INVOKABLE static QQuaternion eulerToQuat(qreal heading, qreal pitch, qreal roll);
+	Q_INVOKABLE static qreal quatToHeading(const QQuaternion& quat);
+	Q_INVOKABLE static qreal quatToPitch(const QQuaternion& quat);
+	Q_INVOKABLE static qreal quatToRoll(const QQuaternion& quat);
+	template<typename T> static void quatToHPR(const QQuaternion& quat, T* heading, T* pitch, T* roll);
+
+	Q_INVOKABLE static qreal matrixToHeading(const QMatrix4x4& mat);
+	Q_INVOKABLE static qreal matrixToPitch(const QMatrix4x4& mat);
+	Q_INVOKABLE static qreal matrixToRoll(const QMatrix4x4& mat);
+	static void matrixToEuler(const QMatrix4x4& mat, qreal *heading, qreal *pitch, qreal *roll);
+
+	Q_INVOKABLE static QQuaternion quatNormalized(const QQuaternion& quat);
+	Q_INVOKABLE static QQuaternion quatConjugate(const QQuaternion& quat);
+	Q_INVOKABLE static QQuaternion quatReciprocal(const QQuaternion& quat);
+	Q_INVOKABLE static QQuaternion quatLog(const QQuaternion& quat);
+
+	Q_INVOKABLE static QQuaternion quatMult(const QQuaternion& q1, const QQuaternion& q2);
+	Q_INVOKABLE static QQuaternion quatMult(const QQuaternion& q1, const float q2);
+	Q_INVOKABLE static QQuaternion quatMult(const float q1, const QQuaternion& q2);
+	Q_INVOKABLE static QQuaternion quatSubtract(const QQuaternion& q1, const QQuaternion& q2);
+
+	Q_INVOKABLE static QQuaternion nlerp(const QQuaternion& q1, const QQuaternion& q2, float t);
+	Q_INVOKABLE static QQuaternion slerp(const QQuaternion& q1, const QQuaternion& q2, float t);
+}; // end Math3D
 
 #endif // MATH3D_H
