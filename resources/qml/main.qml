@@ -25,7 +25,9 @@ GameWindow {
                 {
                     if (event.action == 'message')
                     {
-                        chatText.text += '\n' + event.user + ': ' + event.payload;
+                        chatText.text +=  event.user + ': ' + event.payload + '\n';
+                        chatText.cursorPosition = chatText.text.length
+
                     }
                     else if (event.action == 'notification')
                     {
@@ -55,24 +57,28 @@ GameWindow {
             GridLayout {
                 id: chatGrid
                 rows: 2
+                columns: 2
                 anchors.fill: parent
                 Layout.fillHeight: true
 
                 // TODO: wrap with 'Flickable' for auto-scrolling http://stackoverflow.com/questions/5395106/qml-text-scroll
-                Text {
+                TextArea {
                     id: chatText
-                    width: parent.width
-                    Layout.preferredHeight: 200
-                    color: "white"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    //textColor: "white"
                     Layout.columnSpan: 2
+                    Layout.row: 0
+                    backgroundVisible: false
+                    readOnly: true
                 }
 
                 TextField {
                     id: chatField
-                    Layout.row: 2
-                    Layout.column: 1
+                    Layout.row: 1
+                    Layout.column: 0
                     Layout.alignment: Qt.AlignBottom
-                    Layout.minimumWidth: 325
+                    Layout.fillWidth: true
 
                     onAccepted: {
                         chatButton.sendMessage();
@@ -83,8 +89,8 @@ GameWindow {
                     id: chatButton
                     text: "Send"
                     tooltip: "Press to send message"
-                    Layout.row: 2
-                    Layout.column: 2
+                    Layout.row: 1
+                    Layout.column: 1
                     Layout.alignment: Qt.AlignBottom
 
                     // TODO: implement commands, shortcuts
