@@ -61,7 +61,6 @@ GameWindow {
                 anchors.fill: parent
                 Layout.fillHeight: true
 
-                // TODO: wrap with 'Flickable' for auto-scrolling http://stackoverflow.com/questions/5395106/qml-text-scroll
                 TextArea {
                     id: chatText
                     Layout.fillWidth: true
