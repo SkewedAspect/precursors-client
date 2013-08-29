@@ -19,6 +19,23 @@ GameWindow {
         title: "Insert Chat Here"
         style: SubWindowStyle {}
 
+        Component.onCompleted: {
+            networking.incomingMessage.connect(function(channel, event){
+                if (channel == 'chat')
+                {
+                    if (event.action == 'message')
+                    {
+                        chatText.text += '\n' + event.user + ': ' + event.payload;
+                    }
+                    else if (event.action == 'notification')
+                    {
+                        chatText.test += '\n' + event.payload;
+                    }
+                }
+            });
+
+        }
+
         Behavior on opacity {
             NumberAnimation{
                 duration: 100
@@ -30,12 +47,65 @@ GameWindow {
             hoverEnabled: true
             anchors.fill: parent
             onEntered: {
-                console.log("Entered");
                 chatWindow.opacity = .8;
             }
             onExited: {
-                console.log("Exited");
                 chatWindow.opacity = .2;
+            }
+            GridLayout {
+                id: chatGrid
+                rows: 2
+                anchors.fill: parent
+                Layout.fillHeight: true
+
+                // TODO: wrap with 'Flickable' for auto-scrolling http://stackoverflow.com/questions/5395106/qml-text-scroll
+                Text {
+                    id: chatText
+                    width: parent.width
+                    Layout.preferredHeight: 200
+                    color: "white"
+                    Layout.columnSpan: 2
+                }
+
+                TextField {
+                    id: chatField
+                    Layout.row: 2
+                    Layout.column: 1
+                    Layout.alignment: Qt.AlignBottom
+                    Layout.minimumWidth: 325
+
+                    onAccepted: {
+                        chatButton.sendMessage();
+                    }
+                }
+
+                Button {
+                    id: chatButton
+                    text: "Send"
+                    tooltip: "Press to send message"
+                    Layout.row: 2
+                    Layout.column: 2
+                    Layout.alignment: Qt.AlignBottom
+
+                    // TODO: implement commands, shortcuts
+                    onClicked: {
+                        sendMessage();
+                    }
+
+                    property var sendMessage: function()
+                    {
+                        networking.sendEvent("chat", {'room': 'global', 'action': 'message', 'message': chatField.text}, PChannels.CM_RELIABLE)
+                    }
+
+                    Keys.onEnterPressed: {
+                        console.log('Enter pressed')
+                        sendMessage();
+                    }
+
+                    Keys.onReturnPressed: {
+                        sendMessage();
+                    }
+                }
             }
         }
     }
