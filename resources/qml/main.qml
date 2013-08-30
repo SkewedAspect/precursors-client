@@ -87,6 +87,11 @@ GameWindow {
                     Layout.column: 0
                     Layout.alignment: Qt.AlignBottom
                     Layout.fillWidth: true
+                    focus: false
+
+                    Keys.onEscapePressed: {
+                        focus = false;
+                    }
 
                     onAccepted: {
                         chatButton.sendMessage();
@@ -109,6 +114,7 @@ GameWindow {
                     property var sendMessage: function()
                     {
                         networking.sendEvent("chat", {'room': 'global', 'action': 'message', 'message': chatField.text}, PChannels.CM_RELIABLE)
+                        chatField.text = '';
                     }
 
                     Keys.onEnterPressed: {
