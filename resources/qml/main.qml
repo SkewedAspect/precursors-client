@@ -65,11 +65,20 @@ GameWindow {
                     id: chatText
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    //textColor: "white"
+                    textColor: "white"
                     Layout.columnSpan: 2
                     Layout.row: 0
                     backgroundVisible: false
                     readOnly: true
+                    wrapMode: TextEdit.Wrap
+
+                    style: TextFieldStyle {
+                        background: Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            color: "#00000000"
+                        }
+                    }
                 }
 
                 TextField {
