@@ -31,10 +31,8 @@ function sendCommand(commandName /*, ... */)
     }, Networking.PChannels.CM_RELIABLE);
 } // end sendCommand
 
-function defineContextSlots(contextName, slots)
+function defineContextSlots(context, slots)
 {
-    var context = controls.context(contextName);
-
     _.forIn(slots.digital, function(handler, slotName)
     {
         var slot = context.digitalSlot(slotName);
@@ -81,11 +79,6 @@ function connectSignals()
     defineCapital();
 } // end connectSignals
 
-function cameraPitch(value)
-{
-    mainWindow.camDolly.rotatePitch(value);
-} // end cameraPitch
-
 function cameraZoom(value)
 {
     mainWindow.camera.setPos(0, 0, value);
@@ -100,13 +93,13 @@ function defineFlightsim()
         if(context.isActive)
         {
             // This context was just selected.
-            mainWindow.camDolly.orientation = Qt.quaternion(1, 0, 0, 0); // Reset orientation to the default.
+            mainWindow.camDolly.orientation = identityQuat(); // Reset orientation to the default.
             mainWindow.camDolly.rotatePitch(-11); // Rotate to match default camera orientation for flightsim.
             mainWindow.camDolly.parent = horde3d.avatar;
         } // end if
     }); // end isActiveChanged
 
-    defineContextSlots('flightsim', {
+    defineContextSlots(context, {
         digital: {
             quit: momentary(function()
             {
@@ -144,19 +137,71 @@ function defineFlightsim()
             lift: _.partial(sendCommand, 'lift'),
             throttle: _.partial(sendCommand, 'throttle'),
 
-            heading: _.partial(sendCommand, 'yaw'),
+            heading: _.partial(sendCommand, 'heading'),
             pitch: _.partial(sendCommand, 'pitch'),
             roll: _.partial(sendCommand, 'roll'),
 
             cameraHeading: function(value)
             {
-                mainWindow.camDolly.rotateHeading(value);
+                mainWindow.camDolly.rotateHeading(value * Math.PI);
             },
-            cameraPitch: cameraPitch,
+            cameraPitch: function(value)
+            {
+                mainWindow.camDolly.rotatePitch(value * Math.PI);
+            },
             cameraZoom: cameraZoom
         }
     });
 } // end defineFlightsim
+
+function identityQuat()
+{
+    return Qt.quaternion(1, 0, 0, 0);
+} // end identityQuat
+
+function eulerToQuat(heading, pitch, roll)
+{
+    var c1 = Math.cos(heading / 2);
+    var c2 = Math.cos(roll / 2);
+    var c3 = Math.cos(pitch / 2);
+    var s1 = Math.sin(heading / 2);
+    var s2 = Math.sin(roll / 2);
+    var s3 = Math.sin(pitch / 2);
+
+    var w = c1 * c2 * c3 - s1 * s2 * s3;
+    var x = s1 * s2 * c3 + c1 * c2 * s3;
+    var y = s1 * c2 * c3 + c1 * s2 * s3;
+    var z = c1 * s2 * c3 - s1 * c2 * s3;
+
+    return Qt.quaternion(w, x, y, z);
+} // end eulerToQuat
+
+function rotationFromTo(from, to)
+{
+    return math3d.quatNormalized(
+            math3d.quatMult(
+                math3d.quatReciprocal(from),
+                to
+                )
+            );
+} // end rotationFromTo
+
+function scaleQuat(quat, scale)
+{
+    var scalar = scale * math3d.quatScalar(quat);
+    return math3d.quatNormalized(math3d.quatFromScalarAndVector(scalar, math3d.quatVector(quat)));
+} // end scaleQuat
+
+function scaleQuat(quat, factor)
+{
+    return math3d.slerp(identityQuat(), quat, factor);
+} // end scaleQuat
+
+function quatAngle(quat)
+{
+    //return 2 * Math.acos(math3d.quatScalar(quat));
+    return 2 * Math.atan2(math3d.vectorLength(math3d.quatVector(quat)), math3d.quatScalar(quat));
+} // end quatAngle
 
 function defineCapital()
 {
@@ -164,100 +209,63 @@ function defineCapital()
     var slots = {
         reorient: context.digitalSlot('reorient')
     };
-	var responsiveness = 0.1;
+	var responsiveness = 1;
 	var camTurntable;
     var shipRotateTimer;
+    var targetHeadingQuat = identityQuat();
+    var targetPitchQuat = identityQuat();
+    var headingVelQuat = identityQuat();
+    var pitchVelQuat = identityQuat();
 
     function updateShipRotation()
     {
         var avatar = horde3d.avatar;
         var avatarQuat = avatar.orientation;
 
-        //var totalCamOrientation = math3d.quatMult(mainWindow.camDolly.orientation, camTurntable.orientation);
-        var totalCamOrientation = camTurntable.orientation;
-        var lerped = math3d.slerp(totalCamOrientation, avatarQuat, responsiveness);
+        if(slots.reorient.state)
+        {
+            // Set the target orientation to match the camera.
+            targetHeadingQuat = camTurntable.orientation;
+            targetPitchQuat = mainWindow.camDolly.orientation;
+        }
+        else
+        {
+            // Update the target orientation based on the current heading/pitch velocities from input.
+            //FIXME: Use the frame time here instead of 0.1!
+            targetHeadingQuat = math3d.quatMult(targetHeadingQuat, scaleQuat(headingVelQuat, 0.1));
+            targetPitchQuat = constrainPitch(math3d.quatMult(targetPitchQuat, scaleQuat(pitchVelQuat, 0.1)));
+        } // end if
 
-        /*
-        var lerpDerivative = math3d.quatNormalized(
-                math3d.quatMult(
-                    math3d.quatMult(
-                        math3d.quatLog(
-                            math3d.quatMult(
-                                avatarQuat,
-                                math3d.quatReciprocal(totalCamOrientation)
-                                )
-                            ),
-                            lerped
-                        ),
-                    math3d.quatReciprocal(avatarQuat)
-                    )
-                );
-        */
-
-        /*
-        var lerpDerivative = math3d.quatNormalized(
-                math3d.quatMult(
-                    math3d.quatMult(
-                        math3d.quatLog(
-                            math3d.quatMult(
-                                totalCamOrientation,
-                                math3d.quatReciprocal(avatarQuat)
-                                )
-                            ),
-                            lerped
-                        ),
-                    math3d.quatReciprocal(avatarQuat)
-                    )
-                );
-        */
-
-        /*
-        var lerpDerivative = math3d.quatNormalized(
-                math3d.quatLog(
-                    math3d.quatMult(
-                        totalCamOrientation,
-                        math3d.quatReciprocal(avatarQuat)
-                        )
-                    )
-                );
-        */
-
-        //var desiredRotation = lerpDerivative;
-
-        /*
-        console.log(math3d.quatSubtract(totalCamOrientation, avatarQuat));
-
-        var desiredRotation = math3d.quatNormalized(
-                math3d.quatMult(
-                    math3d.quatMult(
-                        math3d.quatSubtract(avatarQuat, totalCamOrientation),
-                        responsiveness
-                        ),
-                    math3d.quatReciprocal(avatarQuat)
-                    )
-                );
-        */
-
-        var desiredRotation = math3d.quatNormalized(
-                math3d.quatMult(
-                    math3d.quatMult(
-                        math3d.quatMult(
-                            totalCamOrientation,
-                            math3d.quatConjugate(avatarQuat)
-                            ),
-                        math3d.quatConjugate(avatarQuat)
-                        ),
-                    responsiveness
-                    )
+        var targetOrientation = math3d.quatMult(targetHeadingQuat, targetPitchQuat);
+        var desiredRotation = rotationFromTo(
+                avatarQuat,
+                targetOrientation
                 );
 
-        console.log('yaw', math3d.quatToHeading(desiredRotation));
-        console.log('pitch', math3d.quatToPitch(desiredRotation));
-        console.log('roll', math3d.quatToRoll(desiredRotation));
+        var rotAngle = 2 * quatAngle(desiredRotation) / Math.PI;
+        desiredRotation = scaleQuat(desiredRotation, Math.sqrt(Math.abs(rotAngle)) * responsiveness);
 
-        sendCommand('yaw', math3d.quatToHeading(desiredRotation));
-        sendCommand('pitch', math3d.quatToPitch(desiredRotation));
-        sendCommand('roll', math3d.quatToRoll(desiredRotation));
+        var hprFactor = 1;
+        var hprIdx = {
+            heading: 0,
+            pitch: 2,
+            roll: 1
+        };
+
+        function limitHPR(value)
+        {
+            if(Math.abs(value) < 0.00001)
+            {
+                return 0;
+            }
+
+            return Math.min(Math.PI, Math.max(-Math.PI, hprFactor * value));
+        }
+
+        var desiredHPR = math3d.quatToHPR(desiredRotation);
+        sendCommand('heading', limitHPR(hprFactor * desiredHPR[hprIdx.heading]));
+        sendCommand('pitch', limitHPR(hprFactor * desiredHPR[hprIdx.pitch]));
+        sendCommand('roll', limitHPR(hprFactor * desiredHPR[hprIdx.roll]));
     } // end updateShipRotation
 
     context.isActiveChanged.connect(function()
@@ -283,16 +291,25 @@ function defineCapital()
                         );
                 shipRotateTimer.triggered.connect(updateShipRotation);
             } // end if
+            shipRotateTimer.start();
 
             // Reset orientation to the default, then only apply the heading from the ship.
-            camTurntable.orientation = Qt.quaternion(1, 0, 0, 0);
+            camTurntable.orientation = identityQuat();
             camTurntable.rotateHeading(horde3d.avatar.heading * 180 / Math.PI);
 
             mainWindow.camDolly.parent = camTurntable;
+
+            // Set maximum values for rotation debugging controls.
+            mainWindow.debugAngleMax = Math.PI * responsiveness;
+            mainWindow.debugAngleMax = Math.PI;
+        }
+        else
+        {
+            shipRotateTimer.stop();
         } // end if
     }); // end isActiveChanged
 
-    defineContextSlots('capital', {
+    defineContextSlots(context, {
         digital: {
             quit: momentary(function()
             {
@@ -325,8 +342,7 @@ function defineCapital()
                 }
                 else
                 {
-                    shipRotateTimer.stop();
-                    sendCommand('yaw', 0);
+                    sendCommand('heading', 0);
                     sendCommand('pitch', 0);
                     sendCommand('roll', 0);
                 } // end if
@@ -339,16 +355,38 @@ function defineCapital()
         },
         analog: {
             throttle: _.partial(sendCommand, 'throttle'),
-            heading: _.partial(sendCommand, 'yaw'),
-            pitch: _.partial(sendCommand, 'pitch'),
-            roll: _.partial(sendCommand, 'roll'),
+
+            heading: function(value)
+            {
+                headingVelQuat = eulerToQuat(value, 0, 0);
+            },
+            pitch: function(value)
+            {
+                pitchVelQuat = eulerToQuat(0, value, 0);
+            },
 
             cameraHeading: function(value)
             {
-                camTurntable.rotateHeading(value);
+                camTurntable.rotateHeading(value * Math.PI);
             },
-            cameraPitch: cameraPitch,
+            cameraPitch: function(value)
+            {
+                mainWindow.camDolly.rotatePitch(value * Math.PI);
+                mainWindow.camDolly.orientation = constrainPitch(mainWindow.camDolly.orientation);
+            },
             cameraZoom: cameraZoom
         }
     });
+
+    function constrainPitch(quat)
+    {
+        if(quatAngle(quat) > Math.PI / 2)
+        {
+            return eulerToQuat(0, Math.PI / (math3d.quatX(quat) > 0 ? 2 : -2), 0);
+        }
+        else
+        {
+            return quat;
+        } // end if
+    } // end constrainPitch
 } // end defineCapital
