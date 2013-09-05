@@ -130,7 +130,7 @@ ApplicationWindow {
                     font.family: "Titillium Web";
 
                     text: {
-                        var serverText = settings.get("server", "localhost") + ":" + settings.get("port", "6006");
+                        var serverText = settings.get("server", "localhost") + ":" + settings.get("port", 6006);
                         if(serverText != "localhost:6006")
                         {
                             return serverText;
