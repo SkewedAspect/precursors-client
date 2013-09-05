@@ -192,6 +192,20 @@ function scaleQuat(quat, scale)
     return math3d.quatNormalized(math3d.quatFromScalarAndVector(scalar, math3d.quatVector(quat)));
 } // end scaleQuat
 
+function setPosNegBars(posBar, negBar, value, limit)
+{
+    if(value > 0)
+    {
+        posBar.item.progress = Math.min(limit, value);
+        negBar.item.progress = 0;
+    }
+    else
+    {
+        posBar.item.progress = 0;
+        negBar.item.progress = Math.min(limit, -value);
+    } // end if
+} // end setPosNegBars
+
 function scaleQuat(quat, factor)
 {
     return math3d.slerp(identityQuat(), quat, factor);
@@ -245,27 +259,31 @@ function defineCapital()
         var rotAngle = 2 * quatAngle(desiredRotation) / Math.PI;
         desiredRotation = scaleQuat(desiredRotation, Math.sqrt(Math.abs(rotAngle)) * responsiveness);
 
-        var hprFactor = 1;
         var hprIdx = {
             heading: 0,
             pitch: 2,
             roll: 1
         };
 
-        function limitHPR(value)
-        {
-            if(Math.abs(value) < 0.00001)
-            {
-                return 0;
-            }
+        var tgtVelHPR = math3d.quatToHPR(desiredRotation);
+        var tgtVelLimit = debugWindow.angularTgtVelMax;
+        setPosNegBars(debugWindow.posTgtVelHeading, debugWindow.negTgtVelHeading, tgtVelHPR[hprIdx.heading], tgtVelLimit);
+        setPosNegBars(debugWindow.posTgtVelPitch, debugWindow.negTgtVelPitch, tgtVelHPR[hprIdx.pitch], tgtVelLimit);
+        setPosNegBars(debugWindow.posTgtVelRoll, debugWindow.negTgtVelRoll, tgtVelHPR[hprIdx.roll], tgtVelLimit);
 
-            return Math.min(Math.PI, Math.max(-Math.PI, hprFactor * value));
-        }
+        var camHPR = math3d.quatToHPR(targetOrientation);
+        setPosNegBars(debugWindow.posCamHeading, debugWindow.negCamHeading, camHPR[hprIdx.heading], Math.PI);
+        setPosNegBars(debugWindow.posCamPitch, debugWindow.negCamPitch, camHPR[hprIdx.pitch], Math.PI);
+        setPosNegBars(debugWindow.posCamRoll, debugWindow.negCamRoll, camHPR[hprIdx.roll], Math.PI);
 
-        var desiredHPR = math3d.quatToHPR(desiredRotation);
-        sendCommand('heading', limitHPR(hprFactor * desiredHPR[hprIdx.heading]));
-        sendCommand('pitch', limitHPR(hprFactor * desiredHPR[hprIdx.pitch]));
-        sendCommand('roll', limitHPR(hprFactor * desiredHPR[hprIdx.roll]));
+        var shipHPR = math3d.quatToHPR(avatarQuat);
+        setPosNegBars(debugWindow.posShipHeading, debugWindow.negShipHeading, shipHPR[hprIdx.heading], Math.PI);
+        setPosNegBars(debugWindow.posShipPitch, debugWindow.negShipPitch, shipHPR[hprIdx.pitch], Math.PI);
+        setPosNegBars(debugWindow.posShipRoll, debugWindow.negShipRoll, shipHPR[hprIdx.roll], Math.PI);
+
+        sendCommand('heading', tgtVelHPR[hprIdx.heading]);
+        sendCommand('pitch', tgtVelHPR[hprIdx.pitch]);
+        sendCommand('roll', tgtVelHPR[hprIdx.roll]);
     } // end updateShipRotation
 
     context.isActiveChanged.connect(function()
@@ -300,8 +318,7 @@ function defineCapital()
             mainWindow.camDolly.parent = camTurntable;
 
             // Set maximum values for rotation debugging controls.
-            mainWindow.debugAngleMax = Math.PI * responsiveness;
-            mainWindow.debugAngleMax = Math.PI;
+            debugWindow.angularTgtVelMax = Math.PI * responsiveness;
         }
         else
         {
@@ -335,17 +352,6 @@ function defineCapital()
             reorient: function(state)
             {
                 console.log("Got 'reorient'.", state);
-
-                if(state)
-                {
-                    shipRotateTimer.start();
-                }
-                else
-                {
-                    sendCommand('heading', 0);
-                    sendCommand('pitch', 0);
-                    sendCommand('roll', 0);
-                } // end if
             },
 
             headlights: function(state)

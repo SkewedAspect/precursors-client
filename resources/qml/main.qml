@@ -130,6 +130,12 @@ GameWindow {
         }
     }
 
+	DebugWindow {
+		id: debugWindow
+
+		angularTgtVelMax: Math.PI
+		//angularTgtVelMax: 0.7853981633974483
+	}
 
 	SubWindow {
 		id: charWindow
