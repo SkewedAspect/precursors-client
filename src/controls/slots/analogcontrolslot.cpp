@@ -36,6 +36,15 @@ float AnalogControlSlot::value() const
 	return _value;
 } // end value
 
+void AnalogControlSlot::setAccumulatedValue(float value)
+{
+	_accumulatedValue = value;
+	emit accumulatedValueChanged(value);
+
+	_value = _instantaneousValue + _accumulatedValue;
+	emit valueChanged(value);
+} // end setAccumulatedValue
+
 void AnalogControlSlot::onBindingMomentaryStateSet()
 {
 	_instantaneousValue = 0;

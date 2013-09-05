@@ -13,7 +13,7 @@ class AnalogControlSlot : public ControlSlot
     Q_OBJECT
 
     Q_PROPERTY(float instantaneousValue READ instantaneousValue)
-    Q_PROPERTY(float accumulatedValue READ accumulatedValue)
+    Q_PROPERTY(float accumulatedValue READ accumulatedValue WRITE setAccumulatedValue NOTIFY accumulatedValueChanged)
     Q_PROPERTY(float value READ value NOTIFY valueChanged)
 
 public:
@@ -30,6 +30,8 @@ public:
 	/// The actual calculated value.
     float value() const;
 
+	void setAccumulatedValue(float value);
+
 public slots:
 	void onBindingMomentaryStateSet();
 	void onBindingSetTo(float val);
@@ -39,6 +41,7 @@ public slots:
 	virtual void onBindingRemoved(ControlBinding* binding);
 
 signals:
+	void accumulatedValueChanged(float value);
     void valueChanged(float value);
 
 protected:
