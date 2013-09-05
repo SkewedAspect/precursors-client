@@ -79,14 +79,16 @@ function connectSignals()
     defineCapital();
 } // end connectSignals
 
-function cameraZoom(value)
+function setZoom(value)
 {
     mainWindow.camera.setPos(0, 0, value);
-} // end cameraZoom
+} // end setZoom
 
 function defineFlightsim()
 {
     var context = controls.context('flightsim');
+
+    context.analogSlot('cameraZoom').accumulatedValue = settings.get('flightsimCameraZoom', 200);
 
     context.isActiveChanged.connect(function()
     {
@@ -96,6 +98,9 @@ function defineFlightsim()
             mainWindow.camDolly.orientation = identityQuat(); // Reset orientation to the default.
             mainWindow.camDolly.rotatePitch(-11); // Rotate to match default camera orientation for flightsim.
             mainWindow.camDolly.parent = horde3d.avatar;
+
+            // Set zoom level
+            setZoom(context.analogSlot('cameraZoom').value);
         } // end if
     }); // end isActiveChanged
 
@@ -149,7 +154,12 @@ function defineFlightsim()
             {
                 mainWindow.camDolly.rotatePitch(value * Math.PI);
             },
-            cameraZoom: cameraZoom
+            cameraZoom: function(value)
+            {
+                mainWindow.camera.setPos(0, 0, value);
+                settings.set('flightsimCameraZoom', value);
+                settings.save();
+            }
         }
     });
 } // end defineFlightsim
@@ -223,6 +233,9 @@ function defineCapital()
     var slots = {
         reorient: context.digitalSlot('reorient')
     };
+
+    context.analogSlot('cameraZoom').accumulatedValue = settings.get('capitalCameraZoom', 500);
+
 	var responsiveness = 1;
 	var camTurntable;
     var shipRotateTimer;
@@ -315,6 +328,9 @@ function defineCapital()
 
             mainWindow.camDolly.parent = camTurntable;
 
+            // Set zoom level
+            setZoom(context.analogSlot('cameraZoom').value);
+
             // Set maximum values for rotation debugging controls.
             debugWindow.angularTgtVelMax = Math.PI * responsiveness;
         }
@@ -378,7 +394,12 @@ function defineCapital()
                 mainWindow.camDolly.rotatePitch(value * Math.PI);
                 mainWindow.camDolly.orientation = constrainPitch(mainWindow.camDolly.orientation);
             },
-            cameraZoom: cameraZoom
+            cameraZoom: function(value)
+            {
+                setZoom(value);
+                settings.set('capitalCameraZoom', value);
+                settings.save();
+            }
         }
     });
 
