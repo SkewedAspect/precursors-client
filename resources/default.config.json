@@ -4,7 +4,7 @@
             "devices": {
                 "Keyboard": {
                     "contexts": {
-                        "flightsim": {
+                        "capital": {
                             "W": {
                                 "momentaryValue": -0.5,
                                 "slot": "pitch"
@@ -21,13 +21,22 @@
                                 "momentaryValue": -0.5,
                                 "slot": "heading"
                             },
-                            "Q": {
-                                "momentaryValue": -0.5,
-                                "slot": "roll"
-                            },
-                            "E": {
+
+                            "Down": {
                                 "momentaryValue": 0.5,
-                                "slot": "roll"
+                                "slot": "pitch"
+                            },
+                            "Left": {
+                                "momentaryValue": 0.5,
+                                "slot": "heading"
+                            },
+                            "Right": {
+                                "momentaryValue": -0.5,
+                                "slot": "heading"
+                            },
+                            "Up": {
+                                "momentaryValue": -0.5,
+                                "slot": "pitch"
                             },
 
                             "End": {
@@ -54,6 +63,83 @@
                                 "slot": "grabMouse",
                                 "toggle": true
                             },
+                            "F2": {
+                                "slot": "switchToFlightsimMode"
+                            },
+                            "F10": {
+                                "slot": "quit"
+                            }
+                        },
+                        "flightsim": {
+                            "W": {
+                                "momentaryValue": -0.5,
+                                "slot": "pitch"
+                            },
+                            "S": {
+                                "momentaryValue": 0.5,
+                                "slot": "pitch"
+                            },
+                            "A": {
+                                "momentaryValue": 0.5,
+                                "slot": "heading"
+                            },
+                            "D": {
+                                "momentaryValue": -0.5,
+                                "slot": "heading"
+                            },
+                            "Q": {
+                                "momentaryValue": -0.5,
+                                "slot": "roll"
+                            },
+                            "E": {
+                                "momentaryValue": 0.5,
+                                "slot": "roll"
+                            },
+
+                            "Down": {
+                                "momentaryValue": 0.5,
+                                "slot": "pitch"
+                            },
+                            "Left": {
+                                "momentaryValue": 0.5,
+                                "slot": "heading"
+                            },
+                            "Right": {
+                                "momentaryValue": -0.5,
+                                "slot": "heading"
+                            },
+                            "Up": {
+                                "momentaryValue": -0.5,
+                                "slot": "pitch"
+                            },
+
+                            "End": {
+                                "valueToSet": 0,
+                                "slot": "throttle"
+                            },
+                            "Home": {
+                                "valueToSet": 1,
+                                "slot": "throttle"
+                            },
+                            "PageDown": {
+                                "changeRate": -0.3,
+                                "slot": "throttle"
+                            },
+                            "PageUp": {
+                                "changeRate": 0.3,
+                                "slot": "throttle"
+                            },
+
+                            "Escape": {
+                                "slot": "openGameMenu"
+                            },
+                            "F1": {
+                                "slot": "grabMouse",
+                                "toggle": true
+                            },
+                            "F2": {
+                                "slot": "switchToCapitalMode"
+                            },
                             "F10": {
                                 "slot": "quit"
                             }
@@ -66,6 +152,32 @@
             "devices": {
                 "Dumb Mouse": {
                     "contexts": {
+                        "capital": {
+                            "Left": {
+                                "changeRate": 0.3,
+                                "slot": "throttle"
+                            },
+                            "Middle": {
+                                "slot": "reorient"
+                            },
+                            "Right": {
+                                "changeRate": -0.3,
+                                "slot": "throttle"
+                            },
+                            "Wheel Y": {
+                                "delta": true,
+                                "sensitivity": -10,
+                                "slot": "cameraZoom"
+                            },
+                            "X": {
+                                "sensitivity": -10,
+                                "slot": "cameraHeading"
+                            },
+                            "Y": {
+                                "sensitivity": -10,
+                                "slot": "cameraPitch"
+                            }
+                        },
                         "flightsim": {
                             "Left": {
                                 "changeRate": 0.3,
@@ -75,9 +187,9 @@
                                 "changeRate": -0.3,
                                 "slot": "throttle"
                             },
-                            "Wheel X": {
+                            "Wheel Y": {
                                 "delta": true,
-                                "sensitivity": 10,
+                                "sensitivity": -10,
                                 "slot": "cameraZoom"
                             },
                             "X": {
@@ -85,7 +197,7 @@
                                 "slot": "heading"
                             },
                             "Y": {
-                                "sensitivity": 10,
+                                "sensitivity": -10,
                                 "slot": "pitch"
                             }
                         }
