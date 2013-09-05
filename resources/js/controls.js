@@ -259,31 +259,29 @@ function defineCapital()
         var rotAngle = 2 * quatAngle(desiredRotation) / Math.PI;
         desiredRotation = scaleQuat(desiredRotation, Math.sqrt(Math.abs(rotAngle)) * responsiveness);
 
-        var hprIdx = {
-            heading: 0,
-            pitch: 2,
-            roll: 1
-        };
+        var HEADING = 0;
+        var PITCH = 2;
+        var ROLL = 1;
 
         var tgtVelHPR = math3d.quatToHPR(desiredRotation);
         var tgtVelLimit = debugWindow.angularTgtVelMax;
-        setPosNegBars(debugWindow.posTgtVelHeading, debugWindow.negTgtVelHeading, tgtVelHPR[hprIdx.heading], tgtVelLimit);
-        setPosNegBars(debugWindow.posTgtVelPitch, debugWindow.negTgtVelPitch, tgtVelHPR[hprIdx.pitch], tgtVelLimit);
-        setPosNegBars(debugWindow.posTgtVelRoll, debugWindow.negTgtVelRoll, tgtVelHPR[hprIdx.roll], tgtVelLimit);
+        setPosNegBars(debugWindow.posTgtVelHeading, debugWindow.negTgtVelHeading, tgtVelHPR[HEADING], tgtVelLimit);
+        setPosNegBars(debugWindow.posTgtVelPitch, debugWindow.negTgtVelPitch, tgtVelHPR[PITCH], tgtVelLimit);
+        setPosNegBars(debugWindow.posTgtVelRoll, debugWindow.negTgtVelRoll, tgtVelHPR[ROLL], tgtVelLimit);
 
         var camHPR = math3d.quatToHPR(targetOrientation);
-        setPosNegBars(debugWindow.posCamHeading, debugWindow.negCamHeading, camHPR[hprIdx.heading], Math.PI);
-        setPosNegBars(debugWindow.posCamPitch, debugWindow.negCamPitch, camHPR[hprIdx.pitch], Math.PI);
-        setPosNegBars(debugWindow.posCamRoll, debugWindow.negCamRoll, camHPR[hprIdx.roll], Math.PI);
+        setPosNegBars(debugWindow.posCamHeading, debugWindow.negCamHeading, camHPR[HEADING], Math.PI);
+        setPosNegBars(debugWindow.posCamPitch, debugWindow.negCamPitch, camHPR[PITCH], Math.PI);
+        setPosNegBars(debugWindow.posCamRoll, debugWindow.negCamRoll, camHPR[ROLL], Math.PI);
 
         var shipHPR = math3d.quatToHPR(avatarQuat);
-        setPosNegBars(debugWindow.posShipHeading, debugWindow.negShipHeading, shipHPR[hprIdx.heading], Math.PI);
-        setPosNegBars(debugWindow.posShipPitch, debugWindow.negShipPitch, shipHPR[hprIdx.pitch], Math.PI);
-        setPosNegBars(debugWindow.posShipRoll, debugWindow.negShipRoll, shipHPR[hprIdx.roll], Math.PI);
+        setPosNegBars(debugWindow.posShipHeading, debugWindow.negShipHeading, shipHPR[HEADING], Math.PI);
+        setPosNegBars(debugWindow.posShipPitch, debugWindow.negShipPitch, shipHPR[PITCH], Math.PI);
+        setPosNegBars(debugWindow.posShipRoll, debugWindow.negShipRoll, shipHPR[ROLL], Math.PI);
 
-        sendCommand('heading', tgtVelHPR[hprIdx.heading]);
-        sendCommand('pitch', tgtVelHPR[hprIdx.pitch]);
-        sendCommand('roll', tgtVelHPR[hprIdx.roll]);
+        sendCommand('heading', tgtVelHPR[HEADING]);
+        sendCommand('pitch', tgtVelHPR[PITCH]);
+        sendCommand('roll', tgtVelHPR[ROLL]);
     } // end updateShipRotation
 
     context.isActiveChanged.connect(function()
