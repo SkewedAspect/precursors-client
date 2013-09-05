@@ -6,9 +6,11 @@
         "heading": "analog",
         "pitch": "analog",
         "roll": "analog",
+
         "cameraHeading": "analog",
         "cameraPitch": "analog",
         "cameraZoom": "analog",
+
         "fire": "digital",
         "coast": "digital",
         "headlights": "digital",
@@ -16,14 +18,16 @@
         "switchToCapitalMode": "digital",
         "quit": "digital"
     },
+
     "capital": {
         "throttle": "analog",
         "heading": "analog",
         "pitch": "analog",
-        "roll": "analog",
+
         "cameraHeading": "analog",
         "cameraPitch": "analog",
         "cameraZoom": "analog",
+
         "fire": "digital",
         "reorient": "digital",
         "headlights": "digital",
