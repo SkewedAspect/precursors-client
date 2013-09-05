@@ -25,7 +25,8 @@ Item {
     property real contentHeight: content.childrenRect.height
 
     /*! \internal */
-    property Component style: Qt.createComponent(Settings.theme() + "/SubWindowStyle.qml", subwindow)
+    //property Component style: Qt.createComponent(Settings.theme() + "/SubWindowStyle.qml", subwindow)
+    property Component style: Qt.createComponent("SubWindowStyle.qml", subwindow)
 
     /*! \internal */
     default property alias data: content.data
