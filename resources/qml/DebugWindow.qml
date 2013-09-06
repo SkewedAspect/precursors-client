@@ -8,8 +8,6 @@ import Precursors.Networking 1.0
 
 SubWindow {
 	id: debugWindow
-	anchors.top: parent.top
-	anchors.right: parent.right
 	height: debugWindowLayout.implicitHeight + 4 * margin
 	width: debugWindowLayout.implicitWidth + 4 * margin
 

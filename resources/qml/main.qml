@@ -130,102 +130,105 @@ GameWindow {
         }
     }
 
-	DebugWindow {
-		id: debugWindow
+    DebugWindow {
+        id: debugWindow
 
-		angularTgtVelMax: Math.PI
-		//angularTgtVelMax: 0.7853981633974483
-	}
+        x: parent.width - width
+        y: parent.height - height
 
-	SubWindow {
-		id: charWindow
+        angularTgtVelMax: Math.PI
+        //angularTgtVelMax: 0.7853981633974483
+    }
+
+    SubWindow {
+        id: charWindow
         x: (parent.width - width) / 2
-		y: (parent.height - height) / 2
-		width: 300
-		height: charWinLayout.implicitHeight + 4 * margin
+        y: (parent.height - height) / 2
+        width: 300
+        height: charWinLayout.implicitHeight + 4 * margin
         opacity: .9
 
-		title: "Choose a Character"
-		style: SubWindowStyle { }
+        title: "Choose a Character"
+        style: SubWindowStyle { }
 
-		Component {
-			id: characterItem
+        Component {
+            id: characterItem
 
-			MouseArea {
-				id: wrapper
-				anchors.left: parent.left
-				anchors.right: parent.right
-				//anchors.margins: 4
-				height: group.height
+            MouseArea {
+                id: wrapper
+                anchors.left: parent.left
+                anchors.right: parent.right
+                //anchors.margins: 4
+                height: group.height
 
-				onClicked: {
-					wrapper.ListView.view.currentIndex = index;
-					wrapper.ListView.view.currentItemID = charID;
-				}
+                onClicked: {
+                    wrapper.ListView.view.currentIndex = index;
+                    wrapper.ListView.view.currentItemID = charID;
+                }
 
-				GroupBox {
-					id: group
-					anchors.left: parent.left
-					anchors.right: parent.right
+                GroupBox {
+                    id: group
+                    anchors.left: parent.left
+                    anchors.right: parent.right
 
-					Text {
-						text: {
-							try
-							{
-								return first_name + " " + middle_name + " " + last_name;
-							}
-							catch(e)
-							{
-								return first_name + " " + last_name;
-							}
-						}
-						font.family: "Titillium Web";
-						color: "white";
-					}
-				}
-			}
-		}
+                    Text {
+                        text: {
+                            try
+                            {
+                                return first_name + " " + middle_name + " " + last_name;
+                            }
+                            catch(e)
+                            {
+                                return first_name + " " + last_name;
+                            }
+                        }
+                        font.family: "Titillium Web";
+                        color: "white";
+                    }
+                }
+            }
+        }
 
-		ColumnLayout {
-			id: charWinLayout
-			anchors.fill: parent
-			anchors.margins: margin
+        ColumnLayout {
+            id: charWinLayout
+            anchors.fill: parent
+            anchors.margins: margin
 
-			ListView {
-				id: charListView
-				clip: true
-				height: 80
-				Layout.fillWidth: true
+            ListView {
+                id: charListView
+                clip: true
+                height: 80
+                Layout.fillWidth: true
 
-				property var currentItemID
+                property var currentItemID
 
-				model: ListModel { id: charList }
-				delegate: characterItem
-				highlight: Rectangle { color: "orange"; radius: 5 }
-			}
+                model: ListModel { id: charList }
+                delegate: characterItem
+                highlight: Rectangle { color: "orange"; radius: 5 }
+            }
 
-			Button {
-				Layout.fillWidth: true
-				text: "Select Character"
-				onClicked: {
-					// Log in to the currently selected character.
-					var charReq = networking.buildRequest("control",
-							{ type: "selectCharacter", character: charListView.currentItemID },
-							PChannels.CM_SECURE);
-					charReq.reply.connect(onCharSelReply);
-					charReq.send();
+            Button {
+                Layout.fillWidth: true
+                text: "Select Character"
+                onClicked: {
+                    // Log in to the currently selected character.
+                    var charReq = networking.buildRequest("control",
+                            { type: "selectCharacter", character: charListView.currentItemID },
+                            PChannels.CM_SECURE);
+                    charReq.reply.connect(onCharSelReply);
+                    charReq.send();
 
-					function onCharSelReply(confirmed)
-					{
-						if(confirmed)
-						{
-							charWindow.visible = false;
+                    function onCharSelReply(confirmed)
+                    {
+                        if(confirmed)
+                        {
+                            charWindow.visible = false;
 
-							controls.currentContext = controls.context('flightsim');
-						} // end if
-					} // end onCharSelReply
-				}
-			}
+                            controls.currentContext = controls.context('flightsim');
+                        } // end if
+                    } // end onCharSelReply
+                }
+            }
         }
     }
 }
