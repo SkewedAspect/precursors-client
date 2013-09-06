@@ -348,40 +348,43 @@ void Horde3DWindow::mouseMoveEvent(QMouseEvent* event)
 
 void Horde3DWindow::mousePressEvent(QMouseEvent* event)
 {
-	if(_grabMouse)
+	if(!_grabMouse)
+	{
+		QQuickWindow::mousePressEvent(event);
+	} // end if
+
+	if(_grabMouse || !event->isAccepted())
 	{
 		emit mousePressed(event);
 		event->accept();
-	}
-	else
-	{
-		QQuickWindow::mousePressEvent(event);
 	} // end if
 } // end mousePressEvent
 
 void Horde3DWindow::mouseReleaseEvent(QMouseEvent* event)
 {
-	if(_grabMouse)
+	if(!_grabMouse)
+	{
+		QQuickWindow::mouseReleaseEvent(event);
+	} // end if
+
+	if(_grabMouse || !event->isAccepted())
 	{
 		emit mouseReleased(event);
 		event->accept();
-	}
-	else
-	{
-		QQuickWindow::mouseReleaseEvent(event);
 	} // end if
 } // end mouseReleaseEvent
 
 void Horde3DWindow::wheelEvent(QWheelEvent* event)
 {
-	if(_grabMouse)
+	if(!_grabMouse)
+	{
+		QQuickWindow::wheelEvent(event);
+	} // end if
+
+	if(_grabMouse || !event->isAccepted())
 	{
 		emit mouseWheel(event);
 		event->accept();
-	}
-	else
-	{
-		QQuickWindow::wheelEvent(event);
 	} // end if
 } // end mouseReleaseEvent
 
