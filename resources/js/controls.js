@@ -88,7 +88,29 @@ function defineFlightsim()
 {
     var context = controls.context('flightsim');
 
-    context.analogSlot('cameraZoom').accumulatedValue = settings.get('flightsimCameraZoom', 200);
+    var flightsimConfig = settings.get('flightsim', {});
+
+    function getConfig(key, defaultValue)
+    {
+        var value = flightsimConfig[key];
+
+        if(value === undefined)
+        {
+            value = defaultValue;
+        }
+
+        return value;
+    } // end getConfig
+
+    function setConfig(key, value)
+    {
+        flightsimConfig[key] = value;
+
+        settings.set('flightsim', flightsimConfig);
+        settings.save();
+    } // end setConfig
+
+    context.analogSlot('cameraZoom').accumulatedValue = getConfig('cameraZoom', 200);
 
     context.isActiveChanged.connect(function()
     {
@@ -157,8 +179,7 @@ function defineFlightsim()
             cameraZoom: function(value)
             {
                 mainWindow.camera.setPos(0, 0, value);
-                settings.set('flightsimCameraZoom', value);
-                settings.save();
+                setConfig('cameraZoom', value);
             }
         }
     });
@@ -234,11 +255,35 @@ function defineCapital()
         reorient: context.digitalSlot('reorient')
     };
 
-    context.analogSlot('cameraZoom').accumulatedValue = settings.get('capitalCameraZoom', 500);
+    var capitalConfig = settings.get('capital', {});
 
-    var responsiveness = 1;
+    function getConfig(key, defaultValue)
+    {
+        var value = capitalConfig[key];
+
+        if(value === undefined)
+        {
+            value = defaultValue;
+        }
+
+        return value;
+    } // end getConfig
+
+    function setConfig(key, value)
+    {
+        capitalConfig[key] = value;
+
+        settings.set('capital', capitalConfig);
+        settings.save();
+    } // end setConfig
+
+    var responsiveness = getConfig('responsiveness', 1);
+    var directRotationSpeed = getConfig('directRotationSpeed', 0.01);
+    context.analogSlot('cameraZoom').accumulatedValue = getConfig('cameraZoom', 500);
+
     var camTurntable;
     var shipRotateTimer;
+
     var targetHeadingQuat = identityQuat();
     var targetPitchQuat = identityQuat();
     var headingVelQuat = identityQuat();
@@ -258,9 +303,15 @@ function defineCapital()
         else
         {
             // Update the target orientation based on the current heading/pitch velocities from input.
-            //FIXME: Use the frame time here instead of 0.1!
-            targetHeadingQuat = math3d.quatMult(targetHeadingQuat, scaleQuat(headingVelQuat, 0.1));
-            targetPitchQuat = constrainPitch(math3d.quatMult(targetPitchQuat, scaleQuat(pitchVelQuat, 0.1)));
+            targetHeadingQuat = math3d.quatMult(
+                    targetHeadingQuat,
+                    scaleQuat(headingVelQuat, mainWindow.lastFrameTime * directRotationSpeed)
+                    );
+
+            targetPitchQuat = constrainPitch(math3d.quatMult(
+                    targetPitchQuat,
+                    scaleQuat(pitchVelQuat, mainWindow.lastFrameTime * directRotationSpeed)
+                    ));
         } // end if
 
         var targetOrientation = math3d.quatMult(targetHeadingQuat, targetPitchQuat);
@@ -397,8 +448,7 @@ function defineCapital()
             cameraZoom: function(value)
             {
                 setZoom(value);
-                settings.set('capitalCameraZoom', value);
-                settings.save();
+                setConfig('cameraZoom', value);
             }
         }
     });
