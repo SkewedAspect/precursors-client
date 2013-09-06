@@ -236,8 +236,8 @@ function defineCapital()
 
     context.analogSlot('cameraZoom').accumulatedValue = settings.get('capitalCameraZoom', 500);
 
-	var responsiveness = 1;
-	var camTurntable;
+    var responsiveness = 1;
+    var camTurntable;
     var shipRotateTimer;
     var targetHeadingQuat = identityQuat();
     var targetPitchQuat = identityQuat();

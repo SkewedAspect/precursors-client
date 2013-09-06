@@ -88,6 +88,11 @@ float Horde3DWindow::fps() const
 	return lastFPS;
 } // end fps
 
+float Horde3DWindow::lastFrameTime() const;
+{
+	return _lastFrameTime;
+} // end lastFrameTime
+
 float Horde3DWindow::maxViewDistance() const
 {
 	return _settings.get(CFG_VIEW_DIST, DEFAULT_VIEW_DIST).toFloat();
@@ -394,8 +399,9 @@ void Horde3DWindow::onBeforeRendering()
 
 	if(frameTime > 0)
 	{
-		lastFrameTime = frameTime;
-		lastFPS = 1000.0 / lastFrameTime;
+		_lastFrameTime = frameTime;
+		lastFPS = 1000.0 / _lastFrameTime;
+		emit lastFrameTimeChanged(_lastFrameTime);
 		emit fpsChanged(lastFPS);
 	} // end if
 
