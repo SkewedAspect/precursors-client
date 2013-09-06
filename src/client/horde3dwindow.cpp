@@ -390,8 +390,7 @@ void Horde3DWindow::wheelEvent(QWheelEvent* event)
 
 void Horde3DWindow::onBeforeRendering()
 {
-	int frameTime = lastFrameStart.elapsed();
-	lastFrameStart.restart();
+	int frameTime = lastFrameStart.restart();
 
 	if(frameTime > 0)
 	{
