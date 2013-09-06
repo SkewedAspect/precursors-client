@@ -88,7 +88,7 @@ float Horde3DWindow::fps() const
 	return lastFPS;
 } // end fps
 
-float Horde3DWindow::lastFrameTime() const;
+int Horde3DWindow::lastFrameTime() const
 {
 	return _lastFrameTime;
 } // end lastFrameTime

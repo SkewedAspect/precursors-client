@@ -29,7 +29,7 @@ class Horde3DWindow : public QQuickWindow
 	Q_PROPERTY(Entity* camera READ camera NOTIFY cameraChanged)
 	Q_PROPERTY(Entity* camDolly READ camDolly)
 	Q_PROPERTY(float fps READ fps NOTIFY fpsChanged)
-	Q_PROPERTY(float lastFrameTime READ lastFrameTime NOTIFY lastFrameTimeChanged)
+	Q_PROPERTY(int lastFrameTime READ lastFrameTime NOTIFY lastFrameTimeChanged)
 	Q_PROPERTY(float maxViewDistance READ maxViewDistance WRITE setMaxViewDistance NOTIFY maxViewDistanceChanged)
 	Q_PROPERTY(bool grabMouse READ grabMouse WRITE setGrabMouse NOTIFY grabMouseChanged)
 	Q_PROPERTY(QPoint lastRecenterPos READ lastRecenterPos)
@@ -41,7 +41,7 @@ public:
 	Entity* camera() const;
 	Entity* camDolly() const;
 	float fps() const;
-	float lastFrameTime() const;
+	int lastFrameTime() const;
 	float maxViewDistance() const;
 	bool grabMouse() const;
 	QPoint lastRecenterPos() const;
@@ -57,7 +57,7 @@ public:
 signals:
 	void cameraChanged(const Entity* camera);
 	void fpsChanged(const float& newFPS);
-	void lastFrameTimeChanged(const float& lastFrameTime);
+	void lastFrameTimeChanged(const int& lastFrameTime);
 	void maxViewDistanceChanged(float maxViewDist);
 	void grabMouseChanged(bool grab);
 
@@ -102,7 +102,7 @@ private:
 	QOpenGLContext* _h3dContext;
 
 	QTime lastFrameStart;
-	float _lastFrameTime;
+	int _lastFrameTime;
 	float lastFPS;
 	float _shipRot;
 	bool _grabMouse;
