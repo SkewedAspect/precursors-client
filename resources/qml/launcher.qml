@@ -99,7 +99,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     font.family: "Titillium Web";
 
-                    text: settings.get('lastUser', "");
+                    text: settings.get('lastUser', "") || '';
                 } // end Textfield
 
                 TextField {
@@ -131,7 +131,7 @@ ApplicationWindow {
 
                     text: {
                         var serverText = settings.get("server", "localhost") + ":" + settings.get("port", 6006);
-                        if(serverText != "localhost:6006")
+                        if(serverText && serverText != "localhost:6006")
                         {
                             return serverText;
                         } // end if

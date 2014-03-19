@@ -1,7 +1,7 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.1
+import QtQuick.Layouts 1.1
 
 import Precursors.Networking 1.0
 
@@ -72,12 +72,8 @@ GameWindow {
                     readOnly: true
                     wrapMode: TextEdit.Wrap
 
-                    style: TextFieldStyle {
-                        background: Rectangle {
-                            width: parent.width
-                            height: parent.height
-                            color: "#00000000"
-                        }
+                    style: TextAreaStyle {
+                        textColor: "#00000000"
                     }
                 }
 
