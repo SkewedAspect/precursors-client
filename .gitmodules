@@ -1,0 +1,9 @@
+[submodule "deps/ois-ogre"]
+	path = deps/ois-ogre
+	url = https://github.com/SkewedAspect/ois-ogre.git
+[submodule "resources/js/vendor/qtjs"]
+	path = resources/js/vendor/qtjs
+	url = https://github.com/Morgul/qtjs.git
+[submodule "resources/content"]
+	path = resources/content
+	url = https://github.com/SkewedAspect/precursors-content.git
