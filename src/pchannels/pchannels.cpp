@@ -49,12 +49,6 @@ PChannels::PChannels(QObject *parent) :
     connect(this->tcpSocket, SIGNAL(readyRead()), this, SLOT(tcpDataReady()));
     connect(this->tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(tcpError(QAbstractSocket::SocketError)));
     connect(this->tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
-
-    // Create a new UDP socket, and conect it's signals.
-    this->udpSocket = new QUdpSocket(this);
-    connect(this->udpSocket, SIGNAL(readyRead()), this, SLOT(udpDataReady()));
-    connect(this->udpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(udpError(QAbstractSocket::SocketError)));
-    connect(this->udpSocket, SIGNAL(disconnected()), this, SLOT(udpDisconnected()));
 } // end PChannels
 
 /**
@@ -105,12 +99,6 @@ void PChannels::disconnect(QString reason)
         this->tcpSocket->disconnectFromHost();
     } // end if
 
-    // Disconnect the udp socket if it's connected.
-    if(this->udpSocket->isValid())
-    {
-        this->udpSocket->disconnectFromHost();
-    } // end if
-
 	emit disconnected(reason);
 } // end disconnect
 
@@ -133,16 +121,7 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
         } // end CM_SECURE
 
         case CM_UNRELIABLE:
-        {
-            QByteArray ciphertext = jsonData;
-            if(encrypted)
-            {
-                ciphertext = cipher->encrypt(jsonData);
-            } // end if
-
-            udpSocket->writeDatagram(ciphertext, this->serverAddress, this->udpPort);
-            break;
-        } // end CM_UNRELIABLE
+            //FIXME: This has been removed. Send as CM_RELIABLE instead!
 
         case CM_RELIABLE:
         {
@@ -244,19 +223,6 @@ void PChannels::handleEvent(QVariantMap envelope)
 void PChannels::connectTransports()
 {
     tcpSocket->connectToHost(this->serverAddress, this->tcpPort);
-    udpSocket->bind();
-
-    // Send the UDP login message
-    QVariantMap msg;
-    msg["type"] = "connect";
-    msg["cookie"] = this->sessionCookie;
-
-    // Setup a request
-    PChannelsRequest* udpRequest = buildRequest("control", msg, CM_UNRELIABLE);
-    connect(udpRequest, SIGNAL(reply(bool)), this, SLOT(handleUDPResponse(bool)));
-
-    // Send the udp request
-    udpRequest->send();
 } // end connectTransports
 
 // Wraps the mesage in an envelope for sending
@@ -331,7 +297,6 @@ void PChannels::handleLoginResponse(bool confirmed)
     else
     {
         this->tcpPort = replyMessage["tcpPort"].toUInt();
-        this->udpPort = replyMessage["udpPort"].toUInt();
 
         this->sessionCookie = replyMessage["cookie"].toString();
 
@@ -354,33 +319,9 @@ void PChannels::handleTCPResponse(bool confirmed)
     else
     {
         this->_tcpConnected = true;
-        if(this->_udpConnected)
-        {
-            emit connected();
-        } // end if
+		emit connected();
     } // end if
 } // end handleTCPResponse
-
-void PChannels::handleUDPResponse(bool confirmed)
-{
-    //TODO: There might be reasons to avoid this... but it was easier, for now.
-    PChannelsRequest* udpReq = qobject_cast<PChannelsRequest*>(QObject::sender());
-    QVariantMap replyMessage = udpReq->replyMessage;
-
-    if(!confirmed)
-    {
-        logger.error(QString("Server denied udp connection: \"%1\".").arg(replyMessage["reason"].toString()));
-        disconnect(replyMessage["reason"].toString());
-    }
-    else
-    {
-        this->_udpConnected = true;
-        if(this->_tcpConnected)
-        {
-            emit connected();
-        } // end if
-    } // end if
-} // end handleUDPResponse
 
 void PChannels::handleIncomingMessage(QByteArray data)
 {
@@ -418,28 +359,6 @@ void PChannels::tcpDataReady()
     tcpNetstring->addData(tcpSocket->readAll());
 } // end tcpDataReady
 
-void PChannels::udpDataReady()
-{
-    while (udpSocket->hasPendingDatagrams())
-    {
-            QByteArray datagram;
-            datagram.resize(udpSocket->pendingDatagramSize());
-            QHostAddress sender;
-            quint16 senderPort;
-
-            udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-
-            // Decrypt AES
-            QByteArray plainText = cipher->decrypt(datagram);
-
-			QVariantMap envelope = QJsonDocument::fromJson(plainText).toVariant().toMap();
-
-            // Now, parse as JSON, and emit.
-            emit incomingMessage(envelope["channel"].toString(), envelope["contents"].toMap());
-    } // end while
-} // end udpDataReady
-
-
 void PChannels::sslError(QAbstractSocket::SocketError error)
 {
     logger.error(QString("SSL Error: \"%1\".").arg(sslSocket->errorString()));
@@ -449,10 +368,6 @@ void PChannels::tcpError(QAbstractSocket::SocketError error)
 {
     logger.error(QString("TCP Error: \"%1\".").arg(tcpSocket->errorString()));
 } // end sslDebug
-void PChannels::udpError(QAbstractSocket::SocketError error)
-{
-    logger.error(QString("UDP Error: \"%1\".").arg(udpSocket->errorString()));
-} // end sslError
 
 void PChannels::sslDisconnected()
 {
@@ -460,11 +375,6 @@ void PChannels::sslDisconnected()
 } // end sslDisconnected
 
 void PChannels::tcpDisconnected()
-{
-    disconnect();
-} // end sslDisconnected
-
-void PChannels::udpDisconnected()
 {
     disconnect();
 } // end sslDisconnected

@@ -54,7 +54,6 @@ public:
     quint16 port;
 
     quint16 tcpPort;
-    quint16 udpPort;
 
     QString username;
     QString pwdHash;
@@ -73,13 +72,11 @@ private:
 
     QSslSocket* sslSocket;
     QTcpSocket* tcpSocket;
-    QUdpSocket* udpSocket;
 
     QNetString* sslNetstring;
     QNetString* tcpNetstring;
 
     bool _tcpConnected;
-    bool _udpConnected;
 
     QString sessionCookie;
 
@@ -96,19 +93,15 @@ private slots:
     void tcpConnected();
     void handleLoginResponse(bool confirmed);
     void handleTCPResponse(bool confirmed);
-    void handleUDPResponse(bool confirmed);
 
     void sslDataReady();
     void tcpDataReady();
-    void udpDataReady();
 
     void sslError(QAbstractSocket::SocketError error);
     void tcpError(QAbstractSocket::SocketError error);
-    void udpError(QAbstractSocket::SocketError error);
 
     void sslDisconnected();
     void tcpDisconnected();
-    void udpDisconnected();
 
     void handleIncomingMessage(QByteArray data);
 };
