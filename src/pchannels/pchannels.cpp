@@ -122,6 +122,7 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 
         case CM_UNRELIABLE:
             //FIXME: This has been removed. Send as CM_RELIABLE instead!
+            logger.warning(QString("Sent with mode CM_UNRELIABLE: %1").arg(envelope.toString()));
 
         case CM_RELIABLE:
         {
@@ -139,7 +140,7 @@ void PChannels::send(QVariant envelope, ChannelMode mode, bool encrypted)
 
         default:
         {
-            logger.critical(QString("Send with unknown mode: %1, $2, %3").arg(envelope.toString()).arg(mode).arg(encrypted));
+            logger.critical(QString("Send with unknown mode: %1, %2, %3").arg(envelope.toString()).arg(mode).arg(encrypted));
         } // end default
     }
 } // end send
@@ -346,7 +347,7 @@ void PChannels::handleIncomingMessage(QByteArray data)
         return;
     } // end if
 
-    logger.warning(QString("Received incoming message with unknown type: \"%1\".").arg(envelope["type"].toString()));
+    logger.warning(QString("Received incoming message with unknown type: \"%1\"; message: %2.").arg(envelope["type"].toString()).arg(QString(plainText)));
 } // end handleIncomingMessage
 
 void PChannels::sslDataReady()
