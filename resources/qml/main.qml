@@ -169,14 +169,7 @@ GameWindow {
 
                     Text {
                         text: {
-                            try
-                            {
-                                return first_name + " " + middle_name + " " + last_name;
-                            }
-                            catch(e)
-                            {
-                                return first_name + " " + last_name;
-                            }
+						   return name;
                         }
                         font.family: "Titillium Web";
                         color: "white";
